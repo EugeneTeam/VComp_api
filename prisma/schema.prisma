@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.1.x", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserState {
+    ACTIVE
+    INACTIVE
+    BANNED
+}
+
+model User {
+    id Int @id @default(autoincrement())
+    fullName String
+    phone String
+    city String
+    email String @unique
+    state UserState @default(INACTIVE)
+    bannReason String?
+    activationToken String @unique
+    authorizationToken String?
+    resetPasswordToken String?
+    googleId String? @unique
+    favorits Favorite[]
+    createdAt DateTime @default(now())
+    udpatedAt DateTime @default(now())
+}
+
+model Favorite {
+    id Int @id @default(autoincrement())
+    productId Int
+    uesr User @relation(fields: [userId], references: [id])
+    userId Int
+}
+
+model Product {
+    id Int @id @default(autoincrement())
+    name String @db.Text
+    description String @db.Text
+    price Float
+    discountId Int?
+    categoryId Int
+    galleryId Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+}
+
+model Category {
+    id Int @id @default(autoincrement())
+    name String
+    parentId Int
+    subCategory Category? @relation("ChildCategory", fields: [parentId], references: [id])
+    child Category? @relation("ChildCategory")
+}

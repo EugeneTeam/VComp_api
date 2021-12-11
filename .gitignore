@@ -1,0 +1,8 @@
+# folders
+node_modules
+prisma/migrations
+.idea
+
+# files
+.env
+package-lock.json
