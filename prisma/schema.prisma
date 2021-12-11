@@ -30,6 +30,23 @@ enum OrderStatus {
     COMPLETED
 }
 
+enum ArticleStatus {
+    HIDDEN
+    VISIBLE
+}
+
+enum BannerPositionX {
+    LEFT
+    MIDDLE
+    RIHGT
+}
+
+enum BannerPositionY {
+    TOP
+    MIDDLE
+    BOTTOM
+}
+
 model User {
     id Int @id @default(autoincrement())
     fullName String
@@ -43,6 +60,7 @@ model User {
     resetPasswordToken String?
     googleId String? @unique
     favorits Favorite[]
+    roleId LUserRole?
     createdAt DateTime @default(now())
     udpatedAt DateTime @default(now())
 }
@@ -68,17 +86,19 @@ model DeliveryService {
     isActive Boolean @default(false)
     info String
     order Order?
+    lTypeService LTypeService[]
 }
 
 model Order {
     id Int @id @default(autoincrement())
     payment PaymentType @relation(fields: [paymentTypeId], references: [id])
     paymentTypeId Int
-    delivery DeliveryService @relation(fields: [deliveryTypeId], references: [id])
+    delivery DeliveryService @relation(fields: [deliveryServiceId], references: [id])
     deliveryServiceId Int
     comment String?
     callback Boolean @default(false)
     status OrderStatus @default(PROCESSED)
+    lProductList LProductList[]
 }
 
 model Product {
@@ -91,6 +111,8 @@ model Product {
     galleryId Int
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
+    lProductList LProductList[]
+    productViews ProductViews?
 }
 
 model Category {
@@ -99,4 +121,111 @@ model Category {
     parentId Int?
     subCategory Category? @relation("ChildCategory", fields: [parentId], references: [id])
     child Category? @relation("ChildCategory")
+}
+
+model LTypeService {
+    deliveryType DeliveryType @relation(fields: [deliveryTypeId], references: [id])
+    deliveryTypeId Int
+    deliveryService DeliveryService @relation(fields: [deliveryServiceId], references: [id])
+    deliveryServiceId Int
+
+    @@id([deliveryTypeId, deliveryServiceId])
+}
+
+model DeliveryType {
+    id Int @id @default(autoincrement())
+    name String
+    isActive Boolean @default(false)
+    info String
+    lTypeService LTypeService[]
+}
+
+model LProductList {
+    orderId Int
+    order Order @relation(fields: [orderId], references: [id])
+    quantity Int @default(1)
+    productId Int
+    product Product @relation(fields: [productId], references: [id])
+    @@id([productId, orderId])
+}
+
+model ProductViews {
+    id Int @id @default(autoincrement())
+    productId Int
+    product Product @relation(fields: [productId], references: [id])
+    count Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+}
+
+model Callback {
+    id Int @id @default(autoincrement())
+    phone String
+    isProcessed Boolean @default(true)
+}
+
+model Article {
+    id Int @id @default(autoincrement())
+    articleCategoryId Int
+    title String
+    text String @db.Text
+    image String
+    status ArticleStatus @default(HIDDEN)
+    source String?
+}
+
+model ArticleCategory {
+    id Int @id @default(autoincrement())
+    name String
+    parentId Int
+    subCategory ArticleCategory? @relation("ArticleChildCategory", fields: [parentId], references: [id])
+    child ArticleCategory? @relation("ArticleChildCategory")
+}
+
+model Banner {
+    id Int @id @default(autoincrement())
+    page String
+    title String
+    positionX BannerPositionX
+    positionY BannerPositionY
+    html String @db.Text
+    bannerImage BannerImage?
+}
+
+model BannerImage {
+    id Int @id @default(autoincrement())
+    bannerId Int
+    banner Banner @relation(fields: [bannerId], references: [id])
+    imageUrl String
+    title String
+    productUrl String?
+}
+
+model LUserRole {
+    userId Int
+    user User @relation(fields: [userId], references: [id])
+    roleId Int
+    role Role @relation(fields: [roleId], references: [id])
+    @@id([userId, roleId])
+}
+
+model Role {
+    id Int @id @default(autoincrement())
+    name String
+    lUserRole LUserRole[]
+    lRolePermission LRolePermission[]
+}
+
+model LRolePermission {
+    roleId Int
+    role Role @relation(fields: [roleId], references: [id])
+    permissionId Int
+    permission Permission @relation(fields: [permissionId], references: [id])
+    @@id([permissionId, roleId])
+}
+
+model Permission {
+    id Int @id @default(autoincrement())
+    name String
+    lRolePermission LRolePermission[]
 }

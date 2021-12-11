@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch './**/*.ts' --exec 'ts-node' src/app.ts",
-    "prisma:refresh": "npm run prisma:generate && npm run prisma:migrate:reset",
-    "prisma:migrate:reset": "npx prisma migrate reset",
-    "prisma:generate": "prisma generate"
+    "p:refresh": "npm run prisma:generate && npm run prisma:migrate:reset",
+    "p:reset": "npx prisma migrate reset",
+    "p:generate": "npx prisma generate",
+    "p:migrate": "npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
