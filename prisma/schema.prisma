@@ -47,6 +47,16 @@ enum BannerPositionY {
     BOTTOM
 }
 
+enum CommentType {
+    QUESTION
+    COMMENT
+}
+
+enum DiscountType {
+    VALUE
+    PERCENT
+}
+
 model User {
     id Int @id @default(autoincrement())
     fullName String
@@ -59,34 +69,41 @@ model User {
     authorizationToken String?
     resetPasswordToken String?
     googleId String? @unique
+    createdAt DateTime @default(now())
+    udpatedAt DateTime @updatedAt
+    comment Comment[]
     favorits Favorite[]
     roleId LUserRole?
-    createdAt DateTime @default(now())
-    udpatedAt DateTime @default(now())
+    order Order[]
+    @@map("Users")
 }
 
 model Favorite {
     id Int @id @default(autoincrement())
     productId Int
+    product Product @relation(fields: [productId], references: [id])
     userId Int
     user User @relation(fields: [userId], references: [id])
+    @@map("Favorites")
 }
 
 model PaymentType {
     id Int @id @default(autoincrement())
-    name String
+    name String @db.VarChar(100) @unique
     isActive Boolean @default(false)
-    info String
+    info String @db.VarChar(200)
     order Order?
+    @@map("PaymentTypes")
 }
 
 model DeliveryService {
     id Int @id @default(autoincrement())
-    name String
+    name String @unique
     isActive Boolean @default(false)
-    info String
+    info String @db.VarChar(200)
     order Order?
     lTypeService LTypeService[]
+    @@map("DeliveryServices")
 }
 
 model Order {
@@ -98,29 +115,42 @@ model Order {
     comment String?
     callback Boolean @default(false)
     status OrderStatus @default(PROCESSED)
+    userId Int
+    user User @relation(fields: [userId], references: [id])
     lProductList LProductList[]
+    @@map("Orders")
 }
 
 model Product {
     id Int @id @default(autoincrement())
-    name String @db.Text
+    name String @db.VarChar(255) @unique
     description String @db.Text
     price Float
-    discountId Int?
+    discountId Int
+    discount Discount @relation(fields: [discountId], references: [id])
     categoryId Int
+    category Category @relation(fields: [categoryId], references: [id])
     galleryId Int
+    gallery Gallery @relation(fields: [galleryId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
     lProductList LProductList[]
-    productViews ProductViews?
+    productViews ProductView?
+    comment Comment[]
+    lProductCharacteristic LProductCharacteristic[]
+    favorite Favorite[]
+    @@map("Products")
 }
 
 model Category {
     id Int @id @default(autoincrement())
-    name String
+    name String @db.VarChar(100) @unique
     parentId Int?
-    subCategory Category? @relation("ChildCategory", fields: [parentId], references: [id])
-    child Category? @relation("ChildCategory")
+    subCategory Category? @relation("SubCategory", fields: [parentId], references: [id])
+    child Category[] @relation("SubCategory")
+    characteristic Characteristic[]
+    product Product?
+    @@map("Categories")
 }
 
 model LTypeService {
@@ -128,16 +158,17 @@ model LTypeService {
     deliveryTypeId Int
     deliveryService DeliveryService @relation(fields: [deliveryServiceId], references: [id])
     deliveryServiceId Int
-
     @@id([deliveryTypeId, deliveryServiceId])
+    @@map("LTypeServices")
 }
 
 model DeliveryType {
     id Int @id @default(autoincrement())
-    name String
+    name String @db.VarChar(100) @unique
     isActive Boolean @default(false)
-    info String
+    info String @db.VarChar(255)
     lTypeService LTypeService[]
+    @@map("DeliveryTypes")
 }
 
 model LProductList {
@@ -147,58 +178,65 @@ model LProductList {
     productId Int
     product Product @relation(fields: [productId], references: [id])
     @@id([productId, orderId])
+    @@map("LProductLists")
 }
 
-model ProductViews {
+model ProductView {
     id Int @id @default(autoincrement())
     productId Int
     product Product @relation(fields: [productId], references: [id])
     count Int
     createdAt DateTime @default(now())
-    updatedAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@map("ProductViews")
 }
 
 model Callback {
     id Int @id @default(autoincrement())
-    phone String
+    phone String @db.VarChar(15) @unique
     isProcessed Boolean @default(true)
+    @@map("Callbacks")
 }
 
 model Article {
     id Int @id @default(autoincrement())
     articleCategoryId Int
-    title String
+    title String @db.VarChar(100)
     text String @db.Text
-    image String
+    image String @db.VarChar(255)
     status ArticleStatus @default(HIDDEN)
-    source String?
+    source String? @db.VarChar(255)
+    @@map("Articles")
 }
 
 model ArticleCategory {
     id Int @id @default(autoincrement())
-    name String
+    name String @db.VarChar(100) @unique
     parentId Int
     subCategory ArticleCategory? @relation("ArticleChildCategory", fields: [parentId], references: [id])
     child ArticleCategory? @relation("ArticleChildCategory")
+    @@map("ArticleCategories")
 }
 
 model Banner {
     id Int @id @default(autoincrement())
-    page String
-    title String
+    page String @db.VarChar(100)
+    title String @db.VarChar(100)
     positionX BannerPositionX
     positionY BannerPositionY
     html String @db.Text
     bannerImage BannerImage?
+    @@map("Banners")
 }
 
 model BannerImage {
     id Int @id @default(autoincrement())
     bannerId Int
     banner Banner @relation(fields: [bannerId], references: [id])
-    imageUrl String
-    title String
+    imageUrl String @db.VarChar(255)
+    title String @db.VarChar(100)
     productUrl String?
+    @@map("BannerImages")
 }
 
 model LUserRole {
@@ -207,13 +245,15 @@ model LUserRole {
     roleId Int
     role Role @relation(fields: [roleId], references: [id])
     @@id([userId, roleId])
+    @@map("LUserRoles")
 }
 
 model Role {
     id Int @id @default(autoincrement())
-    name String
+    name String @db.VarChar(100) @unique
     lUserRole LUserRole[]
     lRolePermission LRolePermission[]
+    @@map("Roles")
 }
 
 model LRolePermission {
@@ -222,10 +262,84 @@ model LRolePermission {
     permissionId Int
     permission Permission @relation(fields: [permissionId], references: [id])
     @@id([permissionId, roleId])
+    @@map("LRolePermissions")
 }
 
 model Permission {
     id Int @id @default(autoincrement())
-    name String
+    name String @db.VarChar(100) @unique
     lRolePermission LRolePermission[]
+    @@map("Permissions")
+}
+
+model Comment {
+    id Int @id @default(autoincrement())
+    type CommentType
+    rating Int
+    description String @db.Text
+    flaws String @db.VarChar(255)
+    dignity String @db.VarChar(255)
+    userId Int
+    user User @relation(fields: [userId], references: [id])
+    productId Int
+    product Product @relation(fields: [productId], references: [id])
+    parentId Int
+    subComment Comment @relation("SubComment", fields: [parentId], references: [id])
+    child Comment[] @relation("SubComment")
+    @@map("Comments")
+}
+
+model Discount {
+    id Int @id @default(autoincrement())
+    type DiscountType
+    value Float
+    expiredAt DateTime
+    product Product?
+    @@map("Discouonts")
+}
+
+model Gallery {
+    id Int @id @default(autoincrement())
+    name String @db.VarChar(100) @unique
+    lImageGallery LImageGallery[]
+    product Product?
+    @@map("Galleries")
+}
+
+model Characteristic {
+    id Int @id @default(autoincrement())
+    name String @db.VarChar(100) @unique
+    value String @db.VarChar(255)
+    url String @db.VarChar(255)
+    categoryId Int
+    category Category @relation(fields: [categoryId], references: [id])
+    lProductCharacteristic LProductCharacteristic[]
+    @@map("Characteristics")
+}
+
+model LProductCharacteristic {
+    productId Int
+    product Product @relation(fields: [productId], references: [id])
+    characteristicId Int
+    characteristic Characteristic @relation(fields: [characteristicId], references: [id])
+    @@id([productId, characteristicId])
+    @@map("LProductCharacteristics")
+}
+
+model Image {
+    id Int @id @default(autoincrement())
+    name String @unique
+    url String @db.VarChar(255)
+    order Int
+    lImageGallery LImageGallery[]
+    @@map("Images")
+}
+
+model LImageGallery {
+    imageId Int
+    image Image @relation(fields: [imageId], references: [id])
+    galleryId Int
+    gallery Gallery @relation(fields: [galleryId], references: [id])
+    @@id([imageId, galleryId])
+    @@map("LImageGalleries")
 }
