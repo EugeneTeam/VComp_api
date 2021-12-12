@@ -1,4 +1,4 @@
-export enum USER_STATE {
+export enum USER_STATUS {
     ACTIVE,
     INACTIVE,
     BANNED

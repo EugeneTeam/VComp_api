@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserState {
+enum UserStatus {
     ACTIVE
     INACTIVE
     BANNED
@@ -63,7 +63,7 @@ model User {
     phone String
     city String
     email String @unique
-    state UserState @default(INACTIVE)
+    status UserStatus @default(INACTIVE)
     banReason String?
     activationToken String @unique
     authorizationToken String?
@@ -75,7 +75,6 @@ model User {
     favorits Favorite[]
     roleId LUserRole?
     order Order[]
-    @@map("Users")
 }
 
 model Favorite {
@@ -93,7 +92,6 @@ model PaymentType {
     isActive Boolean @default(false)
     info String @db.VarChar(200)
     order Order?
-    @@map("PaymentTypes")
 }
 
 model DeliveryService {
@@ -103,7 +101,6 @@ model DeliveryService {
     info String @db.VarChar(200)
     order Order?
     lTypeService LTypeService[]
-    @@map("DeliveryServices")
 }
 
 model Order {
@@ -118,7 +115,6 @@ model Order {
     userId Int
     user User @relation(fields: [userId], references: [id])
     lProductList LProductList[]
-    @@map("Orders")
 }
 
 model Product {
@@ -139,7 +135,6 @@ model Product {
     comment Comment[]
     lProductCharacteristic LProductCharacteristic[]
     favorite Favorite[]
-    @@map("Products")
 }
 
 model Category {
@@ -150,7 +145,6 @@ model Category {
     child Category[] @relation("SubCategory")
     characteristic Characteristic[]
     product Product?
-    @@map("Categories")
 }
 
 model LTypeService {
@@ -159,7 +153,6 @@ model LTypeService {
     deliveryService DeliveryService @relation(fields: [deliveryServiceId], references: [id])
     deliveryServiceId Int
     @@id([deliveryTypeId, deliveryServiceId])
-    @@map("LTypeServices")
 }
 
 model DeliveryType {
@@ -168,7 +161,6 @@ model DeliveryType {
     isActive Boolean @default(false)
     info String @db.VarChar(255)
     lTypeService LTypeService[]
-    @@map("DeliveryTypes")
 }
 
 model LProductList {
@@ -178,7 +170,6 @@ model LProductList {
     productId Int
     product Product @relation(fields: [productId], references: [id])
     @@id([productId, orderId])
-    @@map("LProductLists")
 }
 
 model ProductView {
@@ -188,14 +179,12 @@ model ProductView {
     count Int
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    @@map("ProductViews")
 }
 
 model Callback {
     id Int @id @default(autoincrement())
     phone String @db.VarChar(15) @unique
     isProcessed Boolean @default(true)
-    @@map("Callbacks")
 }
 
 model Article {
@@ -206,7 +195,6 @@ model Article {
     image String @db.VarChar(255)
     status ArticleStatus @default(HIDDEN)
     source String? @db.VarChar(255)
-    @@map("Articles")
 }
 
 model ArticleCategory {
@@ -215,7 +203,6 @@ model ArticleCategory {
     parentId Int
     subCategory ArticleCategory? @relation("ArticleChildCategory", fields: [parentId], references: [id])
     child ArticleCategory? @relation("ArticleChildCategory")
-    @@map("ArticleCategories")
 }
 
 model Banner {
@@ -226,7 +213,6 @@ model Banner {
     positionY BannerPositionY
     html String @db.Text
     bannerImage BannerImage?
-    @@map("Banners")
 }
 
 model BannerImage {
@@ -236,7 +222,6 @@ model BannerImage {
     imageUrl String @db.VarChar(255)
     title String @db.VarChar(100)
     productUrl String?
-    @@map("BannerImages")
 }
 
 model LUserRole {
@@ -245,7 +230,6 @@ model LUserRole {
     roleId Int
     role Role @relation(fields: [roleId], references: [id])
     @@id([userId, roleId])
-    @@map("LUserRoles")
 }
 
 model Role {
@@ -253,7 +237,6 @@ model Role {
     name String @db.VarChar(100) @unique
     lUserRole LUserRole[]
     lRolePermission LRolePermission[]
-    @@map("Roles")
 }
 
 model LRolePermission {
@@ -262,14 +245,12 @@ model LRolePermission {
     permissionId Int
     permission Permission @relation(fields: [permissionId], references: [id])
     @@id([permissionId, roleId])
-    @@map("LRolePermissions")
 }
 
 model Permission {
     id Int @id @default(autoincrement())
     name String @db.VarChar(100) @unique
     lRolePermission LRolePermission[]
-    @@map("Permissions")
 }
 
 model Comment {
@@ -286,7 +267,6 @@ model Comment {
     parentId Int
     subComment Comment @relation("SubComment", fields: [parentId], references: [id])
     child Comment[] @relation("SubComment")
-    @@map("Comments")
 }
 
 model Discount {
@@ -295,7 +275,6 @@ model Discount {
     value Float
     expiredAt DateTime
     product Product?
-    @@map("Discouonts")
 }
 
 model Gallery {
@@ -303,7 +282,6 @@ model Gallery {
     name String @db.VarChar(100) @unique
     lImageGallery LImageGallery[]
     product Product?
-    @@map("Galleries")
 }
 
 model Characteristic {
@@ -314,7 +292,6 @@ model Characteristic {
     categoryId Int
     category Category @relation(fields: [categoryId], references: [id])
     lProductCharacteristic LProductCharacteristic[]
-    @@map("Characteristics")
 }
 
 model LProductCharacteristic {
@@ -323,7 +300,6 @@ model LProductCharacteristic {
     characteristicId Int
     characteristic Characteristic @relation(fields: [characteristicId], references: [id])
     @@id([productId, characteristicId])
-    @@map("LProductCharacteristics")
 }
 
 model Image {
@@ -332,7 +308,6 @@ model Image {
     url String @db.VarChar(255)
     order Int
     lImageGallery LImageGallery[]
-    @@map("Images")
 }
 
 model LImageGallery {
@@ -341,5 +316,4 @@ model LImageGallery {
     galleryId Int
     gallery Gallery @relation(fields: [galleryId], references: [id])
     @@id([imageId, galleryId])
-    @@map("LImageGalleries")
 }

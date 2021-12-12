@@ -1,7 +1,7 @@
 import {gql} from 'apollo-server-express';
 import {PrismaClient} from '@prisma/client';
 
-import {IDeliveryServices, IPaymentType} from '../typescript/interfaces'
+import {IDeliveryServices, IPaymentType} from '../../typescript/interfaces'
 
 export default class Test {
     static resolver() {
