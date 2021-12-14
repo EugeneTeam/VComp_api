@@ -1,5 +1,4 @@
 import {gql} from 'apollo-server-express'
-import {PrismaClient} from "@prisma/client";
 
 export default class Role {
     static resolver() {

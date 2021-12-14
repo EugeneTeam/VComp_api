@@ -44,16 +44,17 @@ export interface IProduct extends ITimestamp{
     galleryId: number
 }
 
-export interface IUser extends ITimestamp{
+export interface IUser {
     id: number
     fullName: string
     phone: string
     city: string
     email: string
     status: USER_STATUS
-    banReason?: string
+    banReason?: string | null
     activationToken: string
-    authorizationToken?: string
-    resetPasswordToken?: string
-    googleId?: string
+    passwordHash?: string
+    resetPasswordToken?: string | null
+    googleId?: string | null
+    roleId: number
 }

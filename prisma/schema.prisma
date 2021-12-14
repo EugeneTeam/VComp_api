@@ -66,14 +66,15 @@ model User {
     status UserStatus @default(INACTIVE)
     banReason String?
     activationToken String @unique
-    authorizationToken String?
+    passwordHash String?
     resetPasswordToken String?
     googleId String? @unique
+    roleId Int
+    role Role @relation(fields: [roleId], references: [id])
     createdAt DateTime @default(now())
     udpatedAt DateTime @updatedAt
     comment Comment[]
     favorits Favorite[]
-    roleId LUserRole?
     order Order[]
 }
 
@@ -224,33 +225,10 @@ model BannerImage {
     productUrl String?
 }
 
-model LUserRole {
-    userId Int
-    user User @relation(fields: [userId], references: [id])
-    roleId Int
-    role Role @relation(fields: [roleId], references: [id])
-    @@id([userId, roleId])
-}
-
 model Role {
     id Int @id @default(autoincrement())
     name String @db.VarChar(100) @unique
-    lUserRole LUserRole[]
-    lRolePermission LRolePermission[]
-}
-
-model LRolePermission {
-    roleId Int
-    role Role @relation(fields: [roleId], references: [id])
-    permissionId Int
-    permission Permission @relation(fields: [permissionId], references: [id])
-    @@id([permissionId, roleId])
-}
-
-model Permission {
-    id Int @id @default(autoincrement())
-    name String @db.VarChar(100) @unique
-    lRolePermission LRolePermission[]
+    user User?
 }
 
 model Comment {

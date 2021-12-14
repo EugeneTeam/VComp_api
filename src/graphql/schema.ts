@@ -4,41 +4,71 @@ import {makeExecutableSchema} from 'graphql-tools';
 
 import {PrismaClient} from '@prisma/client';
 
-
-import Test from './types/test';
 import Role from './types/role';
+import User from "./types/user";
+
+import {getUserByToken} from "../models/user";
+import {roleDirective, authDirective} from './directives';
+import {GraphQLSchema} from "graphql/index";
 
 const prisma: PrismaClient = new PrismaClient()
 
-
 const typeDefs: any = gql`
-    ${Test.typeDefs()}
+    
+	directive @hasRole(role: String) on FIELD_DEFINITION
+	directive @auth on FIELD_DEFINITION
+    
+	enum UserStatus {
+		ACTIVE
+		INACTIVE
+		BANNED
+	}
+
+	enum UserRole {
+		ADMIN
+		MANAGER
+		CUSTOMER
+		GOVERNING_ARTICLES
+		BANNER_MANAGER
+	}
+    
+    ${User.typeDefs()}
     ${Role.typeDefs()}
+    
 	type Query {
-		testQuery: TestRoute
-		getRoles(limit: Int, offset: Int): [Role]
+		getRoles(limit: Int, offset: Int): [Role] @auth @hasRole(role: "ADMIN")
+		logIn(email: String!, password: String!, rememberMe: Boolean = false): Token
+		
     }
     type Mutation {
-		createRole(name: String!): Role
+		createRole(name: String!): Role @auth @hasRole(role: "ADMIN")
+		signIn(input: SignInInput): User 
     }
-`
+`;
+
+export const context: any = async (context: any) => {
+    context.prisma = prisma;
+    context.user = null;
+
+    const token = context?.req?.headers?.authorization?.split(' ')
+    if (token?.[1]) {
+        context.user = await getUserByToken(token[1]);
+    }
+
+    return context;
+};
 
 const combineResolvers: any = () => {
     return _.merge(
-        Test.resolver(),
+        User.resolver(),
         Role.resolver()
     )
 }
 
-export const schema: any = makeExecutableSchema({
+export let schema: GraphQLSchema = makeExecutableSchema({
     typeDefs,
     resolvers: combineResolvers()
 });
 
-
-
-export const context: any = async (context: any) => {
-    context.prisma = prisma;
-    return context;
-
-}
+schema = roleDirective(schema);
+schema = authDirective(schema);

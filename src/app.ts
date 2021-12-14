@@ -17,6 +17,11 @@ import {context, schema} from './graphql/schema';
 
     // RUN GRAPHQL
     const server = new ApolloServer({
+        formatError: error => {
+            console.log('-----------------------------------------------------------------------------------------------')
+            console.log(error)
+            return error
+        },
         schema,
         context
     });
