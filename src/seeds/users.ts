@@ -1,7 +1,8 @@
 import {PrismaClient} from '@prisma/client';
-import {encryptPassword, generateActivationToken} from '../models/user';
+import {encryptPassword, generateActivationToken} from '../typescript/user';
 
 export async function addUsers(prisma: PrismaClient): Promise<any> {
+    const roles: Array<{id: number, name: string}> = await prisma.role.findMany();
     return prisma.user.createMany({
         data: [{
                 fullName: "Admin",
@@ -11,7 +12,8 @@ export async function addUsers(prisma: PrismaClient): Promise<any> {
                 activationToken: generateActivationToken(),
                 passwordHash: await encryptPassword("123456789"),
                 status: "ACTIVE",
-                roleId: 1,
+                // @ts-ignore
+                roleId: (roles.find(item => item.name === 'ADMIN'))?.id,
                 banReason: null,
                 createdAt: new Date(),
                 resetPasswordToken: null,
@@ -24,7 +26,8 @@ export async function addUsers(prisma: PrismaClient): Promise<any> {
                 activationToken: generateActivationToken(),
                 passwordHash: await encryptPassword("123456789"),
                 status: "ACTIVE",
-                roleId: 2,
+                // @ts-ignore
+                roleId: (roles.find(item => item.name === 'MANAGER'))?.id,
                 banReason: null,
                 createdAt: new Date(),
                 resetPasswordToken: null,
@@ -37,7 +40,8 @@ export async function addUsers(prisma: PrismaClient): Promise<any> {
                 activationToken: generateActivationToken(),
                 passwordHash: await encryptPassword("123456789"),
                 status: "ACTIVE",
-                roleId: 3,
+                // @ts-ignore
+                roleId: (roles.find(item => item.name === 'CUSTOMER'))?.id,
                 banReason: null,
                 createdAt: new Date(),
                 resetPasswordToken: null,
@@ -50,7 +54,8 @@ export async function addUsers(prisma: PrismaClient): Promise<any> {
                 activationToken: generateActivationToken(),
                 passwordHash: await encryptPassword("123456789"),
                 status: "ACTIVE",
-                roleId: 4,
+                // @ts-ignore
+                roleId: (roles.find(item => item.name === 'GOVERNING_ARTICLES'))?.id,
                 banReason: null,
                 createdAt: new Date(),
                 resetPasswordToken: null,
@@ -63,7 +68,8 @@ export async function addUsers(prisma: PrismaClient): Promise<any> {
                 activationToken: generateActivationToken(),
                 passwordHash: await encryptPassword("123456789"),
                 status: "ACTIVE",
-                roleId: 5,
+                // @ts-ignore
+                roleId: (roles.find(item => item.name === 'BANNER_MANAGER'))?.id,
                 banReason: null,
                 createdAt: new Date(),
                 resetPasswordToken: null,

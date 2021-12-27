@@ -1,18 +1,17 @@
 import {gql} from 'apollo-server';
 
-import {IUser} from '../../typescript/interfaces';
-
-import {decryptPassword, encryptPassword, generateActivationToken, login} from '../../models/user';
+import {decryptPassword, encryptPassword, generateActivationToken, login} from '../../typescript/user';
+import {getRoleIdByName} from "../../typescript/role";
 
 export default class User {
     static resolver() {
         return {
             Query: {
                 logIn: async (obj: any, args: {email: string, password: string, rememberMe: boolean}, context: any) => {
-                    const user: IUser = await context.prisma.user.findUnique({
+                    const user: any = await context.prisma.user.findUnique({
                         where: {
-                            email: args.email
-                        }
+                            email: args.email,
+                        },
                     });
 
                     if (!user) {
@@ -26,7 +25,7 @@ export default class User {
                     }
 
                     return {
-                        token: await login(args.rememberMe, user.passwordHash)
+                        token: await login(args.rememberMe, user.passwordHash),
                     }
                 }
             },
@@ -38,8 +37,8 @@ export default class User {
 
                     const checkEmail = await context.prisma.user.findUnique({
                         where: {
-                            email: args.input.email
-                        }
+                            email: args.input.email,
+                        },
                     });
 
                     if (checkEmail) {
@@ -54,10 +53,9 @@ export default class User {
                             email: args.input.email,
                             activationToken: generateActivationToken(),
                             passwordHash: await encryptPassword(args.input.password),
-                            // TODO set default role id
                             status: "INACTIVE",
-                            roleId: 1,
-                        }
+                            roleId: getRoleIdByName('CUSTOMER'),
+                        },
                     });
                 }
             }
@@ -66,6 +64,20 @@ export default class User {
 
     static typeDefs() {
         return gql`
+			enum UserRole {
+				ADMIN
+				MANAGER
+				CUSTOMER
+				GOVERNING_ARTICLES
+				BANNER_MANAGER
+			}
+
+			enum UserStatus {
+				ACTIVE
+				INACTIVE
+				BANNED
+			}
+            
             input SignInInput {
 				fullName: String!
 				phone: String!

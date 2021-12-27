@@ -1,4 +1,4 @@
-import {gql} from 'apollo-server-express'
+import {gql} from 'apollo-server-express';
 
 export default class Role {
     static resolver() {
@@ -10,13 +10,26 @@ export default class Role {
                     })
             },
             Mutation: {
-                createRole: (next: any, args: {name: string}, context: any) => {
+                createRole: (obj: any, args: { name: string }, context: any) => {
                     return context.prisma.role.create({
                         data: {
-                            name: args.name
-                        }
-                    })
+                            name: args.name,
+                        },
+                    });
                 },
+                updateRole: (obj: any, args: { id: number, name: string }, context: any) => context.prisma.role.update({
+                    where: {
+                        id: args.id,
+                    },
+                    data: {
+                        name: args.name,
+                    },
+                }),
+                removeRole: (obj: any, args: {id: number}, context: any) => context.prisma.delete({
+                    where: {
+                        id: args.id,
+                    },
+                })
             }
         }
     }
@@ -27,6 +40,6 @@ export default class Role {
                 id: Int!
                 name: String!
             }
-        `
+        `;
     }
 }

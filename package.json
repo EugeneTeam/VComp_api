@@ -5,10 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch './**/*.ts' --exec 'ts-node' src/app.ts",
+    "prismix": "npx prismix && prisma format",
     "p:reset": "npx prisma migrate reset",
     "p:generate": "npx prisma generate",
     "p:migrate": "npx prisma migrate dev",
-    "p:seed": "ts-node ./prisma/seed.ts"
+    "p:seed": "ts-node ./prisma/seed.ts",
+    "test:prestart": "export DATABASE_URL=\"mysql://root:password@mysql/mydb\" && npx prisma generate && npx prisma migrate reset && jest -i",
+    "test": "jest -i"
   },
   "keywords": [],
   "author": "",
@@ -17,30 +20,41 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/jest": "^27.0.3",
     "@types/jsonwebtoken": "^8.5.6",
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.7",
+    "jest": "^27.4.5",
     "nodemon": "^2.0.15",
     "prisma": "^3.4.2",
+    "ts-jest": "^27.1.1",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.4"
   },
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
     "@graphql-tools/utils": "^8.5.4",
     "@prisma/client": "^3.4.2",
+    "@types/faker": "^5.5.9",
     "apollo-server": "^3.5.0",
     "apollo-server-express": "^3.5.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
+    "cross-fetch": "^3.1.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
+    "faker": "^5.5.3",
     "graphql": "^16.1.0",
+    "graphql-middleware": "^6.1.13",
+    "graphql-request": "^3.7.0",
     "graphql-tools": "^8.2.0",
+    "jest-environment-node": "^27.4.4",
+    "jest-mock-extended": "^2.0.4",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "nanoid": "^3.1.30",
     "rand-token": "^1.0.1"
   }
 }

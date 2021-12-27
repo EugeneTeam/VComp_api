@@ -14,7 +14,7 @@ export const decryptPassword = (password: string, passwordHash: string | undefin
     if (passwordHash) {
         return bcrypt.compare(password, passwordHash);
     }
-    return false
+    return false;
 }
 
 export const encryptPassword = (password: string): Promise<string> => {
@@ -23,9 +23,9 @@ export const encryptPassword = (password: string): Promise<string> => {
 
 export const login = (rememberMe: boolean, passwordHash: string | undefined): string | null => {
     if (passwordHash) {
-        return jwt.sign({data: passwordHash}, AUTHORIZATION_TOKEN_SECRET, {expiresIn: rememberMe ? AUTHORIZATION_TOKEN_EXPIRE_REMEMBER : AUTHORIZATION_TOKEN_EXPIRE})
+        return jwt.sign({data: passwordHash}, AUTHORIZATION_TOKEN_SECRET, {expiresIn: rememberMe ? AUTHORIZATION_TOKEN_EXPIRE_REMEMBER : AUTHORIZATION_TOKEN_EXPIRE});
     }
-    return null
+    return null;
 }
 
 export const getUserByToken = (token: string): Promise<any> => {
@@ -37,13 +37,12 @@ export const getUserByToken = (token: string): Promise<any> => {
 
             const user: any | null = await prisma.user.findFirst({
                 where: {
-                    // @ts-ignore
-                    passwordHash: data?.data || ' '
+                    passwordHash: data?.data || ' ',
                 },
                 include: {
-                    role: true
-                }
-            })
+                    role: true,
+                },
+            });
 
             if (!user) {
                 return resolve(null);
@@ -57,6 +56,5 @@ export const getUserByToken = (token: string): Promise<any> => {
 export const generateActivationToken = (): string => {
     const date: Date = new Date();
     date.setMinutes(date.getMinutes() + ACTIVATION_TOKEN_EXPIRED);
-
     return `${randToken.generate(AUTHORIZATION_TOKEN_SIZE)}_${date.getTime()}`;
 }

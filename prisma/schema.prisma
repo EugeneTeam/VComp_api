@@ -191,6 +191,7 @@ model Callback {
 model Article {
     id Int @id @default(autoincrement())
     articleCategoryId Int
+    articleCategory ArticleCategory @relation(fields: [articleCategoryId], references: [id])
     title String @db.VarChar(100)
     text String @db.Text
     image String @db.VarChar(255)
@@ -201,9 +202,10 @@ model Article {
 model ArticleCategory {
     id Int @id @default(autoincrement())
     name String @db.VarChar(100) @unique
-    parentId Int
+    parentId Int?
     subCategory ArticleCategory? @relation("ArticleChildCategory", fields: [parentId], references: [id])
     child ArticleCategory? @relation("ArticleChildCategory")
+    article Article[]
 }
 
 model Banner {
