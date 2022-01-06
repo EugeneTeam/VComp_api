@@ -43,15 +43,17 @@ describe('User graphql methods ', function () {
 
     it('New user registration will return a duplicate mail error', async function () {
         const client = new GraphQLClient(config.url);
-        const newInputData = USER.FACTORY.createDataForSignIn(ADMIN_EMAIL);
+        const newInputData = createDataForSignIn(ADMIN_EMAIL);
         try {
-            await client.request(USER.GRAPHQL.MUTATIONS.SIGN_IN, {
-                fullName: newInputData.fullName,
-                phone: newInputData.phone,
-                city: newInputData.city,
-                email: newInputData.email,
-                password: newInputData.password,
-                repeatPassword: newInputData.repeatPassword,
+            await client.request(SIGN_IN, {
+                input: {
+                    fullName: newInputData.fullName,
+                    phone: newInputData.phone,
+                    city: newInputData.city,
+                    email: newInputData.email,
+                    password: newInputData.password,
+                    repeatPassword: newInputData.repeatPassword,
+                }
             })
         } catch (e: any) {
             expect(e.response.errors.length).toBeTruthy();
