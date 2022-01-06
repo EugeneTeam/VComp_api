@@ -54,7 +54,7 @@ export default class User {
                             activationToken: generateActivationToken(),
                             passwordHash: await encryptPassword(args.input.password),
                             status: "INACTIVE",
-                            roleId: getRoleIdByName('CUSTOMER'),
+                            roleId: await getRoleIdByName('CUSTOMER'),
                         },
                     });
                 }
@@ -89,6 +89,7 @@ export default class User {
             
             type Token {
                 token: String!
+                asd: User
             }
             
             type User {

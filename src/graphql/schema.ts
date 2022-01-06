@@ -42,6 +42,7 @@ export const typeDefs: any = gql`
 		removeRole(id: Int!): Role                                                                                      @auth @hasRole(role: "ADMIN")
 		
         requestCallback(phone: String!): Boolean!                                                                       @auth @hasRole(role: "CUSTOMER")
+        
 		closeCallback(id: Int!): Boolean!                                                                               @auth @hasRole(role: "ADMIN")
         
 		createArticle(input: ArticelInput!): Article!                                                                   @auth @hasRole(role: "GOVERNING_ARTICLES")

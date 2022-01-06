@@ -6,3 +6,4 @@ prisma/migrations
 # files
 .env
 package-lock.json
+src/graphql.ts

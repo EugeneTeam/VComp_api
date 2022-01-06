@@ -58,7 +58,7 @@ enum DiscountType {
 }
 
 model User {
-    id Int @id @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
     fullName String
     phone String
     city String
@@ -73,9 +73,17 @@ model User {
     role Role @relation(fields: [roleId], references: [id])
     createdAt DateTime @default(now())
     udpatedAt DateTime @updatedAt
-    comment Comment[]
+    comments Comment[]
     favorits Favorite[]
-    order Order[]
+    orders Order[]
+    @@map("Users")
+}
+
+model Role {
+    id Int @id @default(autoincrement())
+    name String @db.VarChar(100) @unique
+    user User[]
+    @@map("Roles")
 }
 
 model Favorite {
@@ -93,6 +101,7 @@ model PaymentType {
     isActive Boolean @default(false)
     info String @db.VarChar(200)
     order Order?
+    @@map("PaymetnTypes")
 }
 
 model DeliveryService {
@@ -102,6 +111,7 @@ model DeliveryService {
     info String @db.VarChar(200)
     order Order?
     lTypeService LTypeService[]
+    @@map("DeliveryServices")
 }
 
 model Order {
@@ -116,6 +126,7 @@ model Order {
     userId Int
     user User @relation(fields: [userId], references: [id])
     lProductList LProductList[]
+    @@map("Orders")
 }
 
 model Product {
@@ -136,6 +147,7 @@ model Product {
     comment Comment[]
     lProductCharacteristic LProductCharacteristic[]
     favorite Favorite[]
+    @@map("Products")
 }
 
 model Category {
@@ -146,6 +158,7 @@ model Category {
     child Category[] @relation("SubCategory")
     characteristic Characteristic[]
     product Product?
+    @@map("Categories")
 }
 
 model LTypeService {
@@ -154,6 +167,7 @@ model LTypeService {
     deliveryService DeliveryService @relation(fields: [deliveryServiceId], references: [id])
     deliveryServiceId Int
     @@id([deliveryTypeId, deliveryServiceId])
+    @@map("LTypeServices")
 }
 
 model DeliveryType {
@@ -162,6 +176,7 @@ model DeliveryType {
     isActive Boolean @default(false)
     info String @db.VarChar(255)
     lTypeService LTypeService[]
+    @@map("DeliveryTypes")
 }
 
 model LProductList {
@@ -171,6 +186,7 @@ model LProductList {
     productId Int
     product Product @relation(fields: [productId], references: [id])
     @@id([productId, orderId])
+    @@map("LProductLists")
 }
 
 model ProductView {
@@ -180,12 +196,14 @@ model ProductView {
     count Int
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    @@map("ProductViews")
 }
 
 model Callback {
     id Int @id @default(autoincrement())
     phone String @db.VarChar(15) @unique
     isProcessed Boolean @default(true)
+    @@map("Callbacks")
 }
 
 model Article {
@@ -197,6 +215,7 @@ model Article {
     image String @db.VarChar(255)
     status ArticleStatus @default(HIDDEN)
     source String? @db.VarChar(255)
+    @@map("Articles")
 }
 
 model ArticleCategory {
@@ -206,6 +225,7 @@ model ArticleCategory {
     subCategory ArticleCategory? @relation("ArticleChildCategory", fields: [parentId], references: [id])
     child ArticleCategory? @relation("ArticleChildCategory")
     article Article[]
+    @@map("ArticleCategorys")
 }
 
 model Banner {
@@ -216,6 +236,7 @@ model Banner {
     positionY BannerPositionY
     html String @db.Text
     bannerImage BannerImage?
+    @@map("Banners")
 }
 
 model BannerImage {
@@ -225,12 +246,7 @@ model BannerImage {
     imageUrl String @db.VarChar(255)
     title String @db.VarChar(100)
     productUrl String?
-}
-
-model Role {
-    id Int @id @default(autoincrement())
-    name String @db.VarChar(100) @unique
-    user User?
+    @@map("BannerImages")
 }
 
 model Comment {
@@ -247,6 +263,7 @@ model Comment {
     parentId Int
     subComment Comment @relation("SubComment", fields: [parentId], references: [id])
     child Comment[] @relation("SubComment")
+    @@map("Comments")
 }
 
 model Discount {
@@ -255,6 +272,7 @@ model Discount {
     value Float
     expiredAt DateTime
     product Product?
+    @@map("Discounts")
 }
 
 model Gallery {
@@ -262,6 +280,7 @@ model Gallery {
     name String @db.VarChar(100) @unique
     lImageGallery LImageGallery[]
     product Product?
+    @@map("Gallerues")
 }
 
 model Characteristic {
@@ -272,6 +291,7 @@ model Characteristic {
     categoryId Int
     category Category @relation(fields: [categoryId], references: [id])
     lProductCharacteristic LProductCharacteristic[]
+    @@map("Characteristics")
 }
 
 model LProductCharacteristic {
@@ -280,6 +300,7 @@ model LProductCharacteristic {
     characteristicId Int
     characteristic Characteristic @relation(fields: [characteristicId], references: [id])
     @@id([productId, characteristicId])
+    @@map("LProductCharacteristics")
 }
 
 model Image {
@@ -288,6 +309,7 @@ model Image {
     url String @db.VarChar(255)
     order Int
     lImageGallery LImageGallery[]
+    @@map("Images")
 }
 
 model LImageGallery {
@@ -296,4 +318,5 @@ model LImageGallery {
     galleryId Int
     gallery Gallery @relation(fields: [galleryId], references: [id])
     @@id([imageId, galleryId])
+    @@map("LImageGallerys")
 }

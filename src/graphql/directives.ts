@@ -1,4 +1,9 @@
-import {defaultFieldResolver, GraphQLFieldConfig, GraphQLResolveInfo, GraphQLSchema} from "graphql/index";
+import {
+    defaultFieldResolver,
+    GraphQLFieldConfig,
+    GraphQLResolveInfo,
+    GraphQLSchema
+} from "graphql/index";
 import {getDirective, MapperKind, mapSchema} from "@graphql-tools/utils";
 
 export const roleDirective = (schema: GraphQLSchema) => {

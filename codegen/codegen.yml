@@ -1,0 +1,10 @@
+schema: ${API_DOMAIN}
+documents: null
+overwrite: true
+generates:
+  ../src/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+require:
+  - dotenv/config

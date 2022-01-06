@@ -8,7 +8,7 @@ import {Headers} from 'cross-fetch';
 // @ts-ignore
 global.Headers = global.Headers || Headers;
 
-type Config = {ulr: string}
+type Config = {url: string}
 
 export const getConfig = () => {
     const prisma = new PrismaClient();
