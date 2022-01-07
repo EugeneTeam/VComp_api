@@ -10,7 +10,6 @@ import {
 } from './utils';
 import {CONSTANTS} from './constants';
 import ErrnoException = NodeJS.ErrnoException;
-import exp from "constants";
 
 const types: any = schema.getTypeMap();
 const queries: any = schema?.getQueryType();
@@ -71,7 +70,7 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
             const content = `${CONSTANTS.WRAP_IN_GQL ? 'import {gql} from "apollo-server";\n' : ''}export const ${constName} = ${CONSTANTS.WRAP_IN_GQL ? 'gql' : ''}\`${queryString}\``;
 
 
-            await fs[CONSTANTS.REWRITE_FILE ? 'writeFile' : 'appendFile'](`${pathToWriteFile}/${fileName}.ts`, content, (error:ErrnoException | null) => {
+            await fs.writeFile(`${pathToWriteFile}/${fileName}.ts`, content, (error:ErrnoException | null) => {
                 if (error) {
                     console.log(error)
                     throw new Error(`File ${fileName} have problem!`);
@@ -112,7 +111,7 @@ const createIndex = async (path: string) => {
         content += export_;
         content += '\n}';
 
-        await fs[CONSTANTS.REWRITE_FILE ? 'writeFile' : 'appendFile'](`${path}/index.ts`, content, (error:ErrnoException | null) => {
+        await fs.writeFile(`${path}/index.ts`, content, (error:ErrnoException | null) => {
             if (error) {
                 console.log(error)
                 throw new Error(`File index.ts have problem!`);
