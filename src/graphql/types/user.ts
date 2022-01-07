@@ -1,6 +1,6 @@
 import {gql} from 'apollo-server';
 
-import {decryptPassword, encryptPassword, generateActivationToken, login} from '../../typescript/user';
+import {decryptPassword, encryptPassword, generateActivationToken, login, checkEmail} from '../../typescript/user';
 import {getRoleIdByName} from "../../typescript/role";
 
 export default class User {
@@ -35,15 +35,7 @@ export default class User {
                         throw new Error('Password mismatch');
                     }
 
-                    const checkEmail = await context.prisma.user.findUnique({
-                        where: {
-                            email: args.input.email,
-                        },
-                    });
-
-                    if (checkEmail) {
-                        throw new Error('Email is used');
-                    }
+                    await checkEmail(args?.input?.email);
 
                     return context.prisma.user.create({
                         data: {
@@ -55,6 +47,49 @@ export default class User {
                             passwordHash: await encryptPassword(args.input.password),
                             status: "INACTIVE",
                             roleId: await getRoleIdByName('CUSTOMER'),
+                        },
+                    });
+                },
+                createUser: async (obj: any, args: any, context: any) => {
+                     return context.prisma.user.create({
+                         data: {
+                             fullName: args.input.fullName,
+                             phone: args.input.phone,
+                             city: args.input.city,
+                             email: args.input.email,
+                             activationToken: generateActivationToken(),
+                             passwordHash: await encryptPassword(args.input.password),
+                             status: args.input.status,
+                             roleId: await getRoleIdByName(args.input.role)
+                         },
+                     });
+                },
+                updateUser: async (obj: any, args: any, context: any) => {
+                    const user = context.prisma.user.findUnique({
+                        where: {
+                            id: args.input.id,
+                        },
+                    });
+
+                    if (!user) {
+                        throw new Error('User not found');
+                    }
+
+                    await checkEmail(args?.input?.email);
+
+                    return context.prisma.user.update({
+                        where: {
+                            id: args.input.id,
+                        },
+                        data: {
+                            ...(args?.input?.fullName ? {fullName: args.input.fullName} : null),
+                            ...(args?.input?.phone ? {phone: args.input.phone} : null),
+                            ...(args?.input?.city ? {city: args.input.city} : null),
+                            ...(args?.input?.email ? {email: args.input.email} : null),
+                            ...(args?.input?.activationToken ? {activationToken: args.input.activationToken} : null),
+                            ...(args?.input?.passwordHash ? {passwordHash: args.input.passwordHash} : null),
+                            ...(args?.input?.status ? {status: args.input.status} : null),
+                            ...(args?.input?.roleId ? {roleId: args.input.roleId} : null),
                         },
                     });
                 }
@@ -85,6 +120,27 @@ export default class User {
 				email: String!
                 password: String!
                 repeatPassword: String!
+            }
+            
+            input CreateUserInput {
+				fullName: String!
+				phone: String!
+				city: String!
+				email: String!
+				password: String!
+				status: UserStatus!
+				role: UserRole!
+            }
+            
+            input UpdateUserInput {
+                id: Int!
+				fullName: String = null
+				phone: String = null
+				city: String = null
+				email: String = null
+				password: String = null
+				status: UserStatus = null
+				role: UserRole = null
             }
             
             type Token {

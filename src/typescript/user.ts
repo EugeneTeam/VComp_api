@@ -1,14 +1,14 @@
 import jwt, {JwtPayload, VerifyErrors} from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import {prisma} from '../config/prismaClient';
+import randToken from "rand-token";
 
+import {prisma} from '../config/prismaClient';
 import {
     PASSWORD_SALT,
     AUTHORIZATION_TOKEN_EXPIRE_REMEMBER,
     AUTHORIZATION_TOKEN_SECRET,
     AUTHORIZATION_TOKEN_EXPIRE, ACTIVATION_TOKEN_EXPIRED, AUTHORIZATION_TOKEN_SIZE
 } from '../config/constants'
-import randToken from "rand-token";
 
 export const decryptPassword = (password: string, passwordHash: string | undefined): Promise<boolean> | false => {
     if (passwordHash) {
@@ -57,4 +57,16 @@ export const generateActivationToken = (): string => {
     const date: Date = new Date();
     date.setMinutes(date.getMinutes() + ACTIVATION_TOKEN_EXPIRED);
     return `${randToken.generate(AUTHORIZATION_TOKEN_SIZE)}_${date.getTime()}`;
+}
+
+export const checkEmail = async (email: string): Promise<void> => {
+    if (email) {
+        const checkEmail = await prisma.user.findUnique({
+            where: {email},
+        });
+
+        if (checkEmail) {
+            throw new Error('Email is used');
+        }
+    }
 }

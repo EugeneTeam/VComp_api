@@ -48,6 +48,9 @@ export const typeDefs: any = gql`
 		createArticle(input: ArticelInput!): Article!                                                                   @auth @hasRole(role: "GOVERNING_ARTICLES")
 		updateArticle(input: ArticelInput!, articleId: ArticleId!): Article                                             @auth @hasRole(role: "GOVERNING_ARTICLES")
 		removeArticle(articleId: ArticleId!): Article                                                                   @auth @hasRole(role: "GOVERNING_ARTICLES")
+
+		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(role: "ADMIN")
+		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(role: "ADMIN")
     }
 `;
 
