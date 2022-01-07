@@ -60,13 +60,11 @@ export const generateActivationToken = (): string => {
 }
 
 export const checkEmail = async (email: string): Promise<void> => {
-    if (email) {
-        const checkEmail = await prisma.user.findUnique({
-            where: {email},
-        });
+    const checkEmail = await prisma.user.findUnique({
+        where: {email},
+    });
 
-        if (checkEmail) {
-            throw new Error('Email is used');
-        }
+    if (checkEmail) {
+        throw new Error('Email is used');
     }
 }

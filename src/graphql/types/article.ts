@@ -1,10 +1,10 @@
 import {gql} from 'apollo-server';
 import {
-    getArticleCategory,
+    getArticleCategoryById,
 } from '../../typescript/articleCategory';
 import {
     IArticle,
-    getArticle,
+    getArticleById,
 } from '../../typescript/article';
 
 export default class Article {
@@ -43,23 +43,11 @@ export default class Article {
                         rows: articles,
                     };
                 },
-                getArticle: async (obj: any, args: any, context: any) => {
-                    const article = await context.prisma.article.findUnique({
-                        where: {
-                            id: args.id,
-                        },
-                    });
-
-                    if (!article) {
-                        throw new Error('Article not fount');
-                    }
-
-                    return article;
-                }
+                getArticle: async (obj: any, args: any, context: any) => getArticleById(args.id),
             },
             Mutation: {
                 createArticle: async (obj: any, args: any, context: any) => {
-                    await getArticleCategory(args.input.articleCategoryId);
+                    await getArticleCategoryById(args.input.articleCategoryId);
                     return context.prisma.article.create({
                         data: {
                             articleCategoryId: args.input.articleCategoryId,
@@ -68,12 +56,12 @@ export default class Article {
                             image: args.input.imageUrl,
                             status: args.input.status,
                             source: args?.input?.source,
-                        }
+                        },
                     });
                 },
                 updateArticle: async (obj: any, args: any, context: any) => {
-                    await getArticleCategory(args.input.articleCategoryId);
-                    await getArticle(args.articleId.id)
+                    await getArticleCategoryById(args.input.articleCategoryId);
+                    await getArticleById(args.id)
                     const article: Promise<IArticle> | null = await context.prisma.article.update({
                         where: {
                             id: args.articleId.id,
@@ -94,10 +82,10 @@ export default class Article {
                     return article;
                 },
                 removeArticle: async (obj: any, args: any, context: any) => {
-                    await getArticle(args.articleId.id)
+                    await getArticleById(args.id)
                     return context.prisma.article.delete({
                         where: {
-                            id: args.articleId.id,
+                            id: args.id,
                         },
                     });
                 }
@@ -134,10 +122,6 @@ export default class Article {
                 image: String!
                 status: ArticleStatus
                 source: String
-            }
-            
-            input ArticleId {
-                id: Int!
             }
             
             input ArticelInput {

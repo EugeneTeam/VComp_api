@@ -1,4 +1,4 @@
-import {findEntry} from './utils/helper'
+import {findEntryById} from './utils/helper'
 
 export interface IArticleCategory {
     id: number
@@ -6,6 +6,6 @@ export interface IArticleCategory {
     parentId: number | null
 }
 
-export const getArticleCategory = async (categoryId: number): Promise<IArticleCategory | null>  => {
-    return findEntry(categoryId, 'article')
+export const getArticleCategoryById = async (categoryId: number): Promise<IArticleCategory | null>  => {
+    return findEntryById(categoryId, 'articleCategory')
 }

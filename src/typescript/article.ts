@@ -1,4 +1,4 @@
-import {findEntry} from './utils/helper';
+import {findEntryById} from './utils/helper';
 
 export enum ArticleStatus {
     VISIBLE = 'VISIBLE',
@@ -15,6 +15,6 @@ export interface IArticle {
     source: string | null
 }
 
-export const getArticle = async (articleId: number): Promise<IArticle| null> => {
-    return findEntry(articleId, 'article');
+export const getArticleById = async (articleId: number): Promise<IArticle| null> => {
+    return findEntryById(articleId, 'article');
 }

@@ -2,19 +2,19 @@ import _ from 'lodash'
 import {gql} from 'apollo-server-express';
 import {makeExecutableSchema} from '@graphql-tools/schema';
 
-import {PrismaClient} from '@prisma/client';
+import {prisma} from '../config/prismaClient';
 
 import Role from './types/role';
 import User from "./types/user";
 import Callback from "./types/callback";
 import Article from "./types/article";
 import Favorite from "./types/favorite";
+import PaymentType from "./types/paymentType";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
 import {GraphQLSchema} from "graphql/index";
 
-const prisma: PrismaClient = new PrismaClient()
 
 export const typeDefs: any = gql`
     
@@ -26,14 +26,18 @@ export const typeDefs: any = gql`
     ${Callback.typeDefs()}
     ${Article.typeDefs()}
     ${Favorite.typeDefs()}
+    ${PaymentType.typeDefs()}
     
 	type Query {
-		logIn(email: String!, password: String!, rememberMe: Boolean = false): Token
+		logIn(input: LogInInput): Token
         
 		getRoles(limit: Int, offset: Int): [Role]                                                                       @auth @hasRole(role: "ADMIN")
 		
 		getArticle(id: Int!): Boolean
 		getArticles(filter: ArticleFilter): ArticleResponse
+
+		getPaymentTypes(limit: Int, offset: Int): [PaymentType]                                                         @auth @hasRole(role: "ADMIN")
+		getPaymentType(id: Int!): PaymentType                                                                           @auth @hasRole(role: "ADMIN")
 		
     }
     type Mutation {
@@ -48,13 +52,17 @@ export const typeDefs: any = gql`
 		closeCallback(id: Int!): Boolean!                                                                               @auth @hasRole(role: "ADMIN")
         
 		createArticle(input: ArticelInput!): Article!                                                                   @auth @hasRole(role: "GOVERNING_ARTICLES")
-		updateArticle(input: ArticelInput!, articleId: ArticleId!): Article                                             @auth @hasRole(role: "GOVERNING_ARTICLES")
-		removeArticle(articleId: ArticleId!): Article                                                                   @auth @hasRole(role: "GOVERNING_ARTICLES")
+		updateArticle(input: ArticelInput!, id: Int!): Article                                                          @auth @hasRole(role: "GOVERNING_ARTICLES")
+		removeArticle(id: Int!): Article                                                                                @auth @hasRole(role: "GOVERNING_ARTICLES")
 
 		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(role: "ADMIN")
 		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(role: "ADMIN")
 
 		addOrRemoveFavorite(input: FavoriteIpnut): Favorite                                                             @auth @hasRole(role: "CUSTOMER")
+
+		createPaymentType(input: PaymentTypeInput): PaymentType                                                         @auth @hasRole(role: "ADMIN")
+		removePaymentType(id: Int!): PaymentType                                                                        @auth @hasRole(role: "ADMIN")
+		updatePaymentType(input: PaymentTypeInput, id: Int!): PaymentType                                               @auth @hasRole(role: "ADMIN")
     }
 `;
 
@@ -77,6 +85,7 @@ export const combineResolvers: any = () => {
 		Callback.resolver(),
 		Article.resolver(),
         Favorite.resolver(),
+        PaymentType.resolver(),
     )
 }
 

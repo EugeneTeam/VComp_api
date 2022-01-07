@@ -59,8 +59,8 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
 
             if (data?.fields) {
                 queryString += ' {\n';
-                data.fields.forEach((item: any) => {
-                    queryString += parseResponse(item, ``, '    ');
+                data.fields.forEach((item: any, index: number) => {
+                    queryString += parseResponse(item, ``, '    ', data.fields.length - 1 === index);
                 });
                 queryString += '\n  }';
             }

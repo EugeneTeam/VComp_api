@@ -1,5 +1,5 @@
-export const LOG_IN = `query LogIn($email: String!, $password: String!, $rememberMe: Boolean = false) {
-  logIn(email: $email, password: $password, rememberMe: $rememberMe) {
+export const LOG_IN = `query LogIn($input: LogInInput) {
+  logIn(input: $input) {
     token
     asd {
       id

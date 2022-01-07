@@ -7,6 +7,5 @@ export const CREATE_ARTICLE = `mutation CreateArticle($input: ArticelInput!) {
     image
     status
     source
-
   }
 }`

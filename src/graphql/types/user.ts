@@ -7,10 +7,10 @@ export default class User {
     static resolver() {
         return {
             Query: {
-                logIn: async (obj: any, args: {email: string, password: string, rememberMe: boolean}, context: any) => {
+                logIn: async (obj: any, args: any, context: any) => {
                     const user: any = await context.prisma.user.findUnique({
                         where: {
-                            email: args.email,
+                            email: args.input.email,
                         },
                     });
 
@@ -18,14 +18,14 @@ export default class User {
                         throw new Error('User not found');
                     }
 
-                    const isPasswordValid: boolean = await decryptPassword(args.password, user.passwordHash);
+                    const isPasswordValid: boolean = await decryptPassword(args.input.password, user.passwordHash);
 
                     if (!isPasswordValid) {
                         throw new Error('Wrong login or password');
                     }
 
                     return {
-                        token: await login(args.rememberMe, user.passwordHash),
+                        token: await login(args.input.rememberMe, user.passwordHash),
                     }
                 }
             },
@@ -35,7 +35,7 @@ export default class User {
                         throw new Error('Password mismatch');
                     }
 
-                    await checkEmail(args?.input?.email);
+                    await checkEmail(args.input.email);
 
                     return context.prisma.user.create({
                         data: {
@@ -120,6 +120,12 @@ export default class User {
 				email: String!
                 password: String!
                 repeatPassword: String!
+            }
+            
+            input LogInInput {
+				email: String!
+                password: String!
+                rememberMe: Boolean! = false
             }
             
             input CreateUserInput {

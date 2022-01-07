@@ -1,5 +1,5 @@
-export const UPDATE_ARTICLE = `mutation UpdateArticle($input: ArticelInput!, $articleId: ArticleId!) {
-  updateArticle(input: $input, articleId: $articleId) {
+export const UPDATE_ARTICLE = `mutation UpdateArticle($input: ArticelInput!, $id: Int!) {
+  updateArticle(input: $input, id: $id) {
     id
     articleCategoryId
     title
@@ -7,6 +7,5 @@ export const UPDATE_ARTICLE = `mutation UpdateArticle($input: ArticelInput!, $ar
     image
     status
     source
-
   }
 }`

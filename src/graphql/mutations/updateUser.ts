@@ -1,5 +1,5 @@
-export const SIGN_IN = `mutation SignIn($input: SignInInput) {
-  signIn(input: $input) {
+export const UPDATE_USER = `mutation UpdateUser($input: UpdateUserInput) {
+  updateUser(input: $input) {
     id
     fullName
     phone
