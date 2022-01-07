@@ -8,6 +8,7 @@ import Role from './types/role';
 import User from "./types/user";
 import Callback from "./types/callback";
 import Article from "./types/article";
+import Favorite from "./types/favorite";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -24,6 +25,7 @@ export const typeDefs: any = gql`
     ${Role.typeDefs()}
     ${Callback.typeDefs()}
     ${Article.typeDefs()}
+    ${Favorite.typeDefs()}
     
 	type Query {
 		logIn(email: String!, password: String!, rememberMe: Boolean = false): Token
@@ -51,6 +53,8 @@ export const typeDefs: any = gql`
 
 		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(role: "ADMIN")
 		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(role: "ADMIN")
+
+		addOrRemoveFavorite(input: FavoriteIpnut): Favorite                                                             @auth @hasRole(role: "CUSTOMER")
     }
 `;
 
@@ -72,6 +76,7 @@ export const combineResolvers: any = () => {
         Role.resolver(),
 		Callback.resolver(),
 		Article.resolver(),
+        Favorite.resolver(),
     )
 }
 

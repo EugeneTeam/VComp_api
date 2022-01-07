@@ -92,6 +92,7 @@ model Favorite {
     product Product @relation(fields: [productId], references: [id])
     userId Int
     user User @relation(fields: [userId], references: [id])
+    @@unique(fields: [productId, userId], name: "favoriteProduct")
     @@map("Favorites")
 }
 
@@ -280,7 +281,7 @@ model Gallery {
     name String @db.VarChar(100) @unique
     lImageGallery LImageGallery[]
     product Product?
-    @@map("Gallerues")
+    @@map("Galleries")
 }
 
 model Characteristic {

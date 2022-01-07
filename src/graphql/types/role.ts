@@ -10,14 +10,14 @@ export default class Role {
                     })
             },
             Mutation: {
-                createRole: (obj: any, args: { name: string }, context: any) => {
+                createRole: (obj: any, args: {name: string}, context: any) => {
                     return context.prisma.role.create({
                         data: {
                             name: args.name,
                         },
                     });
                 },
-                updateRole: (obj: any, args: { id: number, name: string }, context: any) => context.prisma.role.update({
+                updateRole: (obj: any, args: {id: number, name: string}, context: any) => context.prisma.role.update({
                     where: {
                         id: args.id,
                     },
