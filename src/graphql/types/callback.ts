@@ -1,13 +1,15 @@
 import {gql} from 'apollo-server';
 import {
-    Callback as ICallback
+    Callback as ICallback,
+    MutationCloseCallbackArgs as IMutationCloseCallbackArgs,
+    MutationRequestCallbackArgs as IMutationRequestCallbackArgs
 } from '../../graphql';
 
 export default class Callback {
     static resolver() {
         return {
             Mutation: {
-                requestCallback: async (obj: any, args: {phone: string}, context: any): Promise<boolean> => {
+                requestCallback: async (obj: any, args: IMutationRequestCallbackArgs, context: any): Promise<boolean> => {
                     const checkCallback: ICallback = await context.prisma.callback.findFirst({
                         where: {
                             phone: args.phone,
@@ -28,7 +30,7 @@ export default class Callback {
 
                     return true;
                 },
-                closeCallback: async (obj: any, args: {id: number}, context: any): Promise<boolean> => {
+                closeCallback: async (obj: any, args: IMutationCloseCallbackArgs, context: any): Promise<boolean> => {
                     const callback: ICallback = await context.prisma.callback.findUnique({
                         where: {
                             id: args.id,

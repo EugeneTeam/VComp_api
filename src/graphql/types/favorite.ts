@@ -1,11 +1,15 @@
 import {gql} from 'apollo-server';
+import {
+    Favorite as IFavorite,
+    MutationAddOrRemoveFavoriteArgs as IMutationAddOrRemoveFavoriteArgs
+} from '../../graphql';
 
 export default class Favorite {
     static resolver() {
         return {
             Mutation: {
-                addOrRemoveFavorite: async (obj: any, args: any, context: any) => {
-                    const checkFavorite = await context.prisma.favorite.findUnique({
+                addOrRemoveFavorite: async (obj: any, args: IMutationAddOrRemoveFavoriteArgs, context: any): Promise<IFavorite> => {
+                    const checkFavorite: IFavorite = await context.prisma.favorite.findUnique({
                         where: {
                             // this name is spelled out in the prism circuit
                             favoriteProduct: {

@@ -62,11 +62,11 @@ export const typeDefs: any = gql`
 		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(role: "ADMIN")
 		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(role: "ADMIN")
 
-		addOrRemoveFavorite(input: FavoriteIpnut): Favorite                                                             @auth @hasRole(role: "CUSTOMER")
+		addOrRemoveFavorite(input: FavoriteIpnut!): Favorite                                                             @auth @hasRole(role: "CUSTOMER")
 
-		createPaymentType(input: PaymentTypeInput): PaymentType                                                         @auth @hasRole(role: "ADMIN")
+		createPaymentType(input: PaymentTypeInput!): PaymentType                                                         @auth @hasRole(role: "ADMIN")
 		removePaymentType(id: Int!): PaymentType                                                                        @auth @hasRole(role: "ADMIN")
-		updatePaymentType(input: PaymentTypeInput, id: Int!): PaymentType                                               @auth @hasRole(role: "ADMIN")
+		updatePaymentType(input: PaymentTypeInput!, id: Int!): PaymentType                                               @auth @hasRole(role: "ADMIN")
     }
 `;
 

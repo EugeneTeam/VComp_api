@@ -2,13 +2,25 @@ import {gql} from 'apollo-server';
 
 import {decryptPassword, encryptPassword, generateActivationToken, login, checkEmail} from '../../typescript/user';
 import {getRoleIdByName} from "../../typescript/role";
-import {User as IUser} from '../../graphql';
+import {
+    User as IUser,
+    QueryGetUserArgs as IQueryGetUserArgs,
+    QueryGetUsersArgs as IQueryGetUsersArgs,
+    UsersAndCount as IUsersAndCount,
+    QueryLogInArgs as IQueryLogInArgs,
+    Token as IToken,
+    MutationUnbanUserArgs as IMutationUnbanUserArgs,
+    MutationBanUserArgs as IMutationBanUserArgs,
+    MutationSignInArgs as IMutationSignInArgs,
+    MutationCreateUserArgs as IMutationCreateUserArgs,
+    MutationUpdateUserArgs as IMutationUpdateUserArgs,
+} from '../../graphql';
 
 export default class User {
     static resolver() {
         return {
             Query: {
-                getUser: async (obj: any, args: any, context: any) => {
+                getUser: async (obj: any, args: IQueryGetUserArgs, context: any): Promise<IUser> => {
                   const user: IUser | null = await context.prisma.user.findUnique({
                       where: {
                           id: args.id,
@@ -19,12 +31,12 @@ export default class User {
                   }
                   return user;
                 },
-                getUsers: async (obj: any, args: any, context: any) => {
-                    const pagination = {
+                getUsers: async (obj: any, args: IQueryGetUsersArgs, context: any): Promise<IUsersAndCount> => {
+                    const pagination: any = {
                         ...(args?.filter?.limit ? {take: args.filter.limit} : null),
                         ...(args?.filter?.offset ? {skip: args.filter.offset} : null),
                     };
-                    const filter = {
+                    const filter: any = {
                         where: {
                             ...(args?.filter?.fullName ? {fullName: {contains: args.filter.fullName}} : null),
                             ...(args?.filter?.phone ? {phone: {contains: args.filter.phone}} : null),
@@ -34,35 +46,27 @@ export default class User {
                             ...(args?.filter?.role ? {roleId: await getRoleIdByName(args.filter.role)} : null),
                         },
                     };
-                    if (args?.filter?.createdAtFrom || args?.filter?.createdAtTo) {
-                        // @ts-ignore
-                        filter.where.createdAt = {
-                            gte: new Date(args.filter.createdAtFrom),
-                            lt: new Date(args.filter.createdAtFrom),
-                        }
-                    }
-                    const count = await context.prisma.user.aggregate({
+                    const count: any = await context.prisma.user.aggregate({
                         _count: {
                             id: true,
                         },
                         ...filter,
                     });
 
-                    const users = await context.prisma.user.findMany({
+                    const users: Array<IUser | null> = await context.prisma.user.findMany({
                         ...pagination,
                         ...filter,
                     });
 
-                    console.log(filter)
                     return {
                         count: count?._count.id,
                         rows: users,
                     }
                 },
-                logIn: async (obj: any, args: any, context: any) => {
+                logIn: async (obj: any, args: IQueryLogInArgs, context: any): Promise<IToken> => {
                     const user: any = await context.prisma.user.findUnique({
                         where: {
-                            email: args.input.email,
+                            email: args.input!.email,
                         },
                     });
 
@@ -70,22 +74,22 @@ export default class User {
                         throw new Error('User not found');
                     }
 
-                    const isPasswordValid: boolean = await decryptPassword(args.input.password, user.passwordHash);
+                    const isPasswordValid: boolean = await decryptPassword(args.input!.password, user.passwordHash);
 
                     if (!isPasswordValid) {
                         throw new Error('Wrong login or password');
                     }
 
                     return {
-                        token: await login(args.input.rememberMe, user.passwordHash),
+                        token: await login(!!args.input!.rememberMe, user.passwordHash),
                     }
                 }
             },
             Mutation: {
-                unbanUser: async (obj: any, args: any, context: any) => {
-                    const user = await context.prisma.user.findUnique({
+                unbanUser: async (obj: any, args: IMutationUnbanUserArgs, context: any): Promise<IUser> => {
+                    const user: IUser | null = await context.prisma.user.findUnique({
                         where: {
-                            id: args.input.userId,
+                            id: args.input!.userId,
                         },
                     });
 
@@ -99,18 +103,18 @@ export default class User {
 
                     return context.prisma.user.update({
                         where: {
-                            id: args.input.userId,
+                            id: args.input!.userId,
                         },
                         data: {
-                            status: args.input.userStatus,
+                            status: args.input!.userStatus,
                             banReason: null,
                         },
                     });
                 },
-                banUser: async (obj: any, args: any, context: any) => {
-                    const user = await context.prisma.user.findUnique({
+                banUser: async (obj: any, args: IMutationBanUserArgs, context: any): Promise<IUser> => {
+                    const user: IUser | null = await context.prisma.user.findUnique({
                         where: {
-                            id: args.input.userId,
+                            id: args.input!.userId,
                         },
                     });
 
@@ -120,35 +124,35 @@ export default class User {
 
                     return context.prisma.user.update({
                         where: {
-                            id: args.input.userId,
+                            id: args.input!.userId,
                         },
                         data: {
                             status: 'BANNED',
-                            banReason: args.input.banReason,
+                            banReason: args.input!.banReason,
                         },
                     });
                 },
-                signIn: async (obj: any, args: any, context: any) => {
-                    if (args.input.password !== args.input.repeatPassword) {
+                signIn: async (obj: any, args: IMutationSignInArgs, context: any): Promise<IUser> => {
+                    if (args.input!.password !== args.input!.repeatPassword) {
                         throw new Error('Password mismatch');
                     }
 
-                    await checkEmail(args.input.email);
+                    await checkEmail(args.input!.email);
 
                     return context.prisma.user.create({
                         data: {
-                            fullName: args.input.fullName,
-                            phone: args.input.phone,
-                            city: args.input.city,
-                            email: args.input.email,
+                            fullName: args.input!.fullName,
+                            phone: args.input!.phone,
+                            city: args.input!.city,
+                            email: args.input!.email,
                             activationToken: generateActivationToken(),
-                            passwordHash: await encryptPassword(args.input.password),
+                            passwordHash: await encryptPassword(args.input!.password),
                             status: "INACTIVE",
                             roleId: await getRoleIdByName('CUSTOMER'),
                         },
                     });
                 },
-                createUser: async (obj: any, args: any, context: any) => {
+                createUser: async (obj: any, args: IMutationCreateUserArgs, context: any): Promise<IUser> => {
                      return context.prisma.user.create({
                          data: {
                              fullName: args.input.fullName,
@@ -162,10 +166,10 @@ export default class User {
                          },
                      });
                 },
-                updateUser: async (obj: any, args: any, context: any) => {
+                updateUser: async (obj: any, args: IMutationUpdateUserArgs, context: any): Promise<IUser> => {
                     const user = context.prisma.user.findUnique({
                         where: {
-                            id: args.input.id,
+                            id: args.input!.id,
                         },
                     });
 
@@ -173,11 +177,11 @@ export default class User {
                         throw new Error('User not found');
                     }
 
-                    await checkEmail(args?.input?.email);
+                    await checkEmail(args.input!.email || '');
 
                     return context.prisma.user.update({
                         where: {
-                            id: args.input.id,
+                            id: args.input!.id,
                         },
                         data: {
                             ...(args?.input?.fullName ? {fullName: args.input.fullName} : null),
@@ -187,7 +191,7 @@ export default class User {
                             ...(args?.input?.activationToken ? {activationToken: args.input.activationToken} : null),
                             ...(args?.input?.passwordHash ? {passwordHash: args.input.passwordHash} : null),
                             ...(args?.input?.status ? {status: args.input.status} : null),
-                            ...(args?.input?.roleId ? {roleId: args.input.roleId} : null),
+                            ...(args?.input?.role ? {roleId: args.input.role} : null),
                         },
                     });
                 }
@@ -245,10 +249,12 @@ export default class User {
 				password: String = null
 				status: UserStatus = null
 				role: UserRole = null
+				activationToken: String = null
+				passwordHash: String = null
             }
             
             type Token {
-                token: String!
+                token: String
             }
             
             type User {
@@ -273,8 +279,6 @@ export default class User {
 				email: String
 				status: UserStatus
 				role: UserRole
-				createdAtFrom: String
-				createdAtTo: String
                 limit: Int
                 offset: Int
             }
