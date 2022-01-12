@@ -1,15 +1,18 @@
 import {gql} from 'apollo-server';
+import {
+    Callback as ICallback
+} from '../../graphql';
 
 export default class Callback {
     static resolver() {
         return {
             Mutation: {
-                requestCallback: async (obj: any, args: {phone: string}, context: any) => {
-                    const checkCallback = await context.prisma.callback.findFirst({
+                requestCallback: async (obj: any, args: {phone: string}, context: any): Promise<boolean> => {
+                    const checkCallback: ICallback = await context.prisma.callback.findFirst({
                         where: {
                             phone: args.phone,
                             isProcessed: true,
-                        }
+                        },
                     });
 
                     if (checkCallback) {
@@ -25,8 +28,8 @@ export default class Callback {
 
                     return true;
                 },
-                closeCallback: async (obj: any, args: {id: number}, context: any) => {
-                    const callback = await context.prisma.callback.findUnique({
+                closeCallback: async (obj: any, args: {id: number}, context: any): Promise<boolean> => {
+                    const callback: ICallback = await context.prisma.callback.findUnique({
                         where: {
                             id: args.id,
                         },
