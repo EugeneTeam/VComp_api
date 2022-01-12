@@ -38,9 +38,13 @@ export const typeDefs: any = gql`
 
 		getPaymentTypes(limit: Int, offset: Int): [PaymentType]                                                         @auth @hasRole(role: "ADMIN")
 		getPaymentType(id: Int!): PaymentType                                                                           @auth @hasRole(role: "ADMIN")
-		
+		getUsers(filter: UserInputFilter): UsersAndCount                                                                @auth @hasRole(role: "ADMIN")
+		getUser(id: Int!): User                                                                                         @auth @hasRole(role: "ADMIN")
     }
     type Mutation {
+		banUser(input: BanUserInput): User                                                                              @auth @hasRole(role: "ADMIN")
+		unbanUser(input: UnbanUserInput): User                                                                          @auth @hasRole(role: "ADMIN")
+        
 		signIn(input: SignInInput): User
         
 		createRole(name: String!): Role                                                                                 @auth @hasRole(role: "ADMIN")
