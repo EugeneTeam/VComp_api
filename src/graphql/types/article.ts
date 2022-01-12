@@ -3,15 +3,18 @@ import {
     getArticleCategoryById,
 } from '../../typescript/articleCategory';
 import {
-    IArticle,
     getArticleById,
 } from '../../typescript/article';
+import {
+    ArticleFilter as IArticleFilter,
+    Article as IArticle
+} from '../../graphql';
 
 export default class Article {
     static resolver() {
         return {
             Query: {
-                getArticles: async (obj: any, args: any, context: any) => {
+                getArticles: async (obj: any, args: {filter: IArticleFilter}, context: any): Promise<{count: number, rows: Array<IArticle | null>}> => {
                     const pagination = {
                         ...(args?.filter?.limit ? {take: args.filter.limit} : null),
                         ...(args?.filter?.offset ? {skip: args.filter.offset} : null),
@@ -20,20 +23,20 @@ export default class Article {
                     const filter = {
                         where: {
                             ...(args?.filter?.categoryId ? {articleCategoryId: args.filter.categoryId} : null),
-                            ...(args?.filter?.name ? {title: {contains: args.filter.name}} : null),
-                            ...(args?.filter?.text ? {text: {contains: args.filter.name}} : null),
+                            ...(args?.filter?.title ? {title: {contains: args.filter.title}} : null),
+                            ...(args?.filter?.text ? {text: {contains: args.filter.text}} : null),
                             ...(args?.filter?.status ? {status: args.filter.status} : null),
                         },
                     };
 
-                    const count = await context.prisma.article.aggregate({
+                    const count: any = await context.prisma.article.aggregate({
                         _count: {
                             id: true,
                         },
                         ...filter,
                     });
 
-                    const articles = await context.prisma.article.findMany({
+                    const articles: Array<IArticle | null> = await context.prisma.article.findMany({
                         ...pagination,
                         ...filter,
                     });
@@ -43,10 +46,10 @@ export default class Article {
                         rows: articles,
                     };
                 },
-                getArticle: async (obj: any, args: any, context: any) => getArticleById(args.id),
+                getArticle: async (obj: any, args: any): Promise<IArticle> => getArticleById(args.id),
             },
             Mutation: {
-                createArticle: async (obj: any, args: any, context: any) => {
+                createArticle: async (obj: any, args: any, context: any): Promise<IArticle> => {
                     await getArticleCategoryById(args.input.articleCategoryId);
                     return context.prisma.article.create({
                         data: {
@@ -59,7 +62,7 @@ export default class Article {
                         },
                     });
                 },
-                updateArticle: async (obj: any, args: any, context: any) => {
+                updateArticle: async (obj: any, args: any, context: any): Promise<IArticle> => {
                     await getArticleCategoryById(args.input.articleCategoryId);
                     await getArticleById(args.id)
                     const article: Promise<IArticle> | null = await context.prisma.article.update({
@@ -81,7 +84,7 @@ export default class Article {
                     }
                     return article;
                 },
-                removeArticle: async (obj: any, args: any, context: any) => {
+                removeArticle: async (obj: any, args: any, context: any): Promise<IArticle> => {
                     await getArticleById(args.id)
                     return context.prisma.article.delete({
                         where: {
@@ -125,7 +128,7 @@ export default class Article {
             }
             
             input ArticelInput {
-                articleCategoryId: Int = null
+                articleCategoryId: Int!
                 title: String!
                 text: String!
                 imageUrl: String!
