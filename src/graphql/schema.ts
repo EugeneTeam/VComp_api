@@ -10,6 +10,7 @@ import Callback from "./types/callback";
 import Article from "./types/article";
 import Favorite from "./types/favorite";
 import PaymentType from "./types/paymentType";
+import DeliveryService from "./types/deliveryService";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -27,6 +28,7 @@ export const typeDefs: any = gql`
     ${Article.typeDefs()}
     ${Favorite.typeDefs()}
     ${PaymentType.typeDefs()}
+    ${DeliveryService.typeDefs()}
     
 	type Query {
 		logIn(input: LogInInput): Token
@@ -40,8 +42,16 @@ export const typeDefs: any = gql`
 		getPaymentType(id: Int!): PaymentType                                                                           @auth @hasRole(role: "ADMIN")
 		getUsers(filter: UserInputFilter): UsersAndCount                                                                @auth @hasRole(role: "ADMIN")
 		getUser(id: Int!): User                                                                                         @auth @hasRole(role: "ADMIN")
+
+		getDeliveryService(id: Int!): DeliveryService																	@auth @hasRole(role: "ADMIN")
+		getDeliveryServices: [DeliveryService]																			@auth @hasRole(role: "ADMIN")
     }
     type Mutation {
+
+		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										@auth @hasRole(role: "ADMIN")
+		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										@auth @hasRole(role: "ADMIN")
+		removeDeliveryService(id: Int!): DeliveryService																@auth @hasRole(role: "ADMIN")
+		
 		banUser(input: BanUserInput): User                                                                              @auth @hasRole(role: "ADMIN")
 		unbanUser(input: UnbanUserInput): User                                                                          @auth @hasRole(role: "ADMIN")
         
@@ -62,11 +72,11 @@ export const typeDefs: any = gql`
 		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(role: "ADMIN")
 		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(role: "ADMIN")
 
-		addOrRemoveFavorite(input: FavoriteIpnut!): Favorite                                                             @auth @hasRole(role: "CUSTOMER")
+		addOrRemoveFavorite(input: FavoriteIpnut!): Favorite                                                            @auth @hasRole(role: "CUSTOMER")
 
-		createPaymentType(input: PaymentTypeInput!): PaymentType                                                         @auth @hasRole(role: "ADMIN")
+		createPaymentType(input: PaymentTypeInput!): PaymentType                                                        @auth @hasRole(role: "ADMIN")
 		removePaymentType(id: Int!): PaymentType                                                                        @auth @hasRole(role: "ADMIN")
-		updatePaymentType(input: PaymentTypeInput!, id: Int!): PaymentType                                               @auth @hasRole(role: "ADMIN")
+		updatePaymentType(input: PaymentTypeInput!, id: Int!): PaymentType                                              @auth @hasRole(role: "ADMIN")
     }
 `;
 
@@ -90,6 +100,7 @@ export const combineResolvers: any = () => {
 		Article.resolver(),
         Favorite.resolver(),
         PaymentType.resolver(),
+		DeliveryService.resolver(),
     )
 }
 
