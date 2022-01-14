@@ -1,10 +1,6 @@
-import {gql} from 'apollo-server';
-import {
-    getArticleCategoryById,
-} from '../../typescript/articleCategory';
-import {
-    getArticleById,
-} from '../../typescript/article';
+import { gql } from 'apollo-server';
+import { getArticleCategoryById } from '../../typescript/articleCategory';
+import { getArticleById } from '../../typescript/article';
 import {
     Article as IArticle,
     QueryGetArticleArgs as IQueryGetArticleArgs,
@@ -18,18 +14,18 @@ export default class Article {
     static resolver() {
         return {
             Query: {
-                getArticles: async (obj: any, args: IQueryGetArticlesArgs, context: any): Promise<{count: number, rows: Array<IArticle | null>}> => {
+                getArticles: async (obj: any, args: IQueryGetArticlesArgs, context: any): Promise<{ count: number, rows: Array<IArticle | null> }> => {
                     const pagination = {
-                        ...(args?.filter?.limit ? {take: args.filter.limit} : null),
-                        ...(args?.filter?.offset ? {skip: args.filter.offset} : null),
+                        ...(args?.filter?.limit ? { take: args.filter.limit } : null),
+                        ...(args?.filter?.offset ? { skip: args.filter.offset } : null),
                     };
 
                     const filter = {
                         where: {
-                            ...(args?.filter?.categoryId ? {articleCategoryId: args.filter.categoryId} : null),
-                            ...(args?.filter?.title ? {title: {contains: args.filter.title}} : null),
-                            ...(args?.filter?.text ? {text: {contains: args.filter.text}} : null),
-                            ...(args?.filter?.status ? {status: args.filter.status} : null),
+                            ...(args?.filter?.categoryId ? { articleCategoryId: args.filter.categoryId } : null),
+                            ...(args?.filter?.title ? { title: { contains: args.filter.title } } : null),
+                            ...(args?.filter?.text ? { text: { contains: args.filter.text } } : null),
+                            ...(args?.filter?.status ? { status: args.filter.status } : null),
                         },
                     };
 

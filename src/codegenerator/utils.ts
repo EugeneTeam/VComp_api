@@ -1,6 +1,6 @@
-import {getKeyValue} from "../typescript/utils/helper";
-import {schema} from "../graphql/schema";
-import {CONSTANTS} from './constants';
+import { getKeyValue } from "../typescript/utils/helper";
+import { schema } from "../graphql/schema";
+import { CONSTANTS } from './constants';
 
 const types: any = schema.getTypeMap();
 
@@ -17,7 +17,7 @@ export const parseArgument = (node: any, steps: Array<any> = [], defaultValue: a
         return parseArgument(node.type, steps, defaultValue);
     }
 
-    let arg = `${node.type.name.value}`;
+    let arg = `${ node.type.name.value }`;
     steps.reverse().forEach((item: any) => {
         if (!item.isOptional) {
             arg += '!';
@@ -50,23 +50,23 @@ export const parseResponse = (
     const findType = getKeyValue<any, any>(returnType)(types)?.astNode
 
     if (!!findType?.fields) {
-        responseString += `${tab}${field} {\n`;
+        responseString += `${ tab }${ field } {\n`;
         findType.fields.forEach((item: any, index: number) => {
-            responseString += parseResponse(item, '', `${tab}${CONSTANTS.DEFAULT_SPACES}`, findType.fields.length - 1 === index);
+            responseString += parseResponse(item, '', `${ tab }${ CONSTANTS.DEFAULT_SPACES }`, findType.fields.length - 1 === index);
         });
-        responseString += `\n${tab}}`;
+        responseString += `\n${ tab }}`;
     } else {
-        responseString += `${tab}${field}${removeN ? '' : '\n'}`;
+        responseString += `${ tab }${ field }${ removeN ? '' : '\n' }`;
     }
     return responseString;
 }
 
 export const getNameForMethod = (value: string) => {
-    return `${value[0].toUpperCase()}${value.substring(1, value.length)}`;
+    return `${ value[0].toUpperCase() }${ value.substring(1, value.length) }`;
 }
 
 export const getNameForConstant = (value: string) => {
     return value.replace(/[A-Z]/g,(letter: string) => {
-        return `_${letter}`;
+        return `_${ letter }`;
     }).toUpperCase();
 }

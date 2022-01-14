@@ -1,15 +1,16 @@
 import fs from 'fs';
 
-import {schema} from '../graphql/schema';
-import {getKeyValue} from '../typescript/utils/helper';
+import { schema } from '../graphql/schema';
+import { getKeyValue } from '../typescript/utils/helper';
 import {
     parseResponse,
     parseArgument,
     getNameForConstant,
     getNameForMethod
 } from './utils';
-import {CONSTANTS} from './constants';
+import { CONSTANTS } from './constants';
 import ErrnoException = NodeJS.ErrnoException;
+import {resolveAny} from "dns";
 
 const types: any = schema.getTypeMap();
 const queries: any = schema?.getQueryType();
@@ -19,13 +20,13 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
     try {
         for (const item of nodes?.astNode?.fields) {
             const fileName = item.name.value;
-            let queryString = `${query} ${getNameForMethod(item.name.value)}`;
+            let queryString = `${ query } ${ getNameForMethod(item.name.value) }`;
             const constName = getNameForConstant(item.name.value);
 
             if (item?.arguments?.length) {
                 queryString += '(';
                 item.arguments.forEach((arg: any, index: number) => {
-                    queryString += `$${arg.name.value}: `;
+                    queryString += `$${ arg.name.value }: `;
                     queryString += parseArgument(arg);
 
                     if (index !== item.arguments.length - 1) {
@@ -37,12 +38,12 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
             }
 
             queryString += ' {\n';
-            queryString += `  ${item.name.value}`;
+            queryString += `  ${ item.name.value }`;
 
             if (item?.arguments?.length) {
                 queryString += '('
                 item.arguments.forEach((arg: any, index: number) => {
-                    queryString += `${arg.name.value}: $${arg.name.value}`;
+                    queryString += `${ arg.name.value }: $${ arg.name.value }`;
                     if (index !== item.arguments.length - 1) {
                         queryString += ', ';
                     } else {
@@ -67,13 +68,13 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
             queryString += '\n}';
 
 
-            const content = `${CONSTANTS.WRAP_IN_GQL ? 'import {gql} from "apollo-server";\n' : ''}export const ${constName} = ${CONSTANTS.WRAP_IN_GQL ? 'gql' : ''}\`${queryString}\``;
+            const content = `${CONSTANTS.WRAP_IN_GQL ? 'import {gql} from "apollo-server";\n' : ''}export const ${ constName } = ${CONSTANTS.WRAP_IN_GQL ? 'gql' : ''}\`${ queryString }\``;
 
 
-            await fs.writeFile(`${pathToWriteFile}/${fileName}.ts`, content, (error:ErrnoException | null) => {
+            await fs.writeFile(`${ pathToWriteFile }/${ fileName }.ts`, content, (error:ErrnoException | null) => {
                 if (error) {
                     console.log(error)
-                    throw new Error(`File ${fileName} have problem!`);
+                    throw new Error(`File ${ fileName } have problem!`);
                 }
             });
         }
@@ -102,8 +103,8 @@ const createIndex = async (path: string) => {
             if (!file.includes('index')) {
                 const clearName = file.substring(0, file.lastIndexOf('.'));
                 const constName = getNameForConstant(clearName);
-                content += `import {${constName}} from './${clearName}';\n`;
-                export_ += `    ${constName}${count === files.length - 1 ? '' : ',\n'}`
+                content += `import {${ constName }} from './${ clearName }';\n`;
+                export_ += `    ${ constName }${ count === files.length - 1 ? '' : ',\n' }`
             }
             count++;
         }
@@ -111,7 +112,7 @@ const createIndex = async (path: string) => {
         content += export_;
         content += '\n}';
 
-        await fs.writeFile(`${path}/index.ts`, content, (error:ErrnoException | null) => {
+        await fs.writeFile(`${ path }/index.ts`, content, (error: ErrnoException | null) => {
             if (error) {
                 console.log(error)
                 throw new Error(`File index.ts have problem!`);
