@@ -1,6 +1,5 @@
 import { gql } from 'apollo-server';
-import { getArticleCategoryById } from '../../typescript/articleCategory';
-import { getArticleById } from '../../typescript/article';
+import { QueryUtil } from '../../typescript/utils/helper';
 import {
     Article as IArticle,
     QueryGetArticleArgs as IQueryGetArticleArgs,
@@ -10,47 +9,29 @@ import {
     MutationRemoveArticleArgs as IMutationRemoveArticleArgs
 } from '../../graphql';
 
-export default class Article {
+export default class Article extends QueryUtil{
     static resolver() {
+        this.init('article');
         return {
             Query: {
-                getArticles: async (obj: any, args: IQueryGetArticlesArgs, context: any): Promise<{ count: number, rows: Array<IArticle | null> }> => {
-                    const pagination = {
-                        ...(args?.filter?.limit ? { take: args.filter.limit } : null),
-                        ...(args?.filter?.offset ? { skip: args.filter.offset } : null),
-                    };
-
+                getArticles: async (obj: any, args: IQueryGetArticlesArgs): Promise<{ count: number, rows: Array<IArticle | null> }> => {
                     const filter = {
                         where: {
-                            ...(args?.filter?.categoryId ? { articleCategoryId: args.filter.categoryId } : null),
-                            ...(args?.filter?.title ? { title: { contains: args.filter.title } } : null),
-                            ...(args?.filter?.text ? { text: { contains: args.filter.text } } : null),
-                            ...(args?.filter?.status ? { status: args.filter.status } : null),
+                            ...(args?.filter?.categoryId ? {articleCategoryId: args.filter.categoryId} : null),
+                            ...(args?.filter?.title ? {title: {contains: args.filter.title}} : null),
+                            ...(args?.filter?.text ? {text: {contains: args.filter.text}} : null),
+                            ...(args?.filter?.status ? {status: args.filter.status} : null),
                         },
                     };
 
-                    const count: any = await context.prisma.article.aggregate({
-                        _count: {
-                            id: true,
-                        },
-                        ...filter,
-                    });
-
-                    const articles: Array<IArticle | null> = await context.prisma.article.findMany({
-                        ...pagination,
-                        ...filter,
-                    });
-
-                    return {
-                        count: count?._count.id,
-                        rows: articles,
-                    };
+                    return this.findAllAndCount(filter, args?.filter?.limit, args?.filter?.offset);
                 },
-                getArticle: async (obj: any, args: IQueryGetArticleArgs): Promise<IArticle> => getArticleById(args.id),
+                getArticle: async (obj: any, args: IQueryGetArticleArgs): Promise<IArticle> => this.findById(args.id),
             },
             Mutation: {
                 createArticle: async (obj: any, args: IMutationCreateArticleArgs, context: any): Promise<IArticle> => {
-                    await getArticleCategoryById(args.input.articleCategoryId);
+                    await this.setAnotherTableForNextRequest('articleCategory');
+                    await this.findById(args.input.articleCategoryId);
                     return context.prisma.article.create({
                         data: {
                             articleCategoryId: args.input.articleCategoryId,
@@ -63,8 +44,9 @@ export default class Article {
                     });
                 },
                 updateArticle: async (obj: any, args: IMutationUpdateArticleArgs, context: any): Promise<IArticle> => {
-                    await getArticleCategoryById(args.input.articleCategoryId);
-                    await getArticleById(args.id)
+                    await this.setAnotherTableForNextRequest('articleCategory');
+                    await this.findById(args.input.articleCategoryId);
+                    await this.findById(args.id);
                     const article: Promise<IArticle> | null = await context.prisma.article.update({
                         where: {
                             id: args.id,
@@ -85,7 +67,7 @@ export default class Article {
                     return article;
                 },
                 removeArticle: async (obj: any, args: IMutationRemoveArticleArgs, context: any): Promise<IArticle> => {
-                    await getArticleById(args.id)
+                    await this.findById(args.id)
                     return context.prisma.article.delete({
                         where: {
                             id: args.id,

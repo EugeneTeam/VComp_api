@@ -1,26 +1,23 @@
 import { gql } from 'apollo-server';
 import {
-    checkDeliveryServiceName,
-    getDeliveryServiceById
-} from '../../typescript/deliveryService';
-import {
     DeliveryService as IDeliveryService,
     QueryGetDeliveryServiceArgs as IQueryGetDeliveryServiceArgs,
     MutationCreateDeliveryServiceArgs as IMutationCreateDeliveryServiceArgs,
     MutationUpdateDeliveryServiceArgs as IMutationUpdateDeliveryServiceArgs,
     MutationRemoveDeliveryServiceArgs as IMutationRemoveDeliveryServiceArgs,
 } from '../../graphql';
-
-export default class DeliveryService {
+import { QueryUtil } from '../../typescript/utils/helper'
+export default class DeliveryService extends QueryUtil {
     static resolver() {
+        this.init('deliveryService');
         return {
             Query: {
-                getDeliveryService: (obj: any, args: IQueryGetDeliveryServiceArgs, context: any): Promise<IDeliveryService> => getDeliveryServiceById(args.id),
+                getDeliveryService: (obj: any, args: IQueryGetDeliveryServiceArgs): Promise<IDeliveryService> => this.findById(args.id),
                 getDeliveryServices: (obj: any, args: any, context: any): Promise<IDeliveryService> => context.prisma.deliveryService.findMany(),
             },
             Mutation: {
                 createDeliveryService: async (obj: any, args: IMutationCreateDeliveryServiceArgs, context: any): Promise<IDeliveryService> => {
-                    await checkDeliveryServiceName(args.input!.name);
+                    await this.checkByField('name', args.input!.name, true)
                     return context.prisma.deliveryService.create({
                         data: args.input,
                     });
@@ -36,7 +33,7 @@ export default class DeliveryService {
                         throw new Error('Delivery service not found');
                     }
 
-                    await checkDeliveryServiceName(args.input!.name);
+                    await this.checkByField('name', args.input!.name, true);
 
                     return context.prisma.deliveryService.update({
                         where: {
@@ -77,13 +74,13 @@ export default class DeliveryService {
 				isActive: Boolean!
 				info: String!
             }
-            
+
             input CreateDeliveryServiceInput {
                 name: String!
                 isActive: Boolean!
                 info: String!
             }
-            
+
             input UpdateDeliveryServiceInput {
                 id: Int!
                 name: String!

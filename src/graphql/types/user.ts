@@ -1,7 +1,11 @@
-import {gql} from 'apollo-server';
-
-import {decryptPassword, encryptPassword, generateActivationToken, login, checkEmail} from '../../typescript/user';
-import {getRoleIdByName} from "../../typescript/role";
+import { gql } from 'apollo-server';
+import {
+    decryptPassword,
+    encryptPassword,
+    generateActivationToken,
+    login,
+    checkEmail
+} from '../../typescript/user';
 import {
     User as IUser,
     QueryGetUserArgs as IQueryGetUserArgs,
@@ -15,27 +19,16 @@ import {
     MutationCreateUserArgs as IMutationCreateUserArgs,
     MutationUpdateUserArgs as IMutationUpdateUserArgs,
 } from '../../graphql';
+import { QueryUtil } from '../../typescript/utils/helper';
+import {getRoleIdByName} from "../../typescript/role";
 
-export default class User {
+export default class User extends QueryUtil{
     static resolver() {
+        this.init('user');
         return {
             Query: {
-                getUser: async (obj: any, args: IQueryGetUserArgs, context: any): Promise<IUser> => {
-                  const user: IUser | null = await context.prisma.user.findUnique({
-                      where: {
-                          id: args.id,
-                      },
-                  });
-                  if (!user) {
-                      throw new Error('User not found');
-                  }
-                  return user;
-                },
+                getUser: async (obj: any, args: IQueryGetUserArgs): Promise<IUser> => this.findById(args.id),
                 getUsers: async (obj: any, args: IQueryGetUsersArgs, context: any): Promise<IUsersAndCount> => {
-                    const pagination: any = {
-                        ...(args?.filter?.limit ? {take: args.filter.limit} : null),
-                        ...(args?.filter?.offset ? {skip: args.filter.offset} : null),
-                    };
                     const filter: any = {
                         where: {
                             ...(args?.filter?.fullName ? {fullName: {contains: args.filter.fullName}} : null),
@@ -46,22 +39,7 @@ export default class User {
                             ...(args?.filter?.role ? {roleId: await getRoleIdByName(args.filter.role)} : null),
                         },
                     };
-                    const count: any = await context.prisma.user.aggregate({
-                        _count: {
-                            id: true,
-                        },
-                        ...filter,
-                    });
-
-                    const users: Array<IUser | null> = await context.prisma.user.findMany({
-                        ...pagination,
-                        ...filter,
-                    });
-
-                    return {
-                        count: count?._count.id,
-                        rows: users,
-                    }
+                    return this.findAllAndCount(filter, args?.filter?.limit, args?.filter?.offset);
                 },
                 logIn: async (obj: any, args: IQueryLogInArgs, context: any): Promise<IToken> => {
                     const user: any = await context.prisma.user.findUnique({
@@ -214,7 +192,7 @@ export default class User {
 				INACTIVE
 				BANNED
 			}
-            
+
             input SignInInput {
 				fullName: String!
 				phone: String!
@@ -223,13 +201,13 @@ export default class User {
                 password: String!
                 repeatPassword: String!
             }
-            
+
             input LogInInput {
 				email: String!
                 password: String!
                 rememberMe: Boolean! = false
             }
-            
+
             input CreateUserInput {
 				fullName: String!
 				phone: String!
@@ -239,7 +217,7 @@ export default class User {
 				status: UserStatus!
 				role: UserRole!
             }
-            
+
             input UpdateUserInput {
                 id: Int!
 				fullName: String = null
@@ -252,11 +230,11 @@ export default class User {
 				activationToken: String = null
 				passwordHash: String = null
             }
-            
+
             type Token {
                 token: String
             }
-            
+
             type User {
 				id: Int!
 				fullName: String!
@@ -271,7 +249,7 @@ export default class User {
 				googleId: String
 				roleId: Int
             }
-            
+
             input UserInputFilter {
 				fullName: String
 				phone: String
@@ -282,12 +260,12 @@ export default class User {
                 limit: Int
                 offset: Int
             }
-            
+
             type UsersAndCount {
                 count: Int!
                 rows: [User]
             }
-            
+
             input UnbanUserInput {
                 userId: Int!
                 userStatus: UserStatus!

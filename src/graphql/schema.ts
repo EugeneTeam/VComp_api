@@ -11,6 +11,7 @@ import Article from "./types/article";
 import Favorite from "./types/favorite";
 import PaymentType from "./types/paymentType";
 import DeliveryService from "./types/deliveryService";
+import ArticleCategory from "./types/articleCategory";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -29,8 +30,27 @@ export const typeDefs: any = gql`
     ${Favorite.typeDefs()}
     ${PaymentType.typeDefs()}
     ${DeliveryService.typeDefs()}
+    ${Favorite.typeDefs()}
+    ${ArticleCategory.typeDefs()}
     
+	input Pagination {
+		limit: Int
+		offset: Int
+	}
+	
 	type Query {
+		getCategory(id: Int!): Category
+		getCategories(pagination: Pagination): CategoryQuantityAndLisr
+		
+		getBannerImage(id: Int!): ImageBanner
+		getBannerImages(pagination: ImageBannerPagination): ImageBannerQuantityAndList
+		
+		getBanner(id: Int!): Banner
+		getBanners(pagination: BannerPagination): BannerQuantityAndList
+        
+		getArticleCategory(id: Int!): ArticleCategory
+		getArticleCategories(filter: ArticelCategoryFilter): ArticleCategory
+		
 		logIn(input: LogInInput): Token
         
 		getRoles(limit: Int, offset: Int): [Role]                                                                       @auth @hasRole(role: "ADMIN")
@@ -47,10 +67,25 @@ export const typeDefs: any = gql`
 		getDeliveryServices: [DeliveryService]																			@auth @hasRole(role: "ADMIN")
     }
     type Mutation {
+		createCategory(input: CategoryInput): Category
+		updateCategory(input: CategoryInput, id: Int!): Category
+		removeCategory(id: Int!): Category
+		
+		addBannerImages(input: [AddImageBanner]): [ImageBanner]
+		updateBannerImage(input: AddImageBanner, id: Int!): ImageBanner
+		removeBannerImage(id: Int!): ImageBanner
+		
+		createBanner(input: BannerInput): Banner
+		updateBanner(input: BannerInput, id: Int!): Banner
+		removeBanner(id: Int!): Banner
+        
+		createArticleCategory(input: ArticelCategoryInput!): ArticleCategory
+		updateArticleCategory(input: ArticelCategoryInput!, id: Int!): ArticleCategory
+		removeArticleCategory(id: Int!): ArticleCategory
 
-		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										@auth @hasRole(role: "ADMIN")
-		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										@auth @hasRole(role: "ADMIN")
-		removeDeliveryService(id: Int!): DeliveryService																@auth @hasRole(role: "ADMIN")
+		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										#@auth @hasRole(role: "ADMIN")
+		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										#@auth @hasRole(role: "ADMIN")
+		removeDeliveryService(id: Int!): DeliveryService																#@auth @hasRole(role: "ADMIN")
 		
 		banUser(input: BanUserInput): User                                                                              @auth @hasRole(role: "ADMIN")
 		unbanUser(input: UnbanUserInput): User                                                                          @auth @hasRole(role: "ADMIN")
@@ -101,6 +136,7 @@ export const combineResolvers: any = () => {
         Favorite.resolver(),
         PaymentType.resolver(),
 		DeliveryService.resolver(),
+		ArticleCategory.resolver(),
     )
 }
 
