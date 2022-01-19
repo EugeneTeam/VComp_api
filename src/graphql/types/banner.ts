@@ -69,11 +69,6 @@ export default class Banner extends QueryUtil{
             }
             
             #INPUTS
-
-			input BannerPagination {
-				limit: Int
-				offset: Int
-			}
             
             input BannerInput {
 				page: String!

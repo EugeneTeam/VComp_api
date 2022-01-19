@@ -61,11 +61,6 @@ export default class BannerImage extends QueryUtil{
             
             # INPUTS
             
-            input ImageBannerPagination {
-                limit: Int
-                offset: Int
-            }
-            
             input AddImageBanner {
 				bannerId: Int!
 				imageUrl: String!

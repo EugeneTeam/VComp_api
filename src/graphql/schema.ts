@@ -12,6 +12,13 @@ import Favorite from "./types/favorite";
 import PaymentType from "./types/paymentType";
 import DeliveryService from "./types/deliveryService";
 import ArticleCategory from "./types/articleCategory";
+import Banner from "./types/banner";
+import BannerImage from "./types/bannerImage";
+import Category from "./types/category";
+import Characteristic from "./types/characteristic";
+import Comment from "./types/comment";
+import DeliveryType from "./types/deliveryType";
+import Discount from "./types/discount";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -32,6 +39,13 @@ export const typeDefs: any = gql`
     ${DeliveryService.typeDefs()}
     ${Favorite.typeDefs()}
     ${ArticleCategory.typeDefs()}
+    ${Banner.typeDefs()}
+    ${BannerImage.typeDefs()}
+    ${Category.typeDefs()}
+    ${Characteristic.typeDefs()}
+    ${Comment.typeDefs()}
+    ${DeliveryType.typeDefs()}
+    ${Discount.typeDefs()}
     
 	input Pagination {
 		limit: Int
@@ -39,14 +53,26 @@ export const typeDefs: any = gql`
 	}
 	
 	type Query {
+		getDiscount(id: Int!): Discount
+		getDiscounts(pagination: Pagination): Discount
+		
+		getDeliveryType(id: Int!): DeliveryType
+		getDeliveryTypes: [DeliveryType]
+		
+		getComment(id: Int!): Comment
+		getComments(pagination: Pagination, filter: CommentFilter): CommentQuantityAndList
+        
+		getCharacteristic(id: Int!): Characteristic
+		getCharacteristics(pagination: Pagination): CharacteristiQuantityAndList
+        
 		getCategory(id: Int!): Category
 		getCategories(pagination: Pagination): CategoryQuantityAndLisr
 		
 		getBannerImage(id: Int!): ImageBanner
-		getBannerImages(pagination: ImageBannerPagination): ImageBannerQuantityAndList
+		getBannerImages(pagination: Pagination): ImageBannerQuantityAndList
 		
 		getBanner(id: Int!): Banner
-		getBanners(pagination: BannerPagination): BannerQuantityAndList
+		getBanners(pagination: Pagination): BannerQuantityAndList
         
 		getArticleCategory(id: Int!): ArticleCategory
 		getArticleCategories(filter: ArticelCategoryFilter): ArticleCategory
@@ -66,7 +92,23 @@ export const typeDefs: any = gql`
 		getDeliveryService(id: Int!): DeliveryService																	@auth @hasRole(role: "ADMIN")
 		getDeliveryServices: [DeliveryService]																			@auth @hasRole(role: "ADMIN")
     }
+    
     type Mutation {
+		addDiscount(input: DiscountInput): Discount
+		updateDiscount(input: DiscountInput, id: Int!): Discount
+		removeDiscount(id: Int!): Discount
+		
+		createDeliveryType(input: CreateDeliveryTypeInput): DeliveryType
+		updateDeliveryType(input: CreateDeliveryTypeInput, id: Int!): DeliveryType
+		removeDeliveryType(id: Int!): DeliveryType
+        
+		addComment(input: AddComment): Comment
+		removeComment(id: Int!): Comment
+        
+		createCharacteristic(input: CharacteristicInput): Characteristic
+		updateCharacteristic(input: CharacteristicInput, id: Int!): Characteristic
+		removeCharacteristic(id: Int!): Characteristic
+        
 		createCategory(input: CategoryInput): Category
 		updateCategory(input: CategoryInput, id: Int!): Category
 		removeCategory(id: Int!): Category
@@ -137,6 +179,13 @@ export const combineResolvers: any = () => {
         PaymentType.resolver(),
 		DeliveryService.resolver(),
 		ArticleCategory.resolver(),
+		Banner.resolver(),
+		BannerImage.resolver(),
+        Category.resolver(),
+        Characteristic.resolver(),
+        Comment.resolver(),
+		DeliveryType.resolver(),
+		Discount.resolver(),
     )
 }
 
