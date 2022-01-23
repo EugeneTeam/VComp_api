@@ -11,14 +11,14 @@ export default class Category extends QueryUtil {
             },
             Mutation: {
                 createCategory: async (obj: any, args: any, context: any) => {
-                    await this.checkByField('name', args.input.name, true);
+                    await this.errorIfExists({ name: args.input.name }, 'A category with this name has already been created');
                     return context.prisma.category.craete({
                         data: args.input,
                     });
                 },
                 updateCategory: async (obj: any, args: any, context: any) => {
                     await this.findById(args.id);
-                    await this.checkByField('name', args.input.name, true);
+                    await this.errorIfExists({ name: args.input.name }, 'A category with this name has already been created');
                     return context.prisma.category.update({
                         where: {
                             id: args.id,

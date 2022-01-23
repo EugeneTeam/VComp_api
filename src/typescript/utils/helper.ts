@@ -72,20 +72,22 @@ export class QueryUtil {
         return data;
     }
 
-    static async checkByField(field: string, value: string, errorIf: boolean) {
+    static errorIfExists = async (where: any, errorMsg: string) => {
         this.checkStatus();
-        const data = await (this.getActualTable()).findMany({
-            where: {
-                [field]: value,
-            },
-        });
-
-        this.clearTempTable();
-        if (!!data?.length !== errorIf) {
-            throw new Error(`${ this.firstLetterInUppercase(field) } '${ value }' not found`);
-        } else {
-            throw new Error(`${ this.firstLetterInUppercase(field) } '${ value }' is used`);
+        const data = await (this.getActualTable()).findMany({ where });
+        if (data?.length) {
+            throw new Error(errorMsg);
         }
+        this.clearTempTable();
+    }
+
+    static errorIfNotCreated = async (where: any, errorMsg: string) => {
+        this.checkStatus();
+        const data = await (this.getActualTable()).findMany({ where });
+        if (!data?.length) {
+            throw new Error(errorMsg);
+        }
+        this.clearTempTable();
     }
 
     static async findAllAndCount(options: any = {}, limit: number | null | undefined, offset: number | null | undefined) {

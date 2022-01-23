@@ -19,6 +19,7 @@ import Characteristic from "./types/characteristic";
 import Comment from "./types/comment";
 import DeliveryType from "./types/deliveryType";
 import Discount from "./types/discount";
+import Gallery from "./types/gallery";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -46,6 +47,7 @@ export const typeDefs: any = gql`
     ${Comment.typeDefs()}
     ${DeliveryType.typeDefs()}
     ${Discount.typeDefs()}
+    ${Gallery.typeDefs()}
     
 	input Pagination {
 		limit: Int
@@ -53,6 +55,9 @@ export const typeDefs: any = gql`
 	}
 	
 	type Query {
+		getGallery(id: Int!): Gallery
+		getGalleries(pagination: Pagination, filter: GalleryFilter): GalleryQuantityAndLisr
+		
 		getDiscount(id: Int!): Discount
 		getDiscounts(pagination: Pagination): Discount
 		
@@ -94,6 +99,10 @@ export const typeDefs: any = gql`
     }
     
     type Mutation {
+		createGallery(input: GalleryInput): Gallery
+		updateGallery(input: GalleryInput, id: Int!): Gallery
+		removeGallery(id: Int!): Gallery
+        
 		addDiscount(input: DiscountInput): Discount
 		updateDiscount(input: DiscountInput, id: Int!): Discount
 		removeDiscount(id: Int!): Discount
@@ -186,6 +195,7 @@ export const combineResolvers: any = () => {
         Comment.resolver(),
 		DeliveryType.resolver(),
 		Discount.resolver(),
+		Gallery.resolver(),
     )
 }
 

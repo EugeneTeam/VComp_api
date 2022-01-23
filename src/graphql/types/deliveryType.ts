@@ -10,14 +10,14 @@ export default class DeliveryType extends QueryUtil {
             },
             Mutation: {
                 createDeliveryType: async (obj: any, args: any, context: any) => {
-                    await this.checkByField('name', args.input!.name, true)
+                    await this.errorIfExists({ name: args.input!.name }, 'A delivery type with this name has already been created');
                     return context.prisma.deliveryType.create({
                         data: args.input,
                     });
                 },
                 updateDeliveryType: async (obj: any, args: any, context: any) => {
                     await this.findById(args.id);
-                    await this.checkByField('name', args.input!.name, true);
+                    await this.errorIfExists({ name: args.input!.name }, 'A delivery type with this name has already been created');
                     return context.prisma.deliveryType.update({
                         where: {
                             id: args.id,

@@ -22,7 +22,7 @@ export default class PaymentType extends QueryUtil {
             },
             Mutation: {
                 createPaymentType: async (obj: any, args: IMutationCreatePaymentTypeArgs, context: any): Promise<IPaymentType> => {
-                    await this.checkByField('name', args.input.name, true)
+                    await this.errorIfExists({ name: args.input.name }, 'A payment type with this name has already been created');
                     return context.prisma.paymentType.create({
                         data: {
                             name: args.input.name,
@@ -33,7 +33,7 @@ export default class PaymentType extends QueryUtil {
                 },
                 updatePaymentType: async (obj: any, args: IMutationUpdatePaymentTypeArgs, context: any): Promise<IPaymentType> => {
                     await this.findById(args.id);
-                    await this.checkByField('name', args.input.name, true)
+                    await this.errorIfExists({ name: args.input.name }, 'A payment type with this name has already been created');
                     return context.prisma.paymentType.update({
                         where: {
                             id: args.id,

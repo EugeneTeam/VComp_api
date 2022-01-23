@@ -17,7 +17,7 @@ export default class DeliveryService extends QueryUtil {
             },
             Mutation: {
                 createDeliveryService: async (obj: any, args: IMutationCreateDeliveryServiceArgs, context: any): Promise<IDeliveryService> => {
-                    await this.checkByField('name', args.input!.name, true)
+                    await this.errorIfExists({ name: args.input!.name }, 'A service with this name has already been created');
                     return context.prisma.deliveryService.create({
                         data: args.input,
                     });
@@ -33,7 +33,7 @@ export default class DeliveryService extends QueryUtil {
                         throw new Error('Delivery service not found');
                     }
 
-                    await this.checkByField('name', args.input!.name, true);
+                    await this.errorIfExists({ name: args.input!.name }, 'A service with this name has already been created');
 
                     return context.prisma.deliveryService.update({
                         where: {
