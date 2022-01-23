@@ -20,6 +20,8 @@ import Comment from "./types/comment";
 import DeliveryType from "./types/deliveryType";
 import Discount from "./types/discount";
 import Gallery from "./types/gallery";
+import Image from "./types/image";
+import Product from "./types/product";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -48,6 +50,8 @@ export const typeDefs: any = gql`
     ${DeliveryType.typeDefs()}
     ${Discount.typeDefs()}
     ${Gallery.typeDefs()}
+    ${Image.typeDefs()}
+    ${Product.typeDefs()}
     
 	input Pagination {
 		limit: Int
@@ -55,6 +59,9 @@ export const typeDefs: any = gql`
 	}
 	
 	type Query {
+		getProduct(id: Int!): Product
+		getProducts(pagination: Pagination, filter: ProductFilter): ProductQuantityAndList
+		
 		getGallery(id: Int!): Gallery
 		getGalleries(pagination: Pagination, filter: GalleryFilter): GalleryQuantityAndLisr
 		
@@ -99,6 +106,10 @@ export const typeDefs: any = gql`
     }
     
     type Mutation {
+		createProduct(input: ProductInput): Product
+		updateProduct(input: ProductInput, id: Int!): Product
+		removeProduct(id: Int!): Product
+		
 		createGallery(input: GalleryInput): Gallery
 		updateGallery(input: GalleryInput, id: Int!): Gallery
 		removeGallery(id: Int!): Gallery
@@ -173,6 +184,9 @@ export const context: any = async (context: any) => {
     const token = context?.req?.headers?.authorization?.split(' ')
     if (token?.[1]) {
         context.user = await getUserByToken(token[1]);
+        if (context.user) {
+        	context.user.isCustomer = context.user.role === 'CUSTOMER';
+		}
     }
 
     return context;
@@ -196,6 +210,8 @@ export const combineResolvers: any = () => {
 		DeliveryType.resolver(),
 		Discount.resolver(),
 		Gallery.resolver(),
+		Image.resolver(),
+		Product.resolver(),
     )
 }
 

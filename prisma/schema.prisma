@@ -135,7 +135,7 @@ model Product {
     name String @db.VarChar(255) @unique
     description String @db.Text
     price Float
-    discountId Int
+    discountId Int?
     discount Discount @relation(fields: [discountId], references: [id])
     categoryId Int
     category Category @relation(fields: [categoryId], references: [id])
@@ -319,5 +319,5 @@ model LImageGallery {
     galleryId Int
     gallery Gallery @relation(fields: [galleryId], references: [id])
     @@id([imageId, galleryId])
-    @@map("LImageGallerys")
+    @@map("LImageGalleries")
 }
