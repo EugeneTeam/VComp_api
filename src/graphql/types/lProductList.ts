@@ -1,17 +1,13 @@
 import { gql } from 'apollo-server';
 
 export default class LProductList {
-    static resolver() {
-        return {
-            Query: {
-
-            },
-            Mutation: {
-
-            },
-        }
-    }
     static typeDefs() {
-        return gql``;
+        return gql`
+            type LProductList {
+                quantity: Int!
+                productId: Int!
+                orderId: Int!
+            }
+        `;
     }
 }

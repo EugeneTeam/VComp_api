@@ -24,7 +24,7 @@ export default class Article extends QueryUtil{
                         },
                     };
 
-                    return this.findAllAndCount(filter, args?.filter?.limit, args?.filter?.offset);
+                    return this.findAllAndCount(filter, args?.pagination?.limit, args?.pagination?.offset);
                 },
                 getArticle: async (obj: any, args: IQueryGetArticleArgs): Promise<IArticle> => this.findById(args.id),
             },
@@ -79,34 +79,39 @@ export default class Article extends QueryUtil{
     }
 
     static typeDefs() {
-        return gql`            
+        return gql`
+            
+            # ENUMS
+            
             enum ArticleStatus {
                 HIDDEN
                 VISIBLE
             }
+            
+            # TYPES
+            
+			type ArticleResponse {
+				count: Int!
+				rows: [Article]!
+			}
+
+			type Article {
+				id: Int!
+				articleCategoryId: Int
+				title: String!
+				text: String!
+				image: String!
+				status: ArticleStatus
+				source: String
+			}
+            
+            # INPUTS
             
             input ArticleFilter {
                 categoryId: Int
 				title: String
                 text: String
                 status: ArticleStatus = HIDDEN
-                limit: Int = 25
-                offset: Int = 0
-            }
-            
-            type ArticleResponse {
-                count: Int!
-                rows: [Article]!
-            }
-            
-            type Article {
-                id: Int!
-                articleCategoryId: Int
-                title: String!
-                text: String!
-                image: String!
-                status: ArticleStatus
-                source: String
             }
             
             input ArticelInput {

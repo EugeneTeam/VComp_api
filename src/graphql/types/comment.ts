@@ -1,12 +1,21 @@
 import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 
+import {
+    Comment as IComment,
+    CommentQuantityAndList as ICommentQuantityAndList,
+    MutationAddCommentArgs as IMutationAddCommentArgs,
+    MutationRemoveCommentArgs as IMutationRemoveCommentArgs,
+    QueryGetCommentArgs as IQueryGetCommentArgs,
+    QueryGetCommentsArgs as IQueryGetCommentsArgs
+} from '../../graphql';
+
 export default class Comment extends QueryUtil {
     static resolver() {
         return {
             Query: {
-                getComment: (obj: any, args: any) => this.findById(args.id),
-                getComments: async (obj: any, args: any, context: any) => {
+                getComment: (obj: any, args: IQueryGetCommentArgs): Promise<IComment> => this.findById(args.id),
+                getComments: async (obj: any, args: IQueryGetCommentsArgs): Promise<ICommentQuantityAndList> => {
                     return this.findAllAndCount({
                             where: {
                                 ...(args?.filter?.rating ? { rating: args.filter.rating } : null),
@@ -17,14 +26,14 @@ export default class Comment extends QueryUtil {
                                         { dignity: { contains: args.filter.search } },
                                     ]
                                 } : null),
-                                ...(args?.filter?.userId ? { userId: args.input.userId } : null),
-                                ...(args?.filter?.productId ? { productId: args.input.productId } : null),                     }
+                                ...(args?.filter?.userId ? { userId: args.filter.userId } : null),
+                                ...(args?.filter?.productId ? { productId: args.filter.productId } : null),                     }
                         }, args?.pagination?.limit, args?.pagination?.offset);
                 },
             },
             Mutation: {
-                addComment: async (obj: any, args: any, context: any) => {
-                    if (args.input.rating > 5 || args.input.rating) {
+                addComment: async (obj: any, args: IMutationAddCommentArgs, context: any) => {
+                    if (args?.input?.rating && (args.input.rating > 5 || 0 < args.input.rating)) {
                         throw new Error('The score must be in the range of 1-5');
                     }
                     return context.prisma.comment.create({
@@ -34,13 +43,13 @@ export default class Comment extends QueryUtil {
                         },
                     });
                 },
-                removeComment: async (obj: any, args: any, context: any) => {
+                removeComment: async (obj: any, args: IMutationRemoveCommentArgs, context: any) => {
                     await this.findById(args.id);
                     return context.prisma.comment.delete({
                         where: {
                             id: args.id,
                         },
-                    })
+                    });
                 }
             },
         }

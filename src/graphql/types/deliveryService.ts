@@ -1,4 +1,6 @@
 import { gql } from 'apollo-server';
+import { QueryUtil } from '../../typescript/utils/helper'
+
 import {
     DeliveryService as IDeliveryService,
     QueryGetDeliveryServiceArgs as IQueryGetDeliveryServiceArgs,
@@ -6,14 +8,18 @@ import {
     MutationUpdateDeliveryServiceArgs as IMutationUpdateDeliveryServiceArgs,
     MutationRemoveDeliveryServiceArgs as IMutationRemoveDeliveryServiceArgs,
 } from '../../graphql';
-import { QueryUtil } from '../../typescript/utils/helper'
+
 export default class DeliveryService extends QueryUtil {
     static resolver() {
         this.init('deliveryService');
         return {
             Query: {
-                getDeliveryService: (obj: any, args: IQueryGetDeliveryServiceArgs): Promise<IDeliveryService> => this.findById(args.id),
-                getDeliveryServices: (obj: any, args: any, context: any): Promise<IDeliveryService> => context.prisma.deliveryService.findMany(),
+                getDeliveryService: (obj: any, args: IQueryGetDeliveryServiceArgs): Promise<IDeliveryService> => {
+                    return this.findById(args.id)
+                },
+                getDeliveryServices: (obj: any, args: any, context: any): Promise<IDeliveryService> => {
+                    return context.prisma.deliveryService.findMany()
+                },
             },
             Mutation: {
                 createDeliveryService: async (obj: any, args: IMutationCreateDeliveryServiceArgs, context: any): Promise<IDeliveryService> => {
@@ -68,6 +74,9 @@ export default class DeliveryService extends QueryUtil {
 
     static typeDefs() {
         return gql`
+            
+            # TYPES
+            
             type DeliveryService {
                 id: Int!
 				name: String!
@@ -75,6 +84,8 @@ export default class DeliveryService extends QueryUtil {
 				info: String!
             }
 
+            # INPUTS
+            
             input CreateDeliveryServiceInput {
                 name: String!
                 isActive: Boolean!

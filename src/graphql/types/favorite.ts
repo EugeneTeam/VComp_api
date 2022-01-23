@@ -53,7 +53,7 @@ export default class Favorite {
     }
 
     static typeDefs() {
-        return gql`            
+        return gql`
             input FavoriteIpnut {
                 productId: Int!
             }

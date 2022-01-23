@@ -77,10 +77,10 @@ export const typeDefs: any = gql`
 		getComments(pagination: Pagination, filter: CommentFilter): CommentQuantityAndList
         
 		getCharacteristic(id: Int!): Characteristic
-		getCharacteristics(pagination: Pagination): CharacteristiQuantityAndList
+		getCharacteristics(pagination: Pagination): CharacteristicQuantityAndList
         
 		getCategory(id: Int!): Category
-		getCategories(pagination: Pagination): CategoryQuantityAndLisr
+		getCategories(pagination: Pagination): CategoryQuantityAndList
 		
 		getBannerImage(id: Int!): ImageBanner
 		getBannerImages(pagination: Pagination): ImageBannerQuantityAndList
@@ -89,14 +89,14 @@ export const typeDefs: any = gql`
 		getBanners(pagination: Pagination): BannerQuantityAndList
         
 		getArticleCategory(id: Int!): ArticleCategory
-		getArticleCategories(filter: ArticelCategoryFilter): ArticleCategory
+		getArticleCategories(filter: ArticleCategoryFilter, pagination: Pagination): ArticleCategory
 		
 		logIn(input: LogInInput): Token
         
 		getRoles(limit: Int, offset: Int): [Role]                                                                       @auth @hasRole(role: "ADMIN")
 		
 		getArticle(id: Int!): Boolean
-		getArticles(filter: ArticleFilter): ArticleResponse
+		getArticles(filter: ArticleFilter, pagination: Pagination): ArticleResponse
 
 		getPaymentTypes(limit: Int, offset: Int): [PaymentType]                                                         @auth @hasRole(role: "ADMIN")
 		getPaymentType(id: Int!): PaymentType                                                                           @auth @hasRole(role: "ADMIN")
@@ -147,8 +147,8 @@ export const typeDefs: any = gql`
 		updateBanner(input: BannerInput, id: Int!): Banner
 		removeBanner(id: Int!): Banner
         
-		createArticleCategory(input: ArticelCategoryInput!): ArticleCategory
-		updateArticleCategory(input: ArticelCategoryInput!, id: Int!): ArticleCategory
+		createArticleCategory(input: ArticleCategoryInput!): ArticleCategory
+		updateArticleCategory(input: ArticleCategoryInput!, id: Int!): ArticleCategory
 		removeArticleCategory(id: Int!): ArticleCategory
 
 		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										#@auth @hasRole(role: "ADMIN")

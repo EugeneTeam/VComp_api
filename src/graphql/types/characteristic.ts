@@ -1,26 +1,38 @@
 import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 
+import {
+    Characteristic as ICharacteristic,
+    CharacteristicQuantityAndList as ICharacteristicQuantityAndList,
+    MutationCreateCharacteristicArgs as IMutationCreateCharacteristicArgs,
+    MutationRemoveCharacteristicArgs as IMutationRemoveCharacteristicArgs,
+    MutationUpdateCharacteristicArgs as IMutationUpdateCharacteristicArgs,
+    QueryGetCharacteristicArgs as IQueryGetCharacteristicArgs,
+    QueryGetCharacteristicsArgs as IQueryGetCharacteristicsArgs
+} from '../../graphql';
+
 export default class Characteristic extends QueryUtil{
     static resolver() {
         this.init('characteristic');
         return {
             Query: {
-                getCharacteristic: (obj: any, args: any) => this.findById(args.id),
-                getCharacteristics: (obj: any, args: any) => this.findAllAndCount(null, args?.pagination?.limit, args?.pagination?.offset),
+                getCharacteristic: (obj: any, args: IQueryGetCharacteristicArgs): Promise<ICharacteristic> => this.findById(args.id),
+                getCharacteristics: (obj: any, args: IQueryGetCharacteristicsArgs): Promise<ICharacteristicQuantityAndList> => {
+                    return this.findAllAndCount(null, args?.pagination?.limit, args?.pagination?.offset)
+                },
             },
             Mutation: {
-                createCharacteristic: async (obj: any, args: any, context: any) => {
+                createCharacteristic: async (obj: any, args: IMutationCreateCharacteristicArgs, context: any): Promise<ICharacteristic> => {
                     await this.setAnotherTableForNextRequest('category');
-                    await this.findById(args.categoryId);
+                    await this.findById(args.input!.categoryId);
                     return context.prisma.characteristic.craete({
                         data: args.input,
                     });
                 },
-                updateCharacteristic: async (obj: any, args: any, context: any) => {
+                updateCharacteristic: async (obj: any, args: IMutationUpdateCharacteristicArgs, context: any): Promise<ICharacteristic> => {
                     await this.findById(args.id);
                     await this.setAnotherTableForNextRequest('category');
-                    await this.findById(args.categoryId);
+                    await this.findById(args.input!.categoryId);
                     return context.prisma.characteristic.update({
                         where: {
                             id: args.id,
@@ -28,7 +40,7 @@ export default class Characteristic extends QueryUtil{
                         data: args.input,
                     });
                 },
-                removeCharacteristic: async (obj: any, args: any, context: any) => {
+                removeCharacteristic: async (obj: any, args: IMutationRemoveCharacteristicArgs, context: any): Promise<ICharacteristic> => {
                     await this.findById(args.id);
                     return context.prisma.characteristic.delete({
                         where: {
@@ -51,7 +63,7 @@ export default class Characteristic extends QueryUtil{
                 categoryId: Int!
             }
 
-			type CharacteristiQuantityAndList {
+			type CharacteristicQuantityAndList {
 				count: Int
 				rows: [Characteristic]
 			}
