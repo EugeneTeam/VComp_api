@@ -49,7 +49,7 @@ export default class Image extends QueryUtil{
                     }
                     return result;
                 },
-                updateImages: async (obj: any, args: any, context: any) => {
+                updateImage: async (obj: any, args: any, context: any) => {
                     await this.findById(args.id);
                     return context.prisma.image.update({
                         where: {

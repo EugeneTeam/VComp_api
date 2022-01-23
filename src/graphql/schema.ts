@@ -59,6 +59,8 @@ export const typeDefs: any = gql`
 	}
 	
 	type Query {
+		getImage(id: Int!): Image
+		
 		getProduct(id: Int!): Product
 		getProducts(pagination: Pagination, filter: ProductFilter): ProductQuantityAndList
 		
@@ -106,6 +108,10 @@ export const typeDefs: any = gql`
     }
     
     type Mutation {
+		addImages(input: AddImages): [Image]
+		removeImages(input: RemoveImages): [Image]
+		updateImage(input: AddImages, id: Int!): Image
+		
 		createProduct(input: ProductInput): Product
 		updateProduct(input: ProductInput, id: Int!): Product
 		removeProduct(id: Int!): Product
