@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
+
 import {
     Article as IArticle,
     QueryGetArticleArgs as IQueryGetArticleArgs,
@@ -37,7 +38,7 @@ export default class Article extends QueryUtil{
                             articleCategoryId: args.input.articleCategoryId,
                             title: args.input.title,
                             text: args.input.text,
-                            image: args.input.imageUrl,
+                            image: args.input.image,
                             status: args.input.status,
                             source: args?.input?.source,
                         },
@@ -55,7 +56,7 @@ export default class Article extends QueryUtil{
                             articleCategoryId: args.input.articleCategoryId,
                             title: args.input.title,
                             text: args.input.text,
-                            image: args.input.imageUrl,
+                            image: args.input.image,
                             status: args.input.status,
                             source: args.input.source,
                         },
@@ -114,11 +115,11 @@ export default class Article extends QueryUtil{
                 status: ArticleStatus = HIDDEN
             }
             
-            input ArticelInput {
+            input ArticleInput {
                 articleCategoryId: Int!
                 title: String!
                 text: String!
-                imageUrl: String!
+                image: String!
                 status: ArticleStatus = HIDDEN
 				source: String = null
             }

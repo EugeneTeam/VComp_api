@@ -68,6 +68,7 @@ export default class Banner extends QueryUtil{
             
             type Banner {
                 id: Int!
+                """Name of the page on which the banner is displayed"""
                 page: String!
                 title: String!
                 positionX: BannerPositionX!

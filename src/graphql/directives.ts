@@ -13,7 +13,7 @@ export const roleDirective = (schema: GraphQLSchema) => {
             if (permissionDirective) {
                 const {resolve = defaultFieldResolver} = fieldConfig;
                 fieldConfig.resolve = async (source: any, args: any, context: any, info: GraphQLResolveInfo) => {
-                    if (context?.user?.role?.name !== permissionDirective?.role) {
+                    if (!permissionDirective?.roles?.includes(context?.user?.role?.name)) {
                         throw new Error('Access denied');
                     }
                     return await resolve(source, args, context, info);

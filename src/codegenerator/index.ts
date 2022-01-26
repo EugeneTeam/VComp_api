@@ -10,7 +10,6 @@ import {
 } from './utils';
 import { CONSTANTS } from './constants';
 import ErrnoException = NodeJS.ErrnoException;
-import {resolveAny} from "dns";
 
 const types: any = schema.getTypeMap();
 const queries: any = schema?.getQueryType();
@@ -61,7 +60,6 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
             if (data?.fields) {
                 queryString += ' {\n';
                 data.fields.forEach((item: any, index: number) => {
-                    console.log(item)
                     queryString += parseResponse(item, ``, '    ', data.fields.length - 1 === index);
                 });
                 queryString += '\n  }';

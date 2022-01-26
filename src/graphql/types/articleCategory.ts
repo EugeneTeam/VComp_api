@@ -11,7 +11,7 @@ import {
     ArticleCategoryQuantityAndList as IArticleCategoryQuantityAndList,
 } from '../../graphql';
 
-export default class ArticleCategory extends QueryUtil{
+export default class ArticleCategory extends QueryUtil {
     static resolver() {
         this.init('articleCategory');
         return {
@@ -36,7 +36,7 @@ export default class ArticleCategory extends QueryUtil{
                 updateArticleCategory: async (obj: any, args: IMutationUpdateArticleCategoryArgs, context: any): Promise<IArticleCategory> => {
                     await this.findById(args.id);
                     await this.errorIfExists({ name: args.input.name }, 'A category with this name has already been created');
-                    return context.prisma.update({
+                    return context.prisma.articleCategory.update({
                         where: {
                             id: args.id,
                         },
@@ -45,6 +45,10 @@ export default class ArticleCategory extends QueryUtil{
                 },
                 removeArticleCategory: async (obj: any, args: IMutationRemoveArticleCategoryArgs, context: any): Promise<IArticleCategory> => {
                     await this.findById(args.id);
+                    await this.setAnotherTableForNextRequest('article');
+                    await this.errorIfExists({
+                        articleCategoryId: args.id,
+                    }, 'This category is used in the article');
                     return context.prisma.articleCategory.delete({
                         where: {
                             id: args.id,

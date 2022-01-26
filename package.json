@@ -10,11 +10,11 @@
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:seed": "ts-node ./prisma/seed.ts",
-    "test:generate": "export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma generate",
-    "test:migrate": "export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma migrate dev",
-    "test:seed": "export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npm run prisma:seed",
-    "test:run": "export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && jest -i",
-    "code:generate": "export DONE_ENV=test && ts-node src/codegenerator/index.ts"
+    "test:generate": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma generate",
+    "test:migrate": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma migrate dev",
+    "test:seed": "export NODE_ENV=test export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npm run prisma:seed",
+    "test:run": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && jest -i --coverage",
+    "code:generate": "export NODE_ENV=test && ts-node src/codegenerator/index.ts"
   },
   "keywords": [],
   "author": "",

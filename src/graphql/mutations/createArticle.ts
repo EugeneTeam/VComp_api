@@ -1,4 +1,4 @@
-export const CREATE_ARTICLE = `mutation CreateArticle($input: ArticelInput!) {
+export const CREATE_ARTICLE = `mutation CreateArticle($input: ArticleInput!) {
   createArticle(input: $input) {
     id
     articleCategoryId

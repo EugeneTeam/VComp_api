@@ -136,7 +136,7 @@ model Product {
     description String @db.Text
     price Float
     discountId Int?
-    discount Discount @relation(fields: [discountId], references: [id])
+    discount Discount? @relation(fields: [discountId], references: [id])
     categoryId Int
     category Category @relation(fields: [categoryId], references: [id])
     galleryId Int
@@ -223,9 +223,9 @@ model ArticleCategory {
     id Int @id @default(autoincrement())
     name String @db.VarChar(100) @unique
     parentId Int?
-    subCategory ArticleCategory? @relation("ArticleChildCategory", fields: [parentId], references: [id])
-    child ArticleCategory? @relation("ArticleChildCategory")
-    article Article[]
+    subCategory ArticleCategory[] @relation("ArticleChildCategory", fields: [parentId], references: [id])
+    child ArticleCategory[] @relation("ArticleChildCategory")
+    articles Article[]
     @@map("ArticleCategorys")
 }
 

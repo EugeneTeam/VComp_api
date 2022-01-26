@@ -1,13 +1,14 @@
 import faker from 'faker';
 import {
-    GOVERNING_MANAGER_EMAIL,
+    GOVERNING_ARTICLE_MANAGER_EMAIL,
     BANNER_MANAGER_EMAIL,
     CUSTOMER_EMAIL,
     MANAGER_EMAIL,
     USER_STATUS,
     ADMIN_EMAIL,
     USER_ROLE,
-    EUsers
+    EUsers,
+    EArticleStatus
 } from '../constants';
 
 export const createDataForSignIn = (email: string | null = null, repeatPassword: boolean = true) => {
@@ -27,7 +28,7 @@ export const getInputDataForSignIn = (user: EUsers, rememberMe: boolean = false)
     if (user === EUsers.ADMIN) { email = ADMIN_EMAIL; }
     if (user === EUsers.MANAGER) { email = MANAGER_EMAIL; }
     if (user === EUsers.CUSTOMER) { email = CUSTOMER_EMAIL; }
-    if (user === EUsers.GOVERNING_MANAGER) { email = GOVERNING_MANAGER_EMAIL; }
+    if (user === EUsers.GOVERNING_ARTICLE_MANAGER) { email = GOVERNING_ARTICLE_MANAGER_EMAIL; }
     if (user === EUsers.BANNER_MANAGER) { email = BANNER_MANAGER_EMAIL; }
     return {
         password: '123456789',
@@ -49,4 +50,30 @@ export const createDataForCreateOrUpdateUser = (id: number | null = null, repeat
             'max': 2
         })]
     }
+}
+
+export const createDataForDeliveryService = () => {
+    return ({
+        name: faker.lorem.word(),
+        isActive: Math.random() < 0.5,
+        info: faker.lorem.text(),
+    });
+}
+
+export const createDataForArticle = (articleCategoryId: number) => {
+    return ({
+        source: faker.internet.url(),
+        status: Math.random() < 0.5 ? EArticleStatus.HIDDEN : EArticleStatus.VISIBLE,
+        image: faker.image.imageUrl(),
+        text: faker.lorem.text(),
+        articleCategoryId,
+        title: faker.name.title(),
+    });
+}
+
+export const createDataForArticleCategory = (parentId: number | null = null) => {
+    return ({
+        name: `${faker.lorem.word()}${Date.now()}`,
+        parentId: parentId
+    })
 }

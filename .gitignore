@@ -2,6 +2,7 @@
 node_modules
 prisma/migrations
 .idea
+/coverage/
 
 # files
 .env

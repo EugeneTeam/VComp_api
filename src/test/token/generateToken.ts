@@ -1,4 +1,4 @@
-import {getInputDataForSignIn} from '../factories/user';
+import {getInputDataForSignIn} from '../factories';
 import {EUsers} from '../constants';
 import {LOG_IN} from "../../graphql/queries";
 

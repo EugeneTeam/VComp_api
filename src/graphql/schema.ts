@@ -30,7 +30,7 @@ import {GraphQLSchema} from "graphql/index";
 
 export const typeDefs: any = gql`
     
-	directive @hasRole(role: String) on FIELD_DEFINITION
+	directive @hasRole(roles: [String]) on FIELD_DEFINITION
 	directive @auth on FIELD_DEFINITION
     
     ${User.typeDefs()}
@@ -89,97 +89,97 @@ export const typeDefs: any = gql`
 		getBanners(pagination: Pagination): BannerQuantityAndList
         
 		getArticleCategory(id: Int!): ArticleCategory
-		getArticleCategories(filter: ArticleCategoryFilter, pagination: Pagination): ArticleCategory
+		getArticleCategories(filter: ArticleCategoryFilter, pagination: Pagination): ArticleCategoryQuantityAndList
 		
 		logIn(input: LogInInput): Token
         
-		getRoles(limit: Int, offset: Int): [Role]                                                                       @auth @hasRole(role: "ADMIN")
+		getRoles(limit: Int, offset: Int): [Role]                                                                       @auth @hasRole(roles: ["ADMIN"])
 		
-		getArticle(id: Int!): Boolean
+		getArticle(id: Int!): Article
 		getArticles(filter: ArticleFilter, pagination: Pagination): ArticleResponse
 
-		getPaymentTypes(limit: Int, offset: Int): [PaymentType]                                                         @auth @hasRole(role: "ADMIN")
-		getPaymentType(id: Int!): PaymentType                                                                           @auth @hasRole(role: "ADMIN")
-		getUsers(filter: UserInputFilter): UsersAndCount                                                                @auth @hasRole(role: "ADMIN")
-		getUser(id: Int!): User                                                                                         @auth @hasRole(role: "ADMIN")
+		getPaymentTypes(limit: Int, offset: Int): [PaymentType]                                                         @auth @hasRole(roles: ["ADMIN"])
+		getPaymentType(id: Int!): PaymentType                                                                           @auth @hasRole(roles: ["ADMIN"])
+		getUsers(filter: UserInputFilter): UsersAndCount                                                                @auth @hasRole(roles: ["ADMIN"])
+		getUser(id: Int!): User                                                                                         @auth @hasRole(roles: ["ADMIN"])
 
-		getDeliveryService(id: Int!): DeliveryService																	@auth @hasRole(role: "ADMIN")
-		getDeliveryServices: [DeliveryService]																			@auth @hasRole(role: "ADMIN")
+		getDeliveryService(id: Int!): DeliveryService																	@auth @hasRole(roles: ["ADMIN"])
+		getDeliveryServices: [DeliveryService]																			@auth @hasRole(roles: ["ADMIN"])
     }
     
     type Mutation {
-		addImages(input: AddImages): [Image]
-		removeImages(input: RemoveImages): [Image]
-		updateImage(input: AddImages, id: Int!): Image
+		addImages(input: AddImages): [Image]																			@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeImages(input: RemoveImages): [Image]																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateImage(input: AddImages, id: Int!): Image																	@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		
-		createProduct(input: ProductInput): Product
-		updateProduct(input: ProductInput, id: Int!): Product
-		removeProduct(id: Int!): Product
+		createProduct(input: ProductInput): Product																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateProduct(input: ProductInput, id: Int!): Product															@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeProduct(id: Int!): Product																				@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		
-		createGallery(input: GalleryInput): Gallery
-		updateGallery(input: GalleryInput, id: Int!): Gallery
-		removeGallery(id: Int!): Gallery
+		createGallery(input: GalleryInput): Gallery																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateGallery(input: GalleryInput, id: Int!): Gallery															@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeGallery(id: Int!): Gallery																				@auth @hasRole(roles: ["ADMIN", "MANAGER"])
         
-		addDiscount(input: DiscountInput): Discount
-		updateDiscount(input: DiscountInput, id: Int!): Discount
-		removeDiscount(id: Int!): Discount
+		addDiscount(input: DiscountInput): Discount																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateDiscount(input: DiscountInput, id: Int!): Discount														@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeDiscount(id: Int!): Discount																				@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		
-		createDeliveryType(input: CreateDeliveryTypeInput): DeliveryType
-		updateDeliveryType(input: CreateDeliveryTypeInput, id: Int!): DeliveryType
-		removeDeliveryType(id: Int!): DeliveryType
+		createDeliveryType(input: CreateDeliveryTypeInput): DeliveryType												@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateDeliveryType(input: CreateDeliveryTypeInput, id: Int!): DeliveryType										@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeDeliveryType(id: Int!): DeliveryType																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
         
-		addComment(input: AddComment): Comment
-		removeComment(id: Int!): Comment
+		addComment(input: AddComment): Comment																			@auth @hasRole(roles: ["CUSTOMER"])
+		removeComment(id: Int!): Comment																				@auth @hasRole(roles: ["ADMIN"])
         
-		createCharacteristic(input: CharacteristicInput): Characteristic
-		updateCharacteristic(input: CharacteristicInput, id: Int!): Characteristic
-		removeCharacteristic(id: Int!): Characteristic
+		createCharacteristic(input: CharacteristicInput): Characteristic												@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateCharacteristic(input: CharacteristicInput, id: Int!): Characteristic										@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeCharacteristic(id: Int!): Characteristic																	@auth @hasRole(roles: ["ADMIN", "MANAGER"])
         
-		createCategory(input: CategoryInput): Category
-		updateCategory(input: CategoryInput, id: Int!): Category
-		removeCategory(id: Int!): Category
+		createCategory(input: CategoryInput): Category																	@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateCategory(input: CategoryInput, id: Int!): Category														@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeCategory(id: Int!): Category																				@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		
-		addBannerImages(input: [AddImageBanner]): [ImageBanner]
-		updateBannerImage(input: AddImageBanner, id: Int!): ImageBanner
-		removeBannerImage(id: Int!): ImageBanner
+		addBannerImages(input: [AddImageBanner]): [ImageBanner]															@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
+		updateBannerImage(input: AddImageBanner, id: Int!): ImageBanner													@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
+		removeBannerImage(id: Int!): ImageBanner																		@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
 		
-		createBanner(input: BannerInput): Banner
-		updateBanner(input: BannerInput, id: Int!): Banner
-		removeBanner(id: Int!): Banner
+		createBanner(input: BannerInput): Banner																		@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
+		updateBanner(input: BannerInput, id: Int!): Banner																@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
+		removeBanner(id: Int!): Banner																					@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
         
-		createArticleCategory(input: ArticleCategoryInput!): ArticleCategory
-		updateArticleCategory(input: ArticleCategoryInput!, id: Int!): ArticleCategory
-		removeArticleCategory(id: Int!): ArticleCategory
+		createArticleCategory(input: ArticleCategoryInput!): ArticleCategory											#@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		updateArticleCategory(input: ArticleCategoryInput!, id: Int!): ArticleCategory									#@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		removeArticleCategory(id: Int!): ArticleCategory																#@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 
-		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										#@auth @hasRole(role: "ADMIN")
-		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										#@auth @hasRole(role: "ADMIN")
-		removeDeliveryService(id: Int!): DeliveryService																#@auth @hasRole(role: "ADMIN")
+		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										@auth @hasRole(roles: ["ADMIN"])
+		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										@auth @hasRole(roles: ["ADMIN"])
+		removeDeliveryService(id: Int!): DeliveryService																@auth @hasRole(roles: ["ADMIN"])
 		
-		banUser(input: BanUserInput): User                                                                              @auth @hasRole(role: "ADMIN")
-		unbanUser(input: UnbanUserInput): User                                                                          @auth @hasRole(role: "ADMIN")
+		banUser(input: BanUserInput, some: [String]!): User                                                             @auth @hasRole(roles: ["ADMIN"])
+		unbanUser(input: UnbanUserInput): User                                                                          @auth @hasRole(roles: ["ADMIN"])
         
 		signIn(input: SignInInput): User
         
-		createRole(name: String!): Role                                                                                 @auth @hasRole(role: "ADMIN")
-		updateRole(id: Int!, name: String!): Role                                                                       @auth @hasRole(role: "ADMIN")
-		removeRole(id: Int!): Role                                                                                      @auth @hasRole(role: "ADMIN")
+		createRole(name: String!): Role                                                                                 @auth @hasRole(roles: ["ADMIN"])
+		updateRole(id: Int!, name: String!): Role                                                                       @auth @hasRole(roles: ["ADMIN"])
+		removeRole(id: Int!): Role                                                                                      @auth @hasRole(roles: ["ADMIN"])
 		
-        requestCallback(phone: String!): Boolean!                                                                       @auth @hasRole(role: "CUSTOMER")
+        requestCallback(phone: String!): Boolean!                                                                       @auth @hasRole(roles: ["CUSTOMER"])
         
-		closeCallback(id: Int!): Boolean!                                                                               @auth @hasRole(role: "ADMIN")
+		closeCallback(id: Int!): Boolean!                                                                               @auth @hasRole(roles: ["ADMIN", "MANAGER"])
         
-		createArticle(input: ArticelInput!): Article!                                                                   @auth @hasRole(role: "GOVERNING_ARTICLES")
-		updateArticle(input: ArticelInput!, id: Int!): Article                                                          @auth @hasRole(role: "GOVERNING_ARTICLES")
-		removeArticle(id: Int!): Article                                                                                @auth @hasRole(role: "GOVERNING_ARTICLES")
+		createArticle(input: ArticleInput!): Article! #                                                                  @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		updateArticle(input: ArticleInput!, id: Int!): Article                                                          @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		removeArticle(id: Int!): Article                                                                                @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 
-		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(role: "ADMIN")
-		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(role: "ADMIN")
+		createUser(input: CreateUserInput!): User!                                                                      @auth @hasRole(roles: ["ADMIN"])
+		updateUser(input: UpdateUserInput): User!                                                                       @auth @hasRole(roles: ["ADMIN"])
 
-		addOrRemoveFavorite(input: FavoriteIpnut!): Favorite                                                            @auth @hasRole(role: "CUSTOMER")
+		addOrRemoveFavorite(input: FavoriteIpnut!): Favorite                                                            @auth @hasRole(roles: ["CUSTOMER"])
 
-		createPaymentType(input: PaymentTypeInput!): PaymentType                                                        @auth @hasRole(role: "ADMIN")
-		removePaymentType(id: Int!): PaymentType                                                                        @auth @hasRole(role: "ADMIN")
-		updatePaymentType(input: PaymentTypeInput!, id: Int!): PaymentType                                              @auth @hasRole(role: "ADMIN")
+		createPaymentType(input: PaymentTypeInput!): PaymentType                                                        @auth @hasRole(roles: ["ADMIN"])
+		removePaymentType(id: Int!): PaymentType                                                                        @auth @hasRole(roles: ["ADMIN"])
+		updatePaymentType(input: PaymentTypeInput!, id: Int!): PaymentType                                              @auth @hasRole(roles: ["ADMIN"])
     }
 `;
 

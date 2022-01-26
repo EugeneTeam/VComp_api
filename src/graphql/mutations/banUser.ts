@@ -1,5 +1,5 @@
-export const BAN_USER = `mutation BanUser($input: BanUserInput) {
-  banUser(input: $input) {
+export const BAN_USER = `mutation BanUser($input: BanUserInput, $some: [String]!) {
+  banUser(input: $input, some: $some) {
     id
     fullName
     phone

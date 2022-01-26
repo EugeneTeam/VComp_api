@@ -3,10 +3,10 @@ import { prisma } from "../../config/prismaClient";
 export const getKeyValue = <U extends keyof T, T extends object>(key: U) => (obj: T) => obj[key];
 
 export class QueryUtil {
-    private static tableName: string = '';
-    private static table: any = null;
-    private static isInit: boolean = false;
-    private static tempTable: any = {
+    static tableName: string = '';
+    static table: any = null;
+    static isInit: boolean = false;
+    static tempTable: any = {
         model: null,
         name: null
     };
@@ -72,7 +72,7 @@ export class QueryUtil {
         return data;
     }
 
-    static errorIfExists = async (where: any, errorMsg: string) => {
+    static async errorIfExists(where: any, errorMsg: string) {
         this.checkStatus();
         const data = await (this.getActualTable()).findMany({ where });
         if (data?.length) {
@@ -81,7 +81,7 @@ export class QueryUtil {
         this.clearTempTable();
     }
 
-    static errorIfNotCreated = async (where: any, errorMsg: string) => {
+    static async errorIfNotCreated(where: any, errorMsg: string) {
         this.checkStatus();
         const data = await (this.getActualTable()).findMany({ where });
         if (!data?.length) {
@@ -96,7 +96,6 @@ export class QueryUtil {
             ...(limit ? { take: limit } : null),
             ...(offset ? { skip: offset } : null),
         };
-
 
         const count: any = await (this.getActualTable()).aggregate({
             _count: {
