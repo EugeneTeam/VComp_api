@@ -33,7 +33,7 @@ export default class Banner extends QueryUtil{
                         where: {
                             id: args.id,
                         },
-                        date: args.input,
+                        data: args.input,
                     });
                 },
                 removeBanner: async (obj: any, args: IMutationRemoveBannerArgs, context: any): Promise<IBanner> => {

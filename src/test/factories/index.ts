@@ -8,7 +8,9 @@ import {
     ADMIN_EMAIL,
     USER_ROLE,
     EUsers,
-    EArticleStatus
+    EArticleStatus,
+    EBannerPositionX,
+    EBannerPositionY
 } from '../constants';
 
 export const createDataForSignIn = (email: string | null = null, repeatPassword: boolean = true) => {
@@ -39,7 +41,7 @@ export const getInputDataForSignIn = (user: EUsers, rememberMe: boolean = false)
 export const createDataForCreateOrUpdateUser = (id: number | null = null, repeatPassword: boolean = true) => {
     const part1 = createDataForSignIn(null, repeatPassword);
     return {
-        ...(id ? {id} : null),
+        ...(id ? { id } : null),
         ...part1,
         role: USER_ROLE[faker.datatype.number({
             'min': 0,
@@ -75,5 +77,26 @@ export const createDataForArticleCategory = (parentId: number | null = null) => 
     return ({
         name: `${faker.lorem.word()}${Date.now()}`,
         parentId: parentId
+    })
+}
+
+
+export const createDataForBanner = () => {
+    return ({
+        page: faker.lorem.word(),
+        title: faker.lorem.word(),
+        positionX: [
+            EBannerPositionX.LEFT,
+            EBannerPositionX.RIGHT,
+            EBannerPositionX.MIDDLE
+        ]
+            [faker.datatype.number({ min: 0, max: 2 })],
+        positionY: [
+            EBannerPositionY.BOTTOM,
+            EBannerPositionY.TOP,
+            EBannerPositionY.MIDDLE
+        ]
+            [faker.datatype.number({ min: 0, max: 2 })],
+        html: faker.lorem.word(),
     })
 }

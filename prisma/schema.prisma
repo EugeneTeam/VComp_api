@@ -38,7 +38,7 @@ enum ArticleStatus {
 enum BannerPositionX {
     LEFT
     MIDDLE
-    RIHGT
+    RIGHT
 }
 
 enum BannerPositionY {

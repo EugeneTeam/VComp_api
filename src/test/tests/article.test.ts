@@ -122,7 +122,7 @@ describe('Successful article get/get(many) operations', function() {
     });
 });
 
-describe('PermissionsReturn "Access Denied"', function() {
+describe('Permissions return "Access Denied"', function() {
     it('Creating an article without permission will return an error', async function () {
         try {
             const client = new GraphQLClient(config.url);

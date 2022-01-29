@@ -18,6 +18,18 @@ export const USER_STATUS = [
     'BANNED',
 ]
 
+
+export enum EBannerPositionX {
+    LEFT = "LEFT",
+    MIDDLE = "MIDDLE",
+    RIGHT = "RIGHT"
+}
+
+export enum EBannerPositionY {
+    TOP = "TOP",
+    MIDDLE = "MIDDLE",
+    BOTTOM = "BOTTOM"
+}
 export enum EUsers {
     ADMIN = "ADMIN",
     MANAGER = "MANAGER",
