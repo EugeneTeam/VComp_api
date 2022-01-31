@@ -21,18 +21,11 @@ export default class BannerImage extends QueryUtil{
                 },
             },
             Mutation: {
-                addBannerImages: async (obj: any, args: IMutationAddBannerImagesArgs, context: any): Promise<Array<BannerImage>> => {
-                    const result = [];
-                    if (args?.input) {
-                        for (const image of args.input) {
-                            const temp = await context.prisma.bannerImage.create({
-                                data: args.input,
-                                skipDuplicates: true,
-                            });
-                            result.push(temp);
-                        }
-                    }
-                    return result;
+                addBannerImages: async (obj: any, args: IMutationAddBannerImagesArgs, context: any): Promise<number> => {
+                    const temp = await context.prisma.bannerImage.createMany({
+                        data: args.input,
+                    });
+                    return temp.count;
                 },
                 updateBannerImage: async (obj: any, args: IMutationUpdateBannerImageArgs, context: any): Promise<IImageBanner> => {
                     await this.findById(args.id);

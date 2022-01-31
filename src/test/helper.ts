@@ -1,9 +1,9 @@
 import dotEnv from 'dotenv';
 dotEnv.config();
 
-import {server} from '../server';
-import {PrismaClient} from '@prisma/client';
-import {Headers} from 'cross-fetch';
+import { server } from '../server';
+import { PrismaClient } from '@prisma/client';
+import { Headers } from 'cross-fetch';
 
 // @ts-ignore
 global.Headers = global.Headers || Headers;

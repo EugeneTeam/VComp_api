@@ -139,7 +139,7 @@ export const typeDefs: any = gql`
 		updateCategory(input: CategoryInput, id: Int!): Category														@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		removeCategory(id: Int!): Category																				@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		
-		addBannerImages(input: [AddImageBanner]): [ImageBanner]															@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
+		addBannerImages(input: [AddImageBanner]): Int																	@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
 		updateBannerImage(input: AddImageBanner, id: Int!): ImageBanner													@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
 		removeBannerImage(id: Int!): ImageBanner																		@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
 		

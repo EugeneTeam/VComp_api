@@ -1,3 +1,4 @@
+import faker from "faker";
 import { GraphQLClient } from "graphql-request";
 import { getConfig} from '../helper';
 import { getBearerToken } from "../token/generateToken";
@@ -7,18 +8,19 @@ import { createDataForArticleCategory } from "../factories";
 import {
     CREATE_ARTICLE_CATEGORY,
     UPDATE_ARTICLE_CATEGORY,
-    REMOVE_ARTICLE_CATEGORY, REMOVE_ARTICLE,
+    REMOVE_ARTICLE_CATEGORY,
 } from "../../graphql/mutations";
 import {
     GET_ARTICLE_CATEGORY,
-    GET_ARTICLE_CATEGORIES, GET_ARTICLE, GET_ARTICLES
+    GET_ARTICLE_CATEGORIES,
 } from '../../graphql/queries';
 import {getKeyValue} from "../../typescript/utils/helper";
 import {
     ArticleCategory as IArticleCategory,
     ArticleCategoryQuantityAndList as IArticleCategoryQuantityAndList
 } from "../../graphql";
-import faker from "faker";
+import { getRandomEntry, compareObjects } from '../utils/helper';
+
 
 const config: any = getConfig();
 
@@ -34,16 +36,13 @@ describe('Successful article category creation/update/deletion operations', func
             input: newInputData
         });
 
-        Object.keys(newInputData).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(newInputData))
-                .toBe(getKeyValue<string, any>(field)(newArticleCategory.createArticleCategory));
-        });
+        compareObjects(newInputData, newArticleCategory.createArticleCategory);
     });
 
     it('Successful article category update', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategory = await prisma.articleCategory.findFirst();
+        const articleCategory = await getRandomEntry('articleCategory');
         const newInputData = createDataForArticleCategory();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
@@ -53,10 +52,7 @@ describe('Successful article category creation/update/deletion operations', func
             id: articleCategory!.id,
         });
 
-        Object.keys(newInputData).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(newInputData))
-                .toBe(getKeyValue<string, any>(field)(updatedArticle.updateArticleCategory));
-        });
+        compareObjects(newInputData, updatedArticle.updateArticleCategory);
     });
 
     it('Successfully deleting an article category', async function () {
@@ -81,7 +77,7 @@ describe('Successful article category creation/update/deletion operations', func
         let articleCategory: any = articleCategories.find((item: any) => !item?.articles?.length);
 
         const removedArticle: { removeArticleCategory: IArticleCategory } = await client.request(REMOVE_ARTICLE_CATEGORY, {
-            id: articleCategory!.id,
+            id: articleCategory?.id,
         });
 
         // @ts-ignore
@@ -97,18 +93,15 @@ describe('Successful article category get/get(many) operations', function() {
     it('Get article category by id', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategory = await prisma.articleCategory.findFirst();
+        const articleCategory = await getRandomEntry('articleCategory');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
         const findArticleCategory: { getArticleCategory: IArticleCategory } = await client.request(GET_ARTICLE_CATEGORY, {
-            id: articleCategory!.id,
+            id: articleCategory?.id,
         });
-        // @ts-ignore
-        Object.keys(articleCategory).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(articleCategory))
-                .toBe(getKeyValue<string, any>(field)(findArticleCategory.getArticleCategory));
-        });
+
+        compareObjects(articleCategory, findArticleCategory.getArticleCategory);
     });
 
     it('Get list of article category', async function () {
@@ -138,7 +131,7 @@ describe('Search article category by name', function() {
     it('Successful search for a category by title', async function() {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategory = await prisma.articleCategory.findFirst();
+        const articleCategory = await getRandomEntry('articleCategory');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 

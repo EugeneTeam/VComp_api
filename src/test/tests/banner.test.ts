@@ -14,9 +14,7 @@ import {
     GET_BANNERS,
 } from '../../graphql/queries';
 import { getBearerToken } from '../token/generateToken'
-import { prisma } from "../../config/prismaClient";
-import { getKeyValue } from '../../typescript/utils/helper';
-import { compareObjects } from '../utils/helper';
+import {compareObjects, getRandomEntry} from '../utils/helper';
 
 const config: any = getConfig();
 
@@ -38,7 +36,7 @@ describe('Successful banner creation/update/deletion operations', function() {
     it('Successful banner update', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await prisma.banner.findFirst();
+        const banner = await getRandomEntry('banner');
         const newInputData = createDataForBanner();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
@@ -48,16 +46,13 @@ describe('Successful banner creation/update/deletion operations', function() {
             id: banner?.id,
         });
 
-        Object.keys(newInputData).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(newInputData))
-                .toBe(getKeyValue<string, any>(field)(updatedBanner.updateBanner));
-        });
+        compareObjects(newInputData, updatedBanner.updateBanner);
     });
 
     it('Successfully deleting an banner', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await prisma.banner.findFirst();
+        const banner = await getRandomEntry('banner');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -73,7 +68,7 @@ describe('Successful banner get/get(many) operations', function() {
     it('Get banner by id', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await prisma.banner.findFirst();
+        const banner = await getRandomEntry('banner');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 

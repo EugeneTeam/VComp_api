@@ -236,7 +236,7 @@ model Banner {
     positionX BannerPositionX
     positionY BannerPositionY
     html String @db.Text
-    bannerImage BannerImage?
+    bannerImage BannerImage[]
     @@map("Banners")
 }
 

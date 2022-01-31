@@ -80,7 +80,6 @@ export const createDataForArticleCategory = (parentId: number | null = null) => 
     })
 }
 
-
 export const createDataForBanner = () => {
     return ({
         page: faker.lorem.word(),
@@ -99,4 +98,13 @@ export const createDataForBanner = () => {
             [faker.datatype.number({ min: 0, max: 2 })],
         html: faker.lorem.word(),
     })
+}
+
+export const createDataForBannerImage = (bannerId: number | undefined) => {
+    return ({
+        bannerId,
+        imageUrl: faker.image.imageUrl(),
+        title: faker.lorem.word(),
+        productUrl: faker.internet.url(),
+    });
 }

@@ -13,7 +13,8 @@
     "test:generate": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma generate",
     "test:migrate": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma migrate dev",
     "test:seed": "export NODE_ENV=test export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npm run prisma:seed",
-    "test:run": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && jest -i --coverage",
+    "test:run": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && jest -i",
+    "test:run:dev": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && jest src/test/tests/DEV.test.ts",
     "code:generate": "export NODE_ENV=test && ts-node src/codegenerator/index.ts"
   },
   "keywords": [],

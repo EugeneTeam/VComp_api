@@ -38,6 +38,11 @@ export default class Banner extends QueryUtil{
                 },
                 removeBanner: async (obj: any, args: IMutationRemoveBannerArgs, context: any): Promise<IBanner> => {
                     await this.findById(args.id);
+                    await context.prisma.bannerImage.deleteMany({
+                        where: {
+                            bannerId: args.id,
+                        },
+                    });
                     return context.prisma.banner.delete({
                         where: {
                             id: args.id,

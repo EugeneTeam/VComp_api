@@ -8,12 +8,9 @@ import {
     getInputDataForSignIn
 } from '../factories';
 import { ADMIN_EMAIL, EUsers } from '../constants';
-
 import { CREATE_USER, SIGN_IN } from '../../graphql/mutations';
 import { GET_ROLES, LOG_IN } from '../../graphql/queries';
-
 import { User } from '../../graphql';
-
 import { getBearerToken } from '../token/generateToken'
 
 const config: any = getConfig();

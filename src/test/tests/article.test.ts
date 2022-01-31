@@ -1,3 +1,4 @@
+import faker from "faker";
 import { GraphQLClient } from "graphql-request";
 import { getConfig} from '../helper';
 import {
@@ -18,9 +19,9 @@ import {
     GET_ARTICLES,
 } from '../../graphql/queries';
 import { getBearerToken } from '../token/generateToken'
-import { prisma } from "../../config/prismaClient";
 import { getKeyValue } from '../../typescript/utils/helper';
-import faker from "faker";
+import { getRandomEntry, compareObjects } from '../utils/helper';
+import {prisma} from "../../config/prismaClient";
 
 const config: any = getConfig();
 
@@ -28,7 +29,7 @@ describe('Successful article creation/update/deletion operations', function() {
     it('Successful creation of a new article', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const category = await prisma.articleCategory.findFirst();
+        const category = await getRandomEntry('articleCategory');
         const newInputData = createDataForArticle(category!.id);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
@@ -36,36 +37,31 @@ describe('Successful article creation/update/deletion operations', function() {
         const newArticle: { createArticle: IArticle } = await client.request(CREATE_ARTICLE, {
             input: newInputData
         });
-        Object.keys(newInputData).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(newInputData))
-                .toBe(getKeyValue<string, any>(field)(newArticle.createArticle));
-        });
+
+        compareObjects(newInputData, newArticle.createArticle);
     });
 
     it('Successful article update', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const categories = await prisma.articleCategory.findMany();
-        const article = await prisma.article.findFirst();
-        const newInputData = createDataForArticle(categories[categories?.length - 1]!.id);
+        const category = await getRandomEntry('articleCategory');
+        const article = await getRandomEntry('article');
+        const newInputData = createDataForArticle(category?.id);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
         const updatedArticle: { updateArticle: IArticle } = await client.request(UPDATE_ARTICLE, {
             input: newInputData,
-            id: article!.id,
+            id: article?.id,
         });
 
-        Object.keys(newInputData).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(newInputData))
-                .toBe(getKeyValue<string, any>(field)(updatedArticle.updateArticle));
-        });
+        compareObjects(newInputData, updatedArticle.updateArticle);
     });
 
     it('Successfully deleting an article', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const article = await prisma.article.findFirst();
+        const article = await getRandomEntry('article');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -73,11 +69,7 @@ describe('Successful article creation/update/deletion operations', function() {
             id: article!.id,
         });
 
-        // @ts-ignore
-        Object.keys(article).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(article))
-                .toBe(getKeyValue<string, any>(field)(removedArticle.removeArticle));
-        });
+        compareObjects(article, removedArticle.removeArticle);
     });
 });
 
@@ -85,18 +77,15 @@ describe('Successful article get/get(many) operations', function() {
     it('Get article by id', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const article = await prisma.article.findFirst();
+        const article = await getRandomEntry('article');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
         const findArticle: { getArticle: IArticle } = await client.request(GET_ARTICLE, {
             id: article!.id,
         });
-        // @ts-ignore
-        Object.keys(article).forEach((field: any) => {
-            expect(getKeyValue<string, any>(field)(article))
-                .toBe(getKeyValue<string, any>(field)(findArticle.getArticle));
-        });
+
+        compareObjects(article, findArticle.getArticle);
     });
 
     it('Get list of article', async function () {
@@ -110,7 +99,7 @@ describe('Successful article get/get(many) operations', function() {
 
         const index = faker.datatype.number({
             'min': 0,
-            'max': articles.length - 1
+            'max': articles.length - 1,
         });
 
         expect(listOfArticles.getArticles.count).toBe(articles.length);
@@ -127,13 +116,13 @@ describe('Permissions return "Access Denied"', function() {
         try {
             const client = new GraphQLClient(config.url);
             const token = await getBearerToken(EUsers.CUSTOMER, client);
-            const category = await prisma.articleCategory.findFirst();
+            const category = await getRandomEntry('articleCategory');
             const newInputData = createDataForArticle(category!.id);
 
             client.setHeader('Authorization', `Bearer ${ token }`);
 
             await client.request(CREATE_ARTICLE, {
-                input: newInputData
+                input: newInputData,
             });
 
         } catch (e: any) {
@@ -148,9 +137,9 @@ describe('Permissions return "Access Denied"', function() {
         try {
             const client = new GraphQLClient(config.url);
             const token = await getBearerToken(EUsers.CUSTOMER, client);
-            const categories = await prisma.articleCategory.findMany();
-            const article = await prisma.article.findFirst();
-            const newInputData = createDataForArticle(categories[categories?.length - 1]!.id);
+            const categories = await getRandomEntry('articleCategory');
+            const article = await getRandomEntry('article');
+            const newInputData = createDataForArticle(categories?.id);
 
             client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -170,7 +159,7 @@ describe('Permissions return "Access Denied"', function() {
         try {
             const client = new GraphQLClient(config.url);
             const token = await getBearerToken(EUsers.CUSTOMER, client);
-            const article = await prisma.article.findFirst();
+            const article = await getRandomEntry('article');
 
             client.setHeader('Authorization', `Bearer ${ token }`);
 
