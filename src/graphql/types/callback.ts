@@ -10,6 +10,10 @@ export default class Callback {
         return {
             Mutation: {
                 requestCallback: async (obj: any, args: IMutationRequestCallbackArgs, context: any): Promise<boolean> => {
+                    if (args.phone.length > 15) {
+                        throw new Error('Phone number is too long');
+                    }
+
                     const checkCallback: ICallback = await context.prisma.callback.findFirst({
                         where: {
                             phone: args.phone,

@@ -147,9 +147,9 @@ export const typeDefs: any = gql`
 		updateBanner(input: BannerInput, id: Int!): Banner																@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
 		removeBanner(id: Int!): Banner																					@auth @hasRole(roles: ["ADMIN", "BANNER_MANAGER"])
         
-		createArticleCategory(input: ArticleCategoryInput!): ArticleCategory											#@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
-		updateArticleCategory(input: ArticleCategoryInput!, id: Int!): ArticleCategory									#@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
-		removeArticleCategory(id: Int!): ArticleCategory																#@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		createArticleCategory(input: ArticleCategoryInput!): ArticleCategory											@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		updateArticleCategory(input: ArticleCategoryInput!, id: Int!): ArticleCategory									@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		removeArticleCategory(id: Int!): ArticleCategory																@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 
 		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										@auth @hasRole(roles: ["ADMIN"])
 		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										@auth @hasRole(roles: ["ADMIN"])
@@ -168,7 +168,7 @@ export const typeDefs: any = gql`
         
 		closeCallback(id: Int!): Boolean!                                                                               @auth @hasRole(roles: ["ADMIN", "MANAGER"])
         
-		createArticle(input: ArticleInput!): Article! #                                                                  @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
+		createArticle(input: ArticleInput!): Article!                                                                   @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 		updateArticle(input: ArticleInput!, id: Int!): Article                                                          @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 		removeArticle(id: Int!): Article                                                                                @auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 
