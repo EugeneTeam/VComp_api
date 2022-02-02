@@ -24,7 +24,7 @@ export default class Category extends QueryUtil {
             Mutation: {
                 createCategory: async (obj: any, args: IMutationCreateCategoryArgs, context: any): Promise<Category> => {
                     await this.errorIfExists({ name: args?.input?.name }, 'A category with this name has already been created');
-                    return context.prisma.category.craete({
+                    return context.prisma.category.create({
                         data: args.input,
                     });
                 },

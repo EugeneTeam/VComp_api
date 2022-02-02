@@ -10,6 +10,7 @@ import { addArticles } from '../src/seeds/article';
 import { addBanner } from '../src/seeds/banner';
 import { addBannerImages } from '../src/seeds/bannerImage';
 import { addCallback } from '../src/seeds/callback';
+import { addCategory } from '../src/seeds/category';
 
 const prisma: PrismaClient = new PrismaClient();
 
@@ -32,6 +33,11 @@ async function main() {
         await addBannerImages(prisma, 10, banners.map((item: any) => item.id));
 
         await addCallback(prisma, 10);
+
+        await addCategory(prisma, 10, []);
+
+        const categories = await prisma.category.findMany();
+        await addCategory(prisma, 10, categories.map((item: any) => item.id));
     }
 }
 

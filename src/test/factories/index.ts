@@ -13,6 +13,8 @@ import {
     EBannerPositionY
 } from '../constants';
 
+const word = () => `${faker.lorem.word()}${Math.random().toString().replace('.', '_')}`;
+
 export const createDataForSignIn = (email: string | null = null, repeatPassword: boolean = true) => {
     const password = faker.internet.password()
     return ({
@@ -56,7 +58,7 @@ export const createDataForCreateOrUpdateUser = (id: number | null = null, repeat
 
 export const createDataForDeliveryService = () => {
     return ({
-        name: faker.lorem.word(),
+        name: word(),
         isActive: Math.random() < 0.5,
         info: faker.lorem.text(),
     });
@@ -75,15 +77,15 @@ export const createDataForArticle = (articleCategoryId: number) => {
 
 export const createDataForArticleCategory = (parentId: number | null = null) => {
     return ({
-        name: `${faker.lorem.word()}${Date.now()}`,
+        name: word(),
         parentId: parentId
     })
 }
 
 export const createDataForBanner = () => {
     return ({
-        page: faker.lorem.word(),
-        title: faker.lorem.word(),
+        page: word(),
+        title: word(),
         positionX: [
             EBannerPositionX.LEFT,
             EBannerPositionX.RIGHT,
@@ -96,7 +98,7 @@ export const createDataForBanner = () => {
             EBannerPositionY.MIDDLE
         ]
             [faker.datatype.number({ min: 0, max: 2 })],
-        html: faker.lorem.word(),
+        html: word(),
     })
 }
 
@@ -104,7 +106,14 @@ export const createDataForBannerImage = (bannerId: number | undefined) => {
     return ({
         bannerId,
         imageUrl: faker.image.imageUrl(),
-        title: faker.lorem.word(),
+        title: word(),
         productUrl: faker.internet.url(),
+    });
+}
+
+export const createDataForCategory = (parentId: number | null = null) => {
+    return ({
+        name: word(),
+        parentId
     });
 }
