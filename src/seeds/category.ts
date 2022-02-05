@@ -13,7 +13,7 @@ export async function addCategory(prisma: PrismaClient, count: number = 1, paren
         });
     }
 
-    return prisma.article.createMany({
+    return prisma.category.createMany({
         data: entry,
         skipDuplicates: true
     });

@@ -4,5 +4,6 @@ export const GET_CHARACTERISTIC = `query GetCharacteristic($id: Int!) {
     name
     value
     categoryId
+    url
   }
 }`

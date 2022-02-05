@@ -6,6 +6,7 @@ export const GET_CHARACTERISTICS = `query GetCharacteristics($pagination: Pagina
       name
       value
       categoryId
+      url
     }
   }
 }`

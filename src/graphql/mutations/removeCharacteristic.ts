@@ -4,5 +4,6 @@ export const REMOVE_CHARACTERISTIC = `mutation RemoveCharacteristic($id: Int!) {
     name
     value
     categoryId
+    url
   }
 }`

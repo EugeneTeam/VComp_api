@@ -25,7 +25,7 @@ export default class Characteristic extends QueryUtil{
                 createCharacteristic: async (obj: any, args: IMutationCreateCharacteristicArgs, context: any): Promise<ICharacteristic> => {
                     await this.setAnotherTableForNextRequest('category');
                     await this.findById(args.input!.categoryId);
-                    return context.prisma.characteristic.craete({
+                    return context.prisma.characteristic.create({
                         data: args.input,
                     });
                 },
@@ -61,6 +61,7 @@ export default class Characteristic extends QueryUtil{
                 name: String!
                 value: String!
                 categoryId: Int!
+                url: String
             }
 
 			type CharacteristicQuantityAndList {
@@ -74,6 +75,7 @@ export default class Characteristic extends QueryUtil{
 				name: String!
 				value: String!
 				categoryId: Int!
+                url: String
             }
         `;
     }

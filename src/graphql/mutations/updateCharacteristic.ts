@@ -4,5 +4,6 @@ export const UPDATE_CHARACTERISTIC = `mutation UpdateCharacteristic($input: Char
     name
     value
     categoryId
+    url
   }
 }`

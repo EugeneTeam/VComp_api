@@ -112,8 +112,8 @@ it('Return error "A category with this name has already been created"', async fu
     }
 });
 
-describe('Successful article get/get(many) operations', function() {
-    it('Get article by id', async function () {
+describe('Successful category get/get(many) operations', function() {
+    it('Get category by id', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.MANAGER, client);
         const category = await getRandomEntry('category');
@@ -127,7 +127,7 @@ describe('Successful article get/get(many) operations', function() {
         compareObjects(category, findCategory.getCategory);
     });
 
-    it('Get list of article', async function () {
+    it('Get list of category', async function () {
         const client = new GraphQLClient(config.url);
         const token = await getBearerToken(EUsers.MANAGER, client);
         const categories = await prisma.category.findMany();

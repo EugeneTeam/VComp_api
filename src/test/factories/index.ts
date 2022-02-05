@@ -117,3 +117,13 @@ export const createDataForCategory = (parentId: number | null = null) => {
         parentId
     });
 }
+
+
+export const createDataForCharacteristic = (categoryId: number, value: any = null) => {
+    return ({
+        name: word(),
+        value: value ? value : word(),
+        url: faker.internet.url(),
+        categoryId
+    });
+}
