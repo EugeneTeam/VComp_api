@@ -17,6 +17,7 @@ import {
 import {getKeyValue} from "../../typescript/utils/helper";
 import {
     ArticleCategory as IArticleCategory,
+    ArticleCategoryInput as IArticleCategoryInput,
     ArticleCategoryQuantityAndList as IArticleCategoryQuantityAndList
 } from "../../graphql";
 import { getRandomEntry, compareObjects } from '../utils/helper';
@@ -26,9 +27,9 @@ const config: any = getConfig();
 
 describe('Successful article category creation/update/deletion operations', function () {
     it('Successful creation of a new article', async function() {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const newInputData = createDataForArticleCategory();
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
+        const newInputData: IArticleCategoryInput = createDataForArticleCategory();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -40,10 +41,10 @@ describe('Successful article category creation/update/deletion operations', func
     });
 
     it('Successful article category update', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategory = await getRandomEntry('articleCategory');
-        const newInputData = createDataForArticleCategory();
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
+        const articleCategory: IArticleCategory = await getRandomEntry('articleCategory');
+        const newInputData: IArticleCategoryInput = createDataForArticleCategory();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -56,9 +57,9 @@ describe('Successful article category creation/update/deletion operations', func
     });
 
     it('Successfully deleting an article category', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategories = await prisma.articleCategory.findMany({
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
+        const articleCategories: any = await prisma.articleCategory.findMany({
             select: {
                 id: true,
                 name: true,
@@ -74,14 +75,14 @@ describe('Successful article category creation/update/deletion operations', func
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        let articleCategory: any = articleCategories.find((item: any) => !item?.articles?.length);
+        let articleCategory: IArticleCategory = articleCategories.find((item: any) => !item?.articles?.length);
 
         const removedArticle: { removeArticleCategory: IArticleCategory } = await client.request(REMOVE_ARTICLE_CATEGORY, {
             id: articleCategory?.id,
         });
 
         // @ts-ignore
-        Object.keys(removedArticle.removeArticleCategory).forEach((field: any) => {
+        Object.keys(removedArticle.removeArticleCategory).forEach((field: string) => {
             expect(getKeyValue<string, any>(field)(removedArticle.removeArticleCategory))
                 .toBe(getKeyValue<string, any>(field)(articleCategory));
         });
@@ -91,9 +92,9 @@ describe('Successful article category creation/update/deletion operations', func
 
 describe('Successful article category get/get(many) operations', function() {
     it('Get article category by id', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategory = await getRandomEntry('articleCategory');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
+        const articleCategory: IArticleCategory = await getRandomEntry('articleCategory');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -105,15 +106,15 @@ describe('Successful article category get/get(many) operations', function() {
     });
 
     it('Get list of article category', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategories = await prisma.articleCategory.findMany();
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
+        const articleCategories: Array<IArticleCategory> = await prisma.articleCategory.findMany();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
         const listOfArticleCategories: { getArticleCategories: IArticleCategoryQuantityAndList } = await client.request(GET_ARTICLE_CATEGORIES);
 
-        const index = faker.datatype.number({
+        const index: number = faker.datatype.number({
             'min': 0,
             'max': articleCategories.length - 1
         });
@@ -129,9 +130,9 @@ describe('Successful article category get/get(many) operations', function() {
 
 describe('Search article category by name', function() {
     it('Successful search for a category by title', async function() {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
-        const articleCategory = await getRandomEntry('articleCategory');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
+        const articleCategory: IArticleCategory = await getRandomEntry('articleCategory');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 

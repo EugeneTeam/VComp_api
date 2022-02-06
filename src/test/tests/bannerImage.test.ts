@@ -13,20 +13,25 @@ import {
 } from '../../graphql/queries';
 import { getBearerToken } from '../token/generateToken'
 import { prisma } from "../../config/prismaClient";
-import {compareObjects, getRandomEntry} from '../utils/helper';
+import { compareObjects, getRandomEntry } from '../utils/helper';
+import {
+    ImageBannerQuantityAndList as IImageBannerQuantityAndList,
+    ImageBanner as IImageBanner,
+    Banner as IBanner
+} from '../../graphql';
 
 const config: any = getConfig();
 
 describe('Successful banner image creation/update/deletion operations', function() {
     it('Successful creation of a new image for banner', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await getRandomEntry('banner');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const banner: IBanner = await getRandomEntry('banner');
         const newInputData = createDataForBannerImage(banner?.id);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const newBannerImage = await client.request(ADD_BANNER_IMAGES, {
+        const newBannerImage: { addBannerImages: number } = await client.request(ADD_BANNER_IMAGES, {
             input: [newInputData]
         });
 
@@ -34,9 +39,9 @@ describe('Successful banner image creation/update/deletion operations', function
     });
 
     it('Successful banner image update', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await getRandomEntry('banner', {
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const banner: any = await getRandomEntry('banner', {
             where: {
                 bannerImage: {
                     some: {
@@ -60,7 +65,7 @@ describe('Successful banner image creation/update/deletion operations', function
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const updatedBanner = await client.request(UPDATE_BANNER_IMAGE, {
+        const updatedBanner: { updateBannerImage: IImageBanner } = await client.request(UPDATE_BANNER_IMAGE, {
             input: newInputData,
             id: banner?.bannerImage?.[0]?.id,
         });
@@ -69,13 +74,13 @@ describe('Successful banner image creation/update/deletion operations', function
     });
 
     it('Successfully deleting an banner image', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const bannerImage = await getRandomEntry('bannerImage');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const bannerImage: IImageBanner = await getRandomEntry('bannerImage');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const removedBannerImage = await client.request(REMOVE_BANNER_IMAGE, {
+        const removedBannerImage: { removeBannerImage: IImageBanner } = await client.request(REMOVE_BANNER_IMAGE, {
             id: bannerImage?.id,
         });
 
@@ -85,13 +90,13 @@ describe('Successful banner image creation/update/deletion operations', function
 
 describe('Successful banner image get/get(many) operations', function() {
     it('Get banner image by id', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const bannerImage = await getRandomEntry('bannerImage');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const bannerImage: IImageBanner = await getRandomEntry('bannerImage');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const findBanner = await client.request(GET_BANNER_IMAGE, {
+        const findBanner: { getBannerImage: IImageBanner } = await client.request(GET_BANNER_IMAGE, {
             id: bannerImage?.id,
         });
 
@@ -99,12 +104,12 @@ describe('Successful banner image get/get(many) operations', function() {
     });
 
     it('Get list of banner image', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const listOfBanners = await client.request(GET_BANNER_IMAGES);
+        const listOfBanners: { getBannerImages: IImageBannerQuantityAndList } = await client.request(GET_BANNER_IMAGES);
 
         expect(listOfBanners).toHaveProperty('getBannerImages');
         expect(listOfBanners?.getBannerImages).toHaveProperty('count');
@@ -118,10 +123,10 @@ describe('Successful banner image get/get(many) operations', function() {
 describe('Permissions return "Access Denied"', function() {
     it('Creating an banner image without permission will return an error', async function () {
         try {
-            const client = new GraphQLClient(config.url);
-            const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-            const banner = await prisma.banner.findFirst();
-            const newInputData = createDataForBannerImage(banner?.id);
+            const client: GraphQLClient = new GraphQLClient(config.url);
+            const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+            const banner: any = await prisma.banner.findFirst();
+            const newInputData: any = createDataForBannerImage(banner?.id);
 
             client.setHeader('Authorization', `Bearer ${ token }`);
 

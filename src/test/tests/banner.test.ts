@@ -15,18 +15,23 @@ import {
 } from '../../graphql/queries';
 import { getBearerToken } from '../token/generateToken'
 import {compareObjects, getRandomEntry} from '../utils/helper';
+import {
+    Banner as IBanner,
+    BannerInput as IBannerInput,
+    BannerQuantityAndList as IBannerQuantityAndList
+} from '../../graphql';
 
 const config: any = getConfig();
 
 describe('Successful banner creation/update/deletion operations', function() {
     it('Successful creation of a new banner', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const newInputData = createDataForBanner();
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const newInputData: any = createDataForBanner();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const newBanner = await client.request(CREATE_BANNER, {
+        const newBanner: { createBanner: IBanner } = await client.request(CREATE_BANNER, {
             input: newInputData
         });
 
@@ -34,10 +39,10 @@ describe('Successful banner creation/update/deletion operations', function() {
     });
 
     it('Successful banner update', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await getRandomEntry('banner');
-        const newInputData = createDataForBanner();
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const banner: IBanner = await getRandomEntry('banner');
+        const newInputData: any = createDataForBanner();
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -50,9 +55,9 @@ describe('Successful banner creation/update/deletion operations', function() {
     });
 
     it('Successfully deleting an banner', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await getRandomEntry('banner');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const banner: IBanner = await getRandomEntry('banner');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
@@ -66,13 +71,13 @@ describe('Successful banner creation/update/deletion operations', function() {
 
 describe('Successful banner get/get(many) operations', function() {
     it('Get banner by id', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
-        const banner = await getRandomEntry('banner');
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const banner: IBanner = await getRandomEntry('banner');
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const findBanner = await client.request(GET_BANNER, {
+        const findBanner: { getBanner: IBanner } = await client.request(GET_BANNER, {
             id: banner?.id,
         });
 
@@ -80,12 +85,12 @@ describe('Successful banner get/get(many) operations', function() {
     });
 
     it('Get list of banner', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.BANNER_MANAGER, client);
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const listOfBanners = await client.request(GET_BANNERS);
+        const listOfBanners: { getBanners: IBannerQuantityAndList } = await client.request(GET_BANNERS);
 
         expect(listOfBanners).toHaveProperty('getBanners');
         expect(listOfBanners?.getBanners).toHaveProperty('count');
@@ -100,14 +105,14 @@ describe('Successful banner get/get(many) operations', function() {
 describe('Permissions return "Access Denied"', function() {
     it('Creating an banner without permission will return an error', async function () {
         try {
-            const client = new GraphQLClient(config.url);
-            const token = await getBearerToken(EUsers.CUSTOMER, client);
-            const newInputData = createDataForBanner();
+            const client: GraphQLClient = new GraphQLClient(config.url);
+            const token: string = await getBearerToken(EUsers.CUSTOMER, client);
+            const newInputData: any = createDataForBanner();
 
             client.setHeader('Authorization', `Bearer ${ token }`);
 
             await client.request(CREATE_BANNER, {
-                input: newInputData
+                input: newInputData,
             });
 
         } catch (e: any) {

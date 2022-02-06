@@ -40,6 +40,19 @@ export default class Category extends QueryUtil {
                 },
                 removeCategory: async (obj: any, args: IMutationRemoveCategoryArgs, context: any): Promise<Category> => {
                     await this.findById(args.id);
+                    await context.prisma.category.updateMany({
+                        where: {
+                            parentId: args.id,
+                        },
+                        data: {
+                            parentId: null,
+                        },
+                    });
+                    await context.prisma.characteristic.deleteMany({
+                        where: {
+                            categoryId: args.id,
+                        },
+                    });
                     return context.prisma.category.delete({
                         where: {
                             id: args.id,
