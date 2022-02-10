@@ -3,6 +3,7 @@ import { QueryUtil } from '../../typescript/utils/helper';
 
 export default class DeliveryType extends QueryUtil {
     static resolver() {
+        this.init('deliveryType')
         return {
             Query: {
                 getDeliveryType: (obj: any, args: any) => this.findById(args.id),
@@ -27,7 +28,7 @@ export default class DeliveryType extends QueryUtil {
                 },
                 removeDeliveryType: async (obj: any, args: any, context: any) => {
                     await this.findById(args.id);
-                    return context.prisma.deliveryService.delete({
+                    return context.prisma.deliveryType.delete({
                         where: {
                             id: args.id,
                         },
