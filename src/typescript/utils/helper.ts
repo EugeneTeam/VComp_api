@@ -13,7 +13,7 @@ export class QueryUtil {
 
     static init(tableName: string) {
         this.tableName = tableName
-        const table = getKeyValue<any, any>(this.tableName)(prisma);
+        const table: any = getKeyValue<any, any>(this.tableName)(prisma);
         if (!table) {
             throw new Error(`Table ${this.tableName} not found`);
         }
@@ -25,13 +25,13 @@ export class QueryUtil {
         return tableName.replace(/^[a-z]/, (w: string) => w.toUpperCase())
     }
 
-    static checkStatus() {
+    static checkStatus(): void {
         if (!this.isInit) {
             throw new Error('First you need to call init(tableName)');
         }
     }
 
-    static async setAnotherTableForNextRequest(tableName: string) {
+    static async setAnotherTableForNextRequest(tableName: string): Promise<void> {
         const table = await getKeyValue<any, any>(tableName)(prisma);
         if (!table) {
             throw new Error(`Table ${tableName} not found`);
@@ -42,11 +42,11 @@ export class QueryUtil {
         };
     }
 
-    static getActualTable() {
+    static getActualTable(): any {
         return this?.tempTable?.model ? this.tempTable.model : this.table;
     }
 
-    static clearTempTable() {
+    static clearTempTable(): void {
         if (this?.tempTable) {
             this.tempTable = {
                 model: null,
@@ -57,7 +57,7 @@ export class QueryUtil {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static async findById(id: number) {
+    static async findById(id: number): Promise<any> {
         this.checkStatus();
 
         const data = await (this.getActualTable()).findUnique({
@@ -72,7 +72,7 @@ export class QueryUtil {
         return data;
     }
 
-    static async errorIfExists(where: any, errorMsg: string) {
+    static async errorIfExists(where: any, errorMsg: string): Promise<void> {
         this.checkStatus();
         const data = await (this.getActualTable()).findMany({ where });
         if (data?.length) {
@@ -81,7 +81,7 @@ export class QueryUtil {
         this.clearTempTable();
     }
 
-    static async errorIfNotCreated(where: any, errorMsg: string) {
+    static async errorIfNotCreated(where: any, errorMsg: string): Promise<void> {
         this.checkStatus();
         const data = await (this.getActualTable()).findMany({ where });
         if (!data?.length) {
@@ -90,7 +90,7 @@ export class QueryUtil {
         this.clearTempTable();
     }
 
-    static async findAllAndCount(options: any = {}, limit: number | null | undefined, offset: number | null | undefined) {
+    static async findAllAndCount(options: any = {}, limit: number | null | undefined, offset: number | null | undefined): Promise<any> {
         this.checkStatus();
         const pagination = {
             ...(limit ? { take: limit } : null),

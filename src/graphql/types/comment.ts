@@ -12,6 +12,7 @@ import {
 
 export default class Comment extends QueryUtil {
     static resolver() {
+        this.init('comment');
         return {
             Query: {
                 getComment: (obj: any, args: IQueryGetCommentArgs): Promise<IComment> => this.findById(args.id),
@@ -33,8 +34,8 @@ export default class Comment extends QueryUtil {
             },
             Mutation: {
                 addComment: async (obj: any, args: IMutationAddCommentArgs, context: any) => {
-                    if (args?.input?.rating && (args.input.rating > 5 || 0 < args.input.rating)) {
-                        throw new Error('The score must be in the range of 1-5');
+                    if (args?.input?.rating && (args.input.rating > 5 || args.input.rating < 0)) {
+                        throw new Error('The rating must be in the range of from 1 to 5');
                     }
                     return context.prisma.comment.create({
                         data: {

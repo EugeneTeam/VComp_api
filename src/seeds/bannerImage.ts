@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import faker from 'faker';
 
-export async function addBannerImages(prisma: PrismaClient, count: number = 1, bannerIds: [number]): Promise<any> {
+export async function addBannerImages(prisma: PrismaClient, count: number = 1, bannerIds: number[]): Promise<any> {
     const entry: any = [];
     for (let i = 0; i < count; i++) {
         entry.push({

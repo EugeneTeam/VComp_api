@@ -49,7 +49,7 @@ export default class Gallery extends QueryUtil {
             
             type Gallery {
                 id: Int!
-                name: Int!
+                name: String!
             }
 
 			type GalleryQuantityAndLisr {

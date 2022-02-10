@@ -136,11 +136,11 @@ model Product {
     description String @db.Text
     price Float
     discountId Int?
-    discount Discount? @relation(fields: [discountId], references: [id])
+    discount Discount[] @relation(fields: [discountId], references: [id])
     categoryId Int
-    category Category @relation(fields: [categoryId], references: [id])
+    category Category[] @relation(fields: [categoryId], references: [id])
     galleryId Int
-    gallery Gallery @relation(fields: [galleryId], references: [id])
+    gallery Gallery[] @relation(fields: [galleryId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
     lProductList LProductList[]
@@ -158,7 +158,7 @@ model Category {
     subCategory Category? @relation("SubCategory", fields: [parentId], references: [id])
     child Category[] @relation("SubCategory")
     characteristic Characteristic[]
-    product Product?
+    product Product[]
     @@map("Categories")
 }
 
@@ -261,8 +261,8 @@ model Comment {
     user User @relation(fields: [userId], references: [id])
     productId Int
     product Product @relation(fields: [productId], references: [id])
-    parentId Int
-    subComment Comment @relation("SubComment", fields: [parentId], references: [id])
+    parentId Int?
+    subComment Comment? @relation("SubComment", fields: [parentId], references: [id])
     child Comment[] @relation("SubComment")
     @@map("Comments")
 }
@@ -272,7 +272,7 @@ model Discount {
     type DiscountType
     value Float
     expiredAt DateTime
-    product Product?
+    product Product[]
     @@map("Discounts")
 }
 
@@ -280,7 +280,7 @@ model Gallery {
     id Int @id @default(autoincrement())
     name String @db.VarChar(100) @unique
     lImageGallery LImageGallery[]
-    product Product?
+    product Product[]
     @@map("Galleries")
 }
 

@@ -18,7 +18,6 @@ export const USER_STATUS = [
     'BANNED',
 ]
 
-
 export enum EBannerPositionX {
     LEFT = "LEFT",
     MIDDLE = "MIDDLE",
@@ -41,4 +40,14 @@ export enum EUsers {
 export enum EArticleStatus {
     HIDDEN = "HIDDEN",
     VISIBLE = "VISIBLE",
+}
+
+export enum ECommentType {
+    QUESTION = "QUESTION",
+    COMMENT = "COMMENT",
+}
+
+export enum EDiscountType {
+    VALUE = "VALUE",
+    PERCENT = "PERCENT"
 }

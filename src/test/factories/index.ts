@@ -10,7 +10,8 @@ import {
     EUsers,
     EArticleStatus,
     EBannerPositionX,
-    EBannerPositionY
+    EBannerPositionY,
+    ECommentType
 } from '../constants';
 
 const word = () => `${faker.lorem.word()}${Math.random().toString().replace('.', '_')}`;
@@ -126,4 +127,16 @@ export const createDataForCharacteristic = (categoryId: number, value: any = nul
         url: faker.internet.url(),
         categoryId
     });
+}
+
+export const createDataForComment = (parentId: number | null, productId: number) => {
+    return ({
+        type: [ECommentType.COMMENT, ECommentType.QUESTION][faker.datatype.number({ min: 0, max: 1 })],
+        rating: faker.datatype.number({ min: 1, max: 5 }),
+        description: faker.lorem.text(),
+        flaws: faker.lorem.text().substring(0, 220),
+        dignity: faker.lorem.text().substring(0, 220),
+        productId,
+        parentId
+    })
 }

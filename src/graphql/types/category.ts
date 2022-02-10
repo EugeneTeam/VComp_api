@@ -53,6 +53,11 @@ export default class Category extends QueryUtil {
                             categoryId: args.id,
                         },
                     });
+                    await context.prisma.product.deleteMany({
+                        where: {
+                            categoryId: args.id,
+                        },
+                    });
                     return context.prisma.category.delete({
                         where: {
                             id: args.id,
