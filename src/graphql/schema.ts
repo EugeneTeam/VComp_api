@@ -152,7 +152,7 @@ export const typeDefs: any = gql`
 		removeArticleCategory(id: Int!): ArticleCategory																@auth @hasRole(roles: ["ADMIN", "GOVERNING_ARTICLES"])
 
 		createDeliveryService(input: CreateDeliveryServiceInput): DeliveryService										@auth @hasRole(roles: ["ADMIN"])
-		updateDeliveryService(input: UpdateDeliveryServiceInput): DeliveryService										@auth @hasRole(roles: ["ADMIN"])
+		updateDeliveryService(input: UpdateDeliveryServiceInput, id: Int!): DeliveryService								@auth @hasRole(roles: ["ADMIN"])
 		removeDeliveryService(id: Int!): DeliveryService																@auth @hasRole(roles: ["ADMIN"])
 		
 		banUser(input: BanUserInput, some: [String]!): User                                                             @auth @hasRole(roles: ["ADMIN"])

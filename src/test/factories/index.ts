@@ -57,14 +57,6 @@ export const createDataForCreateOrUpdateUser = (id: number | null = null, repeat
     }
 }
 
-export const createDataForDeliveryService = () => {
-    return ({
-        name: word(),
-        isActive: Math.random() < 0.5,
-        info: faker.lorem.text(),
-    });
-}
-
 export const createDataForArticle = (articleCategoryId: number) => {
     return ({
         source: faker.internet.url(),
@@ -129,7 +121,7 @@ export const createDataForCharacteristic = (categoryId: number, value: any = nul
     });
 }
 
-export const createDataForComment = (parentId: number | null, productId: number) => {
+export const createDataForComment = (parentId: number | null, productId: number): any => {
     return ({
         type: [ECommentType.COMMENT, ECommentType.QUESTION][faker.datatype.number({ min: 0, max: 1 })],
         rating: faker.datatype.number({ min: 1, max: 5 }),
@@ -139,4 +131,12 @@ export const createDataForComment = (parentId: number | null, productId: number)
         productId,
         parentId
     })
+}
+
+export const createDataForDeliveryService = () => {
+    return ({
+        name: word(),
+        isActive: Math.random() < 0.5,
+        info: faker.lorem.text().substring(0, 190),
+    });
 }

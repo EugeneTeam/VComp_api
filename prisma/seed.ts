@@ -16,6 +16,7 @@ import { addDiscounts } from '../src/seeds/discount';
 import { addGalleries } from '../src/seeds/gallery';
 import { addProducts } from '../src/seeds/product';
 import { addComments } from '../src/seeds/comment';
+import { addDeliveryServices } from '../src/seeds/deliveryService';
 
 import {
     ArticleCategory as IArticleCategory,
@@ -89,6 +90,7 @@ async function main(): Promise<void> {
             comments.map((item: IComment) => item.id),
             users.map((item: IUser) => item.id));
 
+        await addDeliveryServices(prisma, 5);
     }
 }
 

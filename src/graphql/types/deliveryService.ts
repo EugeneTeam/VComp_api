@@ -23,7 +23,7 @@ export default class DeliveryService extends QueryUtil {
             },
             Mutation: {
                 createDeliveryService: async (obj: any, args: IMutationCreateDeliveryServiceArgs, context: any): Promise<IDeliveryService> => {
-                    await this.errorIfExists({ name: args.input!.name }, 'A service with this name has already been created');
+                    await this.errorIfExists({ name: args.input?.name }, 'A service with this name has already been created');
                     return context.prisma.deliveryService.create({
                         data: args.input,
                     });
@@ -31,7 +31,7 @@ export default class DeliveryService extends QueryUtil {
                 updateDeliveryService: async (obj: any, args: IMutationUpdateDeliveryServiceArgs, context: any): Promise<IDeliveryService> => {
                     const service = await context.prisma.deliveryService.findUnique({
                         where: {
-                            id: args.input!.id,
+                            id: args?.id,
                         },
                     });
 
@@ -43,12 +43,12 @@ export default class DeliveryService extends QueryUtil {
 
                     return context.prisma.deliveryService.update({
                         where: {
-                            id: args.input!.id,
+                            id: args?.id,
                         },
                         data: {
-                            name: args.input!.name,
-                            isActive: args.input!.isActive,
-                            info: args.input!.info,
+                            name: args.input?.name,
+                            isActive: args.input?.isActive,
+                            info: args.input?.info,
                         },
                     });
                 },
@@ -93,7 +93,6 @@ export default class DeliveryService extends QueryUtil {
             }
 
             input UpdateDeliveryServiceInput {
-                id: Int!
                 name: String!
                 isActive: Boolean!
                 info: String!
