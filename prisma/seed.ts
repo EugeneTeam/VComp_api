@@ -18,16 +18,11 @@ import { addProducts } from '../src/seeds/product';
 import { addComments } from '../src/seeds/comment';
 import { addDeliveryServices } from '../src/seeds/deliveryService';
 import { addDeliveryTypes } from "../src/seeds/deliveryTypes";
+import { addPaymentTypes } from "../src/seeds/paymentTypes";
+import { addFavorites } from "../src/seeds/favorites";
 
 import {
     ArticleCategory as IArticleCategory,
-    Banner as IBanner,
-    Category as ICategory,
-    Discount as IDiscount,
-    Gallery as IGallery,
-    Product as IProduct,
-    Comment as IComment,
-    User as IUser
 } from '../src/graphql';
 
 const prisma: PrismaClient = new PrismaClient();
@@ -42,57 +37,68 @@ async function main(): Promise<void> {
     if (process.env.NODE_ENV === 'test') {
         await addArticleCategory(prisma, 20)
 
-        const articles: Array<IArticleCategory> = await prisma.articleCategory.findMany();
-        await addArticles(prisma, 10, articles.map((item: IArticleCategory) => item.id));
+        const articleCategoryIds: Array<number> = (await prisma.articleCategory.findMany())
+            ?.map((item: IArticleCategory) => item.id) || [];
+        await addArticles(prisma, 10, articleCategoryIds);
 
         await addBanner(prisma, 10);
 
-        const banners: Array<any> = await prisma.banner.findMany();
-        await addBannerImages(prisma, 10, banners.map((item: IBanner) => item.id));
+        const bannerIds: Array<number> = (await prisma.banner.findMany())
+            ?.map((item: any) => item.id) || [];
+        await addBannerImages(prisma, 10, bannerIds);
 
         await addCallback(prisma, 10);
 
         await addCategory(prisma, 10, []);
 
-        const categories: Array<ICategory> = await prisma.category.findMany();
-        await addCategory(prisma, 10, categories.map((item: any) => item.id));
+        const categoryIds: Array<number> = (await prisma.category.findMany())
+            ?.map((item: any) => item.id) || [];
+        await addCategory(prisma, 10, categoryIds);
 
-        await addCharacteristic(prisma, 10, categories.map((item: any) => item.id));
+        await addCharacteristic(prisma, 10, categoryIds);
 
         await addGalleries(prisma, 10);
         await addDiscounts(prisma, 10);
 
-        const discounts: Array<any> = await prisma.discount.findMany();
-        const galleries: Array<IGallery> = await prisma.gallery.findMany();
+        const discountIds: Array<number> = (await prisma.discount.findMany())
+            ?.map((item: any) => item.id) || [];
+        const galleryIds: Array<number> = (await prisma.gallery.findMany())
+            ?.map((item: any) => item.id) || [];
 
         await addProducts(
             prisma,
             10,
-            discounts.map((item: IDiscount) => item.id),
-            galleries.map((item: IGallery) => item.id),
-            categories.map((item: ICategory) => item.id)
+            discountIds,
+            galleryIds,
+            categoryIds
             );
 
-        const products: Array<any> = await prisma.product.findMany();
-        const users: Array<any> = await prisma.user.findMany();
+        const productIds: Array<any> = (await prisma.product.findMany())
+            ?.map((item: any) => item.id) || [];
+        const userIds: Array<any> = (await prisma.user.findMany())
+            ?.map((item: any) => item.id) || [];
 
         await addComments(
             prisma,
             10,
-            products.map((item: IProduct) => item.id),
+            productIds,
             [],
-            users.map((item: IUser) => item.id));
+            userIds);
 
-        const comments: Array<any> = await prisma.comment.findMany();
+        const commentIds: Array<number> = (await prisma.comment.findMany())
+            ?.map((item: any) => item.id) || [];
         await addComments(
             prisma,
             10,
-            products.map((item: IProduct) => item.id),
-            comments.map((item: IComment) => item.id),
-            users.map((item: IUser) => item.id));
+            productIds,
+            commentIds,
+            userIds);
 
         await addDeliveryServices(prisma, 5);
         await addDeliveryTypes(prisma, 5);
+        await addPaymentTypes(prisma, 5);
+
+        await addFavorites(prisma, 10, userIds, productIds);
     }
 }
 

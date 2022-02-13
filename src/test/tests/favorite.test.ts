@@ -52,7 +52,7 @@ describe('Successfully add/remove favorites', function() {
             },
         });
 
-        compareObjects(favorite, removeFavorite.addOrRemoveFavorite);
+        compareObjects(favorite, removeFavorite.addOrRemoveFavorite, null, ['userId']);
         expect(findFavorite).toBeNull();
     });
 });

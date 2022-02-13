@@ -14,7 +14,7 @@ export default class PaymentType extends QueryUtil {
         this.init('paymentType');
         return {
             Query: {
-                getPaymentTypes: async (obj: any, {limit, offset}: IQueryGetPaymentTypesArgs, context: any): Promise<IPaymentType> => context.prisma.role.findMany({
+                getPaymentTypes: async (obj: any, {limit, offset}: IQueryGetPaymentTypesArgs, context: any): Promise<IPaymentType> => context.prisma.paymentType.findMany({
                     ...(limit ? {take: limit} : null),
                     ...(offset ? {skip: offset} : null),
                 }),

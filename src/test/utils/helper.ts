@@ -2,7 +2,7 @@ import faker from 'faker';
 import { prisma } from '../../config/prismaClient';
 import { getKeyValue } from "../../typescript/utils/helper";
 
-export const compareObjects = (obj1: any, obj2: any, dateFieldName: null | string = null) => {
+export const compareObjects = (obj1: any, obj2: any, dateFieldName: null | string = null, excludedFields: string[] = []) => {
     Object.keys(obj1).forEach((field: any) => {
         let arg1 = getKeyValue<string, any>(field)(obj1);
         let arg2 = getKeyValue<string, any>(field)(obj2);
@@ -10,7 +10,10 @@ export const compareObjects = (obj1: any, obj2: any, dateFieldName: null | strin
             arg1 = new Date(createDate(arg1.toString())).toUTCString();
             arg2 = new Date(createDate(arg2.toString())).toUTCString();
         }
-        expect(arg1).toBe(arg2);
+
+        if (!excludedFields?.includes(field)) {
+            expect(arg1).toBe(arg2);
+        }
     });
 }
 
