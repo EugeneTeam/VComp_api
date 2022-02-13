@@ -7,6 +7,7 @@ import {
 import { getBearerToken } from '../token/generateToken'
 import { getRandomEntry, compareObjects } from '../utils/helper';
 import { prisma } from "../../config/prismaClient";
+import {getUserByToken} from "../../typescript/user";
 
 const config: any = getConfig();
 
@@ -36,7 +37,12 @@ describe('Successfully add/remove favorites', function() {
     it('Successfully remove favorites', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.CUSTOMER, client);
-        const favorite = await getRandomEntry('favorite');
+        const user: any = await getUserByToken(token);
+        const favorite = await getRandomEntry('favorite', {
+            where: {
+                userId: user.id,
+            },
+        });
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 

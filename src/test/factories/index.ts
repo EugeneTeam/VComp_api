@@ -152,3 +152,9 @@ export const createDataForDiscount = () => {
         expiredAt: date,
     });
 }
+
+export const createDataForGallery = () => {
+    return ({
+        name: word()
+    })
+}

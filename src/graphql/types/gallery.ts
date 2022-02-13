@@ -33,7 +33,7 @@ export default class Gallery extends QueryUtil {
                     });
                 },
                 removeGallery: async (obj: any, args: any, context: any) => {
-                    return context.prisma.delete({
+                    return context.prisma.gallery.delete({
                         where: {
                             id: args.id,
                         },

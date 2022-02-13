@@ -10,8 +10,7 @@ export const compareObjects = (obj1: any, obj2: any, dateFieldName: null | strin
             arg1 = new Date(createDate(arg1.toString())).toUTCString();
             arg2 = new Date(createDate(arg2.toString())).toUTCString();
         }
-
-        if (!excludedFields?.includes(field)) {
+        if ((excludedFields?.length && excludedFields.includes(field) === false) || !excludedFields?.length) {
             expect(arg1).toBe(arg2);
         }
     });
