@@ -1,4 +1,4 @@
-import {gql} from 'apollo-server';
+import { gql } from 'apollo-server';
 import {
     Favorite as IFavorite,
     MutationAddOrRemoveFavoriteArgs as IMutationAddOrRemoveFavoriteArgs
