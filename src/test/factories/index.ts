@@ -11,7 +11,8 @@ import {
     EArticleStatus,
     EBannerPositionX,
     EBannerPositionY,
-    ECommentType
+    ECommentType,
+    EDiscountType
 } from '../constants';
 
 const word = () => `${faker.lorem.word()}${Math.random().toString().replace('.', '_')}`;
@@ -138,5 +139,16 @@ export const createDataForDeliveryService = () => {
         name: word(),
         isActive: Math.random() < 0.5,
         info: faker.lorem.text().substring(0, 190),
+    });
+}
+
+export const createDataForDiscount = () => {
+    const index = faker.datatype.number({ min: 0, max: 1 });
+    const date = new Date();
+    date.setMonth(date.getMonth() + 1);
+    return ({
+        type: [EDiscountType.PERCENT, EDiscountType.VALUE][index],
+        value: faker.datatype.number({ min: 1, max: index === 0 ? 100 : 1000 }),
+        expiredAt: date,
     });
 }

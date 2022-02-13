@@ -68,7 +68,7 @@ export const typeDefs: any = gql`
 		getGalleries(pagination: Pagination, filter: GalleryFilter): GalleryQuantityAndLisr
 		
 		getDiscount(id: Int!): Discount
-		getDiscounts(pagination: Pagination): Discount
+		getDiscounts(pagination: Pagination): DiscountQuantityAndList
 		
 		getDeliveryType(id: Int!): DeliveryType
 		getDeliveryTypes: [DeliveryType]
