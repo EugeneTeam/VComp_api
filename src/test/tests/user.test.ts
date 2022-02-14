@@ -12,6 +12,12 @@ import { CREATE_USER, SIGN_IN } from '../../graphql/mutations';
 import { GET_ROLES, LOG_IN } from '../../graphql/queries';
 import { User } from '../../graphql';
 import { getBearerToken } from '../token/generateToken'
+import {
+    encryptPassword,
+    decryptPassword,
+    login, getUserByToken
+} from '../../typescript/user';
+import { prisma } from "../../config/prismaClient";
 
 const config: any = getConfig();
 
@@ -194,5 +200,41 @@ describe('"User" module method for administrator(EXCEPTIONS)', function () {
                 return expect(error.message).toEqual('Access denied');
             });
         }
+    });
+});
+
+describe('Testing additional methods for working with the user model', function () {
+    it ('Successful decrypt password', async function () {
+        const password: string = faker.lorem.text().replace(/[ ]/g, '').substring(0, 10);
+        const passwordForDecrypt: string = await encryptPassword(password);
+        const result: boolean = await decryptPassword(password, passwordForDecrypt);
+        expect(result).toBe(true);
+    });
+
+    it ('Unsuccessful password decryption', async function () {
+        const password: string = faker.lorem.text().replace(/[ ]/g, '').substring(0, 10);
+        const passwordForDecrypt: string = await encryptPassword(password);
+        // added "1" for password to trigger error
+        const result: boolean = await decryptPassword(`${password}1`, passwordForDecrypt);
+        expect(result).toBe(false);
+    });
+
+    it ('Successful login', async function() {
+        const user: any = await prisma.user.findFirst();
+        const token: string | null = login(false, user.passwordHash);
+        expect(token).toBeTruthy();
+        expect(token).toMatch(/^[a-zA-Z.\-_0-9]{100,300}$/g)
+    });
+
+    it ('Login method  will be return null', async function() {
+        const token: string | null = login(false, undefined);
+        expect(token).toBeNull();
+    });
+
+    it ('getUserByToken method will be return null for wrong token', async function() {
+        const password: string = faker.lorem.text().replace(/[ ]/g, '').substring(0, 10);
+        const passwordForDecrypt: string = await encryptPassword(password);
+        const user: any = await getUserByToken(passwordForDecrypt);
+        expect(user).toBeNull();
     });
 });
