@@ -318,6 +318,6 @@ model LImageGallery {
     image Image @relation(fields: [imageId], references: [id])
     galleryId Int
     gallery Gallery @relation(fields: [galleryId], references: [id])
-    @@id([imageId, galleryId])
+    @@unique(fields: [imageId, galleryId], name: "imageInGallery")
     @@map("LImageGalleries")
 }

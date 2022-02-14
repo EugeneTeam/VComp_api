@@ -20,6 +20,7 @@ import { addDeliveryServices } from '../src/seeds/deliveryService';
 import { addDeliveryTypes } from "../src/seeds/deliveryTypes";
 import { addPaymentTypes } from "../src/seeds/paymentTypes";
 import { addFavorites } from "../src/seeds/favorites";
+import { addImages, addImagesToGallery } from "../src/seeds/image";
 
 import {
     ArticleCategory as IArticleCategory,
@@ -99,6 +100,12 @@ async function main(): Promise<void> {
         await addPaymentTypes(prisma, 5);
 
         await addFavorites(prisma, 10, userIds, productIds);
+
+        await addImages(prisma, 20);
+
+        const imageIds = (await prisma.image.findMany())
+            ?.map((item: any) => item.id);
+        await addImagesToGallery(prisma, 20, galleryIds, imageIds)
     }
 }
 

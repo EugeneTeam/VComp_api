@@ -109,8 +109,8 @@ export const typeDefs: any = gql`
     
     type Mutation {
 		addImages(input: AddImages): [Image]																			@auth @hasRole(roles: ["ADMIN", "MANAGER"])
-		removeImages(input: RemoveImages): [Image]																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
-		updateImage(input: AddImages, id: Int!): Image																	@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		removeImages(input: RemoveImages): [RemoveImagesResult]															@auth @hasRole(roles: ["ADMIN", "MANAGER"])
+		updateImage(input: ImageInput!, id: Int!): Image																@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		
 		createProduct(input: ProductInput): Product																		@auth @hasRole(roles: ["ADMIN", "MANAGER"])
 		updateProduct(input: ProductInput, id: Int!): Product															@auth @hasRole(roles: ["ADMIN", "MANAGER"])
@@ -225,7 +225,6 @@ export let schema: GraphQLSchema = makeExecutableSchema({
     typeDefs,
     resolvers: combineResolvers()
 });
-
 
 schema = roleDirective(schema);
 schema = authDirective(schema);

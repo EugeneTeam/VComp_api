@@ -18,8 +18,10 @@ export default class Image extends QueryUtil{
                             data: image,
                         });
                         await context.prisma.lImageGallery.create({
-                            imageId: newImage.id,
-                            galleryId: args.input.galleryId,
+                            data: {
+                                imageId: newImage.id,
+                                galleryId: args.input.galleryId,
+                            }
                         });
                         result.push(newImage);
                     }
@@ -30,12 +32,19 @@ export default class Image extends QueryUtil{
                     await this.findById(args.input.galleryId);
                     let result = [];
 
-                    for (const imageId of args.input.imagesIds) {
+                    for (const imageId of args.input.imageIds) {
                         await context.prisma.lImageGallery.delete({
                             where: {
-                                galleryId: args.input.galleryId,
-                                imageId,
+                                imageInGallery: {
+                                    galleryId: args.input.galleryId,
+                                    imageId,
+                                }
                             },
+                        });
+
+                        result.push({
+                            type: 'RELATION',
+                            id: imageId,
                         });
 
                         if (args.input.destroyImages) {
@@ -44,7 +53,10 @@ export default class Image extends QueryUtil{
                                     id: imageId,
                                 },
                             });
-                            result.push(deletedImage);
+                            result.push({
+                                type: 'IMAGE',
+                                id: deletedImage.id
+                            });
                         }
                     }
                     return result;
@@ -63,6 +75,13 @@ export default class Image extends QueryUtil{
     }
     static typeDefs() {
         return gql`
+            
+            # ENUMS
+            
+            enum ResultType {
+                IMAGE
+                RELATION
+            }
             
             # TYPES 
             
@@ -86,12 +105,17 @@ export default class Image extends QueryUtil{
                 galleryId: Int!
             }
             
+            type RemoveImagesResult {
+                type: ResultType!
+                id: Int!
+            }
+            
             input RemoveImages {
                 galleryId: Int!
                 imageIds: [Int!]!
                 """
                 \nRemove images from gallery and from table Image if set to true
-                \nRemove iamges only form gallery if set to false
+                \nRemove iamges only from gallery if set to false
                 """
                 destroyImages: Boolean = false
             }

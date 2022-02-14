@@ -158,3 +158,15 @@ export const createDataForGallery = () => {
         name: word()
     })
 }
+
+export const createDataForImage = (count: number = 1) => {
+    const entry: any = [];
+    for (let i = 0; i < count; i++) {
+        entry.push({
+            name: word(),
+            url: faker.internet.url(),
+            order: faker.datatype.number({ min: 1, max: 1000 }),
+        });
+    }
+    return entry;
+}
