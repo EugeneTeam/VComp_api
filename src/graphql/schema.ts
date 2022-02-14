@@ -22,6 +22,7 @@ import Discount from "./types/discount";
 import Gallery from "./types/gallery";
 import Image from "./types/image";
 import Product from "./types/product";
+import ProductView from "./types/productView";
 
 import {getUserByToken} from "../typescript/user";
 import {roleDirective, authDirective} from './directives';
@@ -52,6 +53,7 @@ export const typeDefs: any = gql`
     ${Gallery.typeDefs()}
     ${Image.typeDefs()}
     ${Product.typeDefs()}
+    ${ProductView.typeDefs()}
     
 	input Pagination {
 		limit: Int
@@ -218,7 +220,7 @@ export const combineResolvers: any = () => {
 		Gallery.resolver(),
 		Image.resolver(),
 		Product.resolver(),
-    )
+    );
 }
 
 export let schema: GraphQLSchema = makeExecutableSchema({

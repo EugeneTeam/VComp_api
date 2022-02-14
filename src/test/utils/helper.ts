@@ -2,7 +2,7 @@ import faker from 'faker';
 import { prisma } from '../../config/prismaClient';
 import { getKeyValue } from "../../typescript/utils/helper";
 
-export const compareObjects = (obj1: any, obj2: any, dateFieldName: null | string = null, excludedFields: string[] = []) => {
+export const compareObjects = (obj1: any, obj2: any, dateFieldName: null | string = null, excludedFields: string[] = []): void => {
     Object.keys(obj1).forEach((field: any) => {
         let arg1 = getKeyValue<string, any>(field)(obj1);
         let arg2 = getKeyValue<string, any>(field)(obj2);
@@ -23,7 +23,7 @@ export const createDate = (date: string): number | string => {
     return date;
 }
 
-export const getRandomEntry = async (tableName: string, options: object | null = null) => {
+export const getRandomEntry = async (tableName: string, options: object | null = null): Promise<any> => {
     const table = getKeyValue<string, any>(tableName)(prisma);
     const list = await table.findMany(options);
     return list?.[faker.datatype.number({ min: 0, max: list.length - 1 })];

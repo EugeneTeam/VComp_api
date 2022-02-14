@@ -15,7 +15,7 @@ it('Correct operation of the product views counter', async function () {
 
     client.setHeader('Authorization', `Bearer ${ token }`);
 
-    await incrementView(product.id);
+    const count: number = await incrementView(product.id);
 
     const view: any = await prisma.productView.findFirst({
         where: {
@@ -28,4 +28,5 @@ it('Correct operation of the product views counter', async function () {
     });
     expect(view?.productId).toBe(product.id);
     expect(view?.count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeGreaterThanOrEqual(1);
 });

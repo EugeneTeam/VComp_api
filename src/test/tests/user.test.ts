@@ -10,12 +10,20 @@ import {
 import { ADMIN_EMAIL, EUsers } from '../constants';
 import { CREATE_USER, SIGN_IN } from '../../graphql/mutations';
 import { GET_ROLES, LOG_IN } from '../../graphql/queries';
-import { User } from '../../graphql';
+import {
+    User
+} from '../../graphql';
+import {
+    LogInData,
+    LogInResponse,
+    SignInData, SignInDataFull
+} from '../../typescript/customTypes';
 import { getBearerToken } from '../token/generateToken'
 import {
     encryptPassword,
     decryptPassword,
-    login, getUserByToken
+    login,
+    getUserByToken
 } from '../../typescript/user';
 import { prisma } from "../../config/prismaClient";
 
@@ -23,8 +31,8 @@ const config: any = getConfig();
 
 describe('Successful registration/authorization', function() {
     it('New user registration', async function () {
-        const newInputData = createDataForSignIn();
-        const client = new GraphQLClient(config.url);
+        const newInputData: SignInData = createDataForSignIn();
+        const client: GraphQLClient = new GraphQLClient(config.url);
         const newUser: { signIn: User } = await client.request(SIGN_IN, {
             input: newInputData,
         });
@@ -47,9 +55,9 @@ describe('Successful registration/authorization', function() {
         });
     });
     it('User authorization', async function() {
-        const client = new GraphQLClient(config.url);
-        const data = getInputDataForSignIn(EUsers.MANAGER, false);
-        const response = await client.request(LOG_IN, {
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const data: LogInData = getInputDataForSignIn(EUsers.MANAGER, false);
+        const response: LogInResponse = await client.request(LOG_IN, {
             input: data,
         });
         expect(response).not.toBeNull();
@@ -62,8 +70,8 @@ describe('Successful registration/authorization', function() {
 describe('Failed registration/authorization', function() {
     it('Return error "Password mismatch"', async function () {
         try {
-            const newInputData = createDataForSignIn();
-            const client = new GraphQLClient(config.url);
+            const newInputData: SignInData = createDataForSignIn();
+            const client: GraphQLClient = new GraphQLClient(config.url);
 
             // change password and call exception
             newInputData.password += faker.random.alphaNumeric(2);
@@ -81,8 +89,8 @@ describe('Failed registration/authorization', function() {
 
     it('Return error "User not found"', async function() {
         try {
-            const client = new GraphQLClient(config.url);
-            const data = getInputDataForSignIn(EUsers.MANAGER, false);
+            const client: GraphQLClient = new GraphQLClient(config.url);
+            const data: LogInData = getInputDataForSignIn(EUsers.MANAGER, false);
 
             // change email and call exception
             data.email += faker.random.alphaNumeric(2);
@@ -100,8 +108,8 @@ describe('Failed registration/authorization', function() {
 
     it('Return error "Wrong login or password"', async function() {
         try {
-            const client = new GraphQLClient(config.url);
-            const data = getInputDataForSignIn(EUsers.MANAGER, false);
+            const client: GraphQLClient = new GraphQLClient(config.url);
+            const data: LogInData = getInputDataForSignIn(EUsers.MANAGER, false);
 
             // change password and call exception
             data.password += faker.random.alphaNumeric(2);
@@ -120,15 +128,15 @@ describe('Failed registration/authorization', function() {
 
 describe('"User" module method for administrator(CRUD)', function () {
     it ('Admin will create a new user', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.ADMIN, client);
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.ADMIN, client);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
         const newInputData = createDataForCreateOrUpdateUser(null,false);
         const newUser: { createUser: User } = await client.request(CREATE_USER, {
-            input: newInputData
-        })
+            input: newInputData,
+        });
         expect(newUser).not.toBeNull();
         expect(newUser).toHaveProperty(['createUser']);
         expect(newUser?.createUser?.fullName).toBe(newInputData.fullName);
@@ -139,15 +147,16 @@ describe('"User" module method for administrator(CRUD)', function () {
     });
 
     it ('The administrator will update the data of an existing user', async function() {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.ADMIN, client);
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.ADMIN, client);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
-        const newInputData = createDataForCreateOrUpdateUser(null, false);
+        const newInputData: SignInDataFull = createDataForCreateOrUpdateUser(null, false);
+
         const newUser: { createUser: User } = await client.request(CREATE_USER, {
-            input: newInputData
-        })
+            input: newInputData,
+        });
         expect(newUser).not.toBeNull();
         expect(newUser).toHaveProperty(['createUser']);
         expect(newUser?.createUser?.fullName).toBe(newInputData.fullName);
@@ -160,12 +169,12 @@ describe('"User" module method for administrator(CRUD)', function () {
 
 describe('"User" module method for administrator(EXCEPTIONS)', function () {
     it('New user registration will return a duplicate mail error', async function () {
-        const client = new GraphQLClient(config.url);
-        const newInputData = createDataForSignIn(ADMIN_EMAIL);
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const newInputData: SignInData = createDataForSignIn(ADMIN_EMAIL);
         try {
             await client.request(SIGN_IN, {
-                input: newInputData
-            })
+                input: newInputData,
+            });
         } catch (e: any) {
             expect(e.response.errors.length).toBeTruthy();
             e.response.errors.some((error: any) => {
@@ -175,9 +184,9 @@ describe('"User" module method for administrator(EXCEPTIONS)', function () {
     });
 
     it ('Return error "Please authorize!"', async function () {
-        const client = new GraphQLClient(config.url);
+        const client: GraphQLClient = new GraphQLClient(config.url);
         try {
-            await client.request(GET_ROLES)
+            await client.request(GET_ROLES);
         } catch (e: any) {
             expect(e.response.errors.length).toBeTruthy();
             e.response.errors.some((error: any) => {
@@ -187,13 +196,13 @@ describe('"User" module method for administrator(EXCEPTIONS)', function () {
     });
 
     it ('Return error "Access denied"', async function () {
-        const client = new GraphQLClient(config.url);
-        const token = await getBearerToken(EUsers.MANAGER, client);
+        const client: GraphQLClient = new GraphQLClient(config.url);
+        const token: string = await getBearerToken(EUsers.MANAGER, client);
 
         client.setHeader('Authorization', `Bearer ${ token }`);
 
         try {
-            await client.request(GET_ROLES)
+            await client.request(GET_ROLES);
         } catch (e: any) {
             expect(e.response.errors.length).toBeTruthy();
             e.response.errors.some((error: any) => {
@@ -215,7 +224,7 @@ describe('Testing additional methods for working with the user model', function 
         const password: string = faker.lorem.text().replace(/[ ]/g, '').substring(0, 10);
         const passwordForDecrypt: string = await encryptPassword(password);
         // added "1" for password to trigger error
-        const result: boolean = await decryptPassword(`${password}1`, passwordForDecrypt);
+        const result: boolean = await decryptPassword(`${ password }1`, passwordForDecrypt);
         expect(result).toBe(false);
     });
 

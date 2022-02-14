@@ -1,8 +1,8 @@
-import {getInputDataForSignIn} from '../factories';
-import {EUsers} from '../constants';
-import {LOG_IN} from "../../graphql/queries";
+import { getInputDataForSignIn } from '../factories';
+import { EUsers } from '../constants';
+import { LOG_IN } from "../../graphql/queries";
 
-export const getBearerToken = async (user: EUsers, client: any) => {
+export const getBearerToken = async (user: EUsers, client: any): Promise<string> => {
     const data = getInputDataForSignIn(user, false);
 
     const response = await client.request(LOG_IN, {

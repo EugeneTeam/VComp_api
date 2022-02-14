@@ -10,13 +10,13 @@ global.Headers = global.Headers || Headers;
 
 type Config = {url: string}
 
-export const getConfig = () => {
-    const prisma = new PrismaClient();
+export const getConfig = (): Config => {
+    const prisma: PrismaClient = new PrismaClient();
 
     let config: any = {};
 
     beforeAll(async () => {
-        const {url} = await server.listen({port: 0});
+        const { url } = await server.listen({port: 0});
         config.url = url;
         return config;
     });

@@ -11,7 +11,7 @@ export class QueryUtil {
         name: null
     };
 
-    static init(tableName: string) {
+    static init(tableName: string): void {
         this.tableName = tableName
         const table: any = getKeyValue<any, any>(this.tableName)(prisma);
         if (!table) {
@@ -32,7 +32,7 @@ export class QueryUtil {
     }
 
     static async setAnotherTableForNextRequest(tableName: string): Promise<void> {
-        const table = await getKeyValue<any, any>(tableName)(prisma);
+        const table: any = await getKeyValue<any, any>(tableName)(prisma);
         if (!table) {
             throw new Error(`Table ${tableName} not found`);
         }
@@ -60,7 +60,7 @@ export class QueryUtil {
     static async findById(id: number): Promise<any> {
         this.checkStatus();
 
-        const data = await (this.getActualTable()).findUnique({
+        const data: any = await (this.getActualTable()).findUnique({
             where: { id },
         });
 
@@ -74,7 +74,7 @@ export class QueryUtil {
 
     static async errorIfExists(where: any, errorMsg: string): Promise<void> {
         this.checkStatus();
-        const data = await (this.getActualTable()).findMany({ where });
+        const data: any = await (this.getActualTable()).findMany({ where });
         if (data?.length) {
             throw new Error(errorMsg);
         }
@@ -83,7 +83,7 @@ export class QueryUtil {
 
     static async errorIfNotCreated(where: any, errorMsg: string): Promise<void> {
         this.checkStatus();
-        const data = await (this.getActualTable()).findMany({ where });
+        const data: any = await (this.getActualTable()).findMany({ where });
         if (!data?.length) {
             throw new Error(errorMsg);
         }
@@ -92,7 +92,7 @@ export class QueryUtil {
 
     static async findAllAndCount(options: any = {}, limit: number | null | undefined, offset: number | null | undefined): Promise<any> {
         this.checkStatus();
-        const pagination = {
+        const pagination: any = {
             ...(limit ? { take: limit } : null),
             ...(offset ? { skip: offset } : null),
         };

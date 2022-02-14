@@ -1,12 +1,12 @@
 import dotEnv from 'dotenv';
 dotEnv.config();
 
-import {ApolloServer} from "apollo-server";
-import {applyMiddleware} from 'graphql-middleware';
+import { ApolloServer } from "apollo-server";
+import { applyMiddleware } from 'graphql-middleware';
 
-import {context, schema} from "./graphql/schema";
+import { context, schema } from "./graphql/schema";
 
-export const server = new ApolloServer({
+export const server: ApolloServer = new ApolloServer({
     formatError: error => {
         if (process.env.NODE_ENV === 'development') {
             console.log('-------------------------------------------------------------------------------------------------');

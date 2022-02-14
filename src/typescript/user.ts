@@ -1,14 +1,16 @@
-import jwt, {JwtPayload, VerifyErrors} from 'jsonwebtoken';
+import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import randToken from "rand-token";
 
-import {prisma} from '../config/prismaClient';
+import { prisma } from '../config/prismaClient';
 import {
     PASSWORD_SALT,
     AUTHORIZATION_TOKEN_EXPIRE_REMEMBER,
     AUTHORIZATION_TOKEN_SECRET,
     AUTHORIZATION_TOKEN_EXPIRE, ACTIVATION_TOKEN_EXPIRED, AUTHORIZATION_TOKEN_SIZE
 } from '../config/constants'
+
+import { User } from "../graphql";
 
 export const decryptPassword = (password: string, passwordHash: string | undefined): Promise<boolean> | false => {
     if (passwordHash) {
@@ -23,12 +25,12 @@ export const encryptPassword = (password: string): Promise<string> => {
 
 export const login = (rememberMe: boolean, passwordHash: string | undefined): string | null => {
     if (passwordHash) {
-        return jwt.sign({data: passwordHash}, AUTHORIZATION_TOKEN_SECRET, {expiresIn: rememberMe ? AUTHORIZATION_TOKEN_EXPIRE_REMEMBER : AUTHORIZATION_TOKEN_EXPIRE});
+        return jwt.sign({ data: passwordHash }, AUTHORIZATION_TOKEN_SECRET, { expiresIn: rememberMe ? AUTHORIZATION_TOKEN_EXPIRE_REMEMBER : AUTHORIZATION_TOKEN_EXPIRE });
     }
     return null;
 }
 
-export const getUserByToken = (token: string): Promise<any> => {
+export const getUserByToken = (token: string): Promise<User | null> => {
     return new Promise((resolve) => {
         jwt.verify(token, AUTHORIZATION_TOKEN_SECRET, async (error: VerifyErrors | null, data: JwtPayload | undefined) => {
             if (error) {
@@ -56,12 +58,12 @@ export const getUserByToken = (token: string): Promise<any> => {
 export const generateActivationToken = (): string => {
     const date: Date = new Date();
     date.setMinutes(date.getMinutes() + ACTIVATION_TOKEN_EXPIRED);
-    return `${randToken.generate(AUTHORIZATION_TOKEN_SIZE)}_${date.getTime()}`;
+    return `${ randToken.generate(AUTHORIZATION_TOKEN_SIZE) }_${ date.getTime() }`;
 }
 
 export const checkEmail = async (email: string): Promise<void> => {
     const checkEmail = await prisma.user.findUnique({
-        where: {email},
+        where: { email },
     });
 
     if (checkEmail) {

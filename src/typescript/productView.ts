@@ -1,7 +1,7 @@
 import { prisma } from "../config/prismaClient";
-
+import { ProductView } from '../typescript/customTypes';
 export const incrementView = async (productId: number): Promise<number> => {
-    const entry = await prisma.productView.findMany({
+    const entry: Array<ProductView> = await prisma.productView.findMany({
         where: { productId },
     });
     if (!entry?.length) {
@@ -14,7 +14,7 @@ export const incrementView = async (productId: number): Promise<number> => {
         });
         return 1;
     } else {
-        const updatedEntry = await prisma.productView.update({
+        const updatedEntry: ProductView = await prisma.productView.update({
             where: { productId },
             data: {
                 count: {

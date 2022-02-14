@@ -1,10 +1,10 @@
-export const ADMIN_EMAIL = 'admin@gmail.com';
-export const MANAGER_EMAIL = 'manager@gmail.com'
-export const CUSTOMER_EMAIL = 'customer@gmail.com'
-export const GOVERNING_ARTICLE_MANAGER_EMAIL = 'governing.manager@gmail.com'
-export const BANNER_MANAGER_EMAIL = 'banner.manager@gmail.com'
+export const ADMIN_EMAIL: string = 'admin@gmail.com';
+export const MANAGER_EMAIL: string = 'manager@gmail.com';
+export const CUSTOMER_EMAIL: string = 'customer@gmail.com';
+export const GOVERNING_ARTICLE_MANAGER_EMAIL: string = 'governing.manager@gmail.com';
+export const BANNER_MANAGER_EMAIL: string = 'banner.manager@gmail.com';
 
-export const USER_ROLE = [
+export const USER_ROLE: Array<string> = [
     'ADMIN',
     'MANAGER',
     'CUSTOMER',
@@ -12,7 +12,7 @@ export const USER_ROLE = [
     'BANNER_MANAGER',
 ]
 
-export const USER_STATUS = [
+export const USER_STATUS: Array<string> = [
     'ACTIVE',
     'INACTIVE',
     'BANNED',
