@@ -27,7 +27,7 @@ export class QueryUtil {
 
     static checkStatus(): void {
         if (!this.isInit) {
-            throw new Error('First you need to call init(tableName)');
+            throw new Error('First you need to call init');
         }
     }
 
@@ -65,7 +65,7 @@ export class QueryUtil {
         });
 
         if (!data) {
-            throw new Error(`${this.firstLetterInUppercase(this?.tempTable?.name || this?.tableName)} not found'`);
+            throw new Error(`${this.firstLetterInUppercase(this?.tempTable?.name || this?.tableName)} not found`);
         }
 
         this.clearTempTable();
