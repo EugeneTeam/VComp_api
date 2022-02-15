@@ -17,18 +17,18 @@ export const parseArgument = (node: any, steps: Array<any> = [], defaultValue: a
         return parseArgument(node.type, steps, defaultValue);
     }
 
-    let arg = `${ node.type.name.value }`;
+    let arg: string = `${ node.type.name.value }`;
     steps.reverse().forEach((item: any) => {
         if (!item.isOptional) {
             arg += '!';
         }
         if (item.isArray) {
-            arg = `[${arg}]`;
+            arg = `[${ arg }]`;
         }
     });
 
     if (defaultValue !== null) {
-        arg += ` = ${defaultValue}`;
+        arg += ` = ${ defaultValue }`;
     }
 
     return arg;
@@ -47,7 +47,7 @@ export const parseResponse = (
         node?.type?.type?.type?.type?.name?.value;
     const field = node?.name?.value;
 
-    const findType = getKeyValue<any, any>(returnType)(types)?.astNode
+    const findType: any = getKeyValue<any, any>(returnType)(types)?.astNode
 
     if (!!findType?.fields) {
         responseString += `${ tab }${ field } {\n`;
@@ -61,11 +61,11 @@ export const parseResponse = (
     return responseString;
 }
 
-export const getNameForMethod = (value: string) => {
+export const getNameForMethod = (value: string): string => {
     return `${ value[0].toUpperCase() }${ value.substring(1, value.length) }`;
 }
 
-export const getNameForConstant = (value: string) => {
+export const getNameForConstant = (value: string): string => {
     return value.replace(/[A-Z]/g,(letter: string) => {
         return `_${ letter }`;
     }).toUpperCase();

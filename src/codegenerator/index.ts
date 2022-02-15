@@ -15,12 +15,12 @@ const types: any = schema.getTypeMap();
 const queries: any = schema?.getQueryType();
 const mutations: any = schema?.getMutationType();
 
-const startParse = async (nodes: any, pathToWriteFile: string, query: string) => {
+const startParse = async (nodes: any, pathToWriteFile: string, query: string): Promise<any> => {
     try {
         for (const item of nodes?.astNode?.fields) {
-            const fileName = item.name.value;
-            let queryString = `${ query } ${ getNameForMethod(item.name.value) }`;
-            const constName = getNameForConstant(item.name.value);
+            const fileName: string = item.name.value;
+            let queryString: string = `${ query } ${ getNameForMethod(item.name.value) }`;
+            const constName: string = getNameForConstant(item.name.value);
 
             if (item?.arguments?.length) {
                 queryString += '(';
@@ -67,7 +67,7 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
             queryString += '\n}';
 
 
-            const content = `${CONSTANTS.WRAP_IN_GQL ? 'import {gql} from "apollo-server";\n' : ''}export const ${ constName } = ${CONSTANTS.WRAP_IN_GQL ? 'gql' : ''}\`${ queryString }\``;
+            const content: string = `${CONSTANTS.WRAP_IN_GQL ? 'import {gql} from "apollo-server";\n' : ''}export const ${ constName } = ${CONSTANTS.WRAP_IN_GQL ? 'gql' : ''}\`${ queryString }\``;
 
 
             await fs.writeFile(`${ pathToWriteFile }/${ fileName }.ts`, content, (error:ErrnoException | null) => {
@@ -83,11 +83,11 @@ const startParse = async (nodes: any, pathToWriteFile: string, query: string) =>
 }
 
 startParse(queries, CONSTANTS.DIRECTORY_PATH_FOR_QUERIES, CONSTANTS.QUERY.QUERY)
-    .then(async () => {
+    .then(async (): Promise<any> => {
         await startParse(mutations, CONSTANTS.DIRECTORY_PATH_FOR_MUTATIONS, CONSTANTS.QUERY.MUTATION)
-            .then(() => {
+            .then((): void => {
                 createIndex(CONSTANTS.DIRECTORY_PATH_FOR_MUTATIONS)
-                    .then(() => createIndex(CONSTANTS.DIRECTORY_PATH_FOR_QUERIES))
+                    .then((): any  => createIndex(CONSTANTS.DIRECTORY_PATH_FOR_QUERIES))
             });
     });
 
@@ -95,13 +95,13 @@ startParse(queries, CONSTANTS.DIRECTORY_PATH_FOR_QUERIES, CONSTANTS.QUERY.QUERY)
 
 const createIndex = async (path: string) => {
     return fs.readdir(path, async (err: ErrnoException | null, files: string[]) => {
-        let content = '';
-        let export_ = `export {\n`;
+        let content: string = '';
+        let export_: string = `export {\n`;
         let count: number = 0;
         for (const file of files) {
             if (!file.includes('index')) {
-                const clearName = file.substring(0, file.lastIndexOf('.'));
-                const constName = getNameForConstant(clearName);
+                const clearName: string = file.substring(0, file.lastIndexOf('.'));
+                const constName: string = getNameForConstant(clearName);
                 content += `import {${ constName }} from './${ clearName }';\n`;
                 export_ += `    ${ constName }${ count === files.length - 1 ? '' : ',\n' }`
             }

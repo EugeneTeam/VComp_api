@@ -1,4 +1,4 @@
-export const CONSTANTS = {
+export const CONSTANTS: any = {
     DEFAULT_SPACES: '  ',
     WRAP_IN_GQL: false,
     ADD_INDEX_WITH_EXPORTS: false,
