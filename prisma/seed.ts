@@ -23,8 +23,16 @@ import { addFavorites } from "../src/seeds/favorites";
 import { addImages, addImagesToGallery } from "../src/seeds/image";
 
 import {
-    ArticleCategory as IArticleCategory,
-} from '../src/graphql';
+    ArticleCategory,
+    Category,
+    Discount,
+    Comment,
+    Gallery,
+    Product,
+    Banner,
+    Image,
+    User
+} from '../src/typescript/customTypes';
 
 const prisma: PrismaClient = new PrismaClient();
 
@@ -39,13 +47,13 @@ async function main(): Promise<void> {
         await addArticleCategory(prisma, 20)
 
         const articleCategoryIds: Array<number> = (await prisma.articleCategory.findMany())
-            ?.map((item: IArticleCategory) => item.id) || [];
+            ?.map((item: ArticleCategory) => item.id) || [];
         await addArticles(prisma, 10, articleCategoryIds);
 
         await addBanner(prisma, 10);
 
         const bannerIds: Array<number> = (await prisma.banner.findMany())
-            ?.map((item: any) => item.id) || [];
+            ?.map((item: Banner) => item.id) || [];
         await addBannerImages(prisma, 10, bannerIds);
 
         await addCallback(prisma, 10);
@@ -53,7 +61,7 @@ async function main(): Promise<void> {
         await addCategory(prisma, 10, []);
 
         const categoryIds: Array<number> = (await prisma.category.findMany())
-            ?.map((item: any) => item.id) || [];
+            ?.map((item: Category) => item.id) || [];
         await addCategory(prisma, 10, categoryIds);
 
         await addCharacteristic(prisma, 10, categoryIds);
@@ -62,9 +70,9 @@ async function main(): Promise<void> {
         await addDiscounts(prisma, 10);
 
         const discountIds: Array<number> = (await prisma.discount.findMany())
-            ?.map((item: any) => item.id) || [];
+            ?.map((item: Discount) => item.id) || [];
         const galleryIds: Array<number> = (await prisma.gallery.findMany())
-            ?.map((item: any) => item.id) || [];
+            ?.map((item: Gallery) => item.id) || [];
 
         await addProducts(
             prisma,
@@ -74,10 +82,10 @@ async function main(): Promise<void> {
             categoryIds
             );
 
-        const productIds: Array<any> = (await prisma.product.findMany())
-            ?.map((item: any) => item.id) || [];
-        const userIds: Array<any> = (await prisma.user.findMany())
-            ?.map((item: any) => item.id) || [];
+        const productIds: Array<number> = (await prisma.product.findMany())
+            ?.map((item: Product) => item.id) || [];
+        const userIds: Array<number> = (await prisma.user.findMany())
+            ?.map((item: User) => item.id) || [];
 
         await addComments(
             prisma,
@@ -87,7 +95,7 @@ async function main(): Promise<void> {
             userIds);
 
         const commentIds: Array<number> = (await prisma.comment.findMany())
-            ?.map((item: any) => item.id) || [];
+            ?.map((item: Comment) => item.id) || [];
         await addComments(
             prisma,
             10,
@@ -104,15 +112,15 @@ async function main(): Promise<void> {
         await addImages(prisma, 20);
 
         const imageIds = (await prisma.image.findMany())
-            ?.map((item: any) => item.id);
+            ?.map((item: Image) => item.id);
         await addImagesToGallery(prisma, 20, galleryIds, imageIds)
     }
 }
 
-main().catch(error => {
+main().catch((error: any) => {
     console.error(error);
     process.exit(1);
 })
-.finally(async (): Promise<void> => {
-    await prisma.$disconnect();
-})
+    .finally(async (): Promise<void> => {
+        await prisma.$disconnect();
+    });

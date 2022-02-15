@@ -1,17 +1,7 @@
 import faker from "faker";
-import { GraphQLClient } from "graphql-request";
-import { getConfig} from '../helper';
-import {
-    createDataForArticle, createDataForDeliveryService
-} from '../factories';
-import { EUsers } from '../constants';
-import { getBearerToken } from '../token/generateToken'
-import { getKeyValue } from '../../typescript/utils/helper';
-import { getRandomEntry, compareObjects } from '../utils/helper';
+import { compareObjects } from '../utils/helper';
 import { prisma } from "../../config/prismaClient";
 import { QueryUtil } from '../../typescript/utils/helper'
-import {CREATE_DELIVERY_TYPE} from "../../graphql/mutations";
-const config: any = getConfig();
 
 describe('Test QueryUtil', function() {
     it('Return error when trying to call a method without initialization', async function () {
