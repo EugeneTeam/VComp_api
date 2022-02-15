@@ -1,27 +1,31 @@
 import { gql } from 'apollo-server-express';
 import {
-    PaymentType as IPaymentType,
-    QueryGetPaymentTypesArgs as IQueryGetPaymentTypesArgs,
-    QueryGetPaymentTypeArgs as IQueryGetPaymentTypeArgs,
-    MutationCreatePaymentTypeArgs as IMutationCreatePaymentTypeArgs,
-    MutationRemovePaymentTypeArgs as IMutationRemovePaymentTypeArgs,
-    MutationUpdatePaymentTypeArgs as IMutationUpdatePaymentTypeArgs
+    PaymentType as TPaymentType,
+    QueryGetPaymentTypesArgs as TQueryGetPaymentTypesArgs,
+    QueryGetPaymentTypeArgs as TQueryGetPaymentTypeArgs,
+    MutationCreatePaymentTypeArgs as TMutationCreatePaymentTypeArgs,
+    MutationRemovePaymentTypeArgs as TMutationRemovePaymentTypeArgs,
+    MutationUpdatePaymentTypeArgs as TMutationUpdatePaymentTypeArgs
 } from '../../graphql';
 import { QueryUtil } from '../../typescript/utils/helper';
 
 export default class PaymentType extends QueryUtil {
-    static resolver() {
+    static resolver(): any {
         this.init('paymentType');
         return {
             Query: {
-                getPaymentTypes: async (obj: any, {limit, offset}: IQueryGetPaymentTypesArgs, context: any): Promise<IPaymentType> => context.prisma.paymentType.findMany({
-                    ...(limit ? {take: limit} : null),
-                    ...(offset ? {skip: offset} : null),
-                }),
-                getPaymentType: async (obj: any, args: IQueryGetPaymentTypeArgs): Promise<IPaymentType> => await this.findById(args.id),
+                getPaymentTypes: async (obj: any, {limit, offset}: TQueryGetPaymentTypesArgs, context: any): Promise<Array<TPaymentType>> => {
+                    return context.prisma.paymentType.findMany({
+                        ...(limit && { take: limit }),
+                        ...(offset && { skip: offset }),
+                    });
+                },
+                getPaymentType: async (obj: any, args: TQueryGetPaymentTypeArgs): Promise<TPaymentType> => {
+                    return this.findById(args.id);
+                },
             },
             Mutation: {
-                createPaymentType: async (obj: any, args: IMutationCreatePaymentTypeArgs, context: any): Promise<IPaymentType> => {
+                createPaymentType: async (obj: any, args: TMutationCreatePaymentTypeArgs, context: any): Promise<TPaymentType> => {
                     await this.errorIfExists({ name: args.input.name }, 'A payment type with this name has already been created');
                     return context.prisma.paymentType.create({
                         data: {
@@ -31,7 +35,7 @@ export default class PaymentType extends QueryUtil {
                         },
                     });
                 },
-                updatePaymentType: async (obj: any, args: IMutationUpdatePaymentTypeArgs, context: any): Promise<IPaymentType> => {
+                updatePaymentType: async (obj: any, args: TMutationUpdatePaymentTypeArgs, context: any): Promise<TPaymentType> => {
                     await this.findById(args.id);
                     await this.errorIfExists({ name: args.input.name }, 'A payment type with this name has already been created');
                     return context.prisma.paymentType.update({
@@ -42,10 +46,10 @@ export default class PaymentType extends QueryUtil {
                             name: args.input.name,
                             isActive: args.input.isActive,
                             info: args.input.info,
-                        }
+                        },
                     });
                 },
-                removePaymentType: async (obj: any, args: IMutationRemovePaymentTypeArgs, context: any): Promise<IPaymentType> => {
+                removePaymentType: async (obj: any, args: TMutationRemovePaymentTypeArgs, context: any): Promise<TPaymentType> => {
                     await this.findById(args.id)
                     return context.prisma.paymentType.delete({
                         where: {
@@ -57,18 +61,23 @@ export default class PaymentType extends QueryUtil {
         }
     }
 
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
-            input PaymentTypeInput {
-                name: String!
-                isActive: Boolean = false
-                info: String!
-            }
-
-            type PaymentType {
+            
+            # TYPES
+            
+			type PaymentType {
 				id: Int!
 				name: String!
 				isActive: Boolean!
+				info: String!
+			}
+            
+            # INPUTS
+
+			input PaymentTypeInput {
+				name: String!
+				isActive: Boolean = false
 				info: String!
 			}
         `;

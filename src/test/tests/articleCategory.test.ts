@@ -14,14 +14,13 @@ import {
     GET_ARTICLE_CATEGORY,
     GET_ARTICLE_CATEGORIES,
 } from '../../graphql/queries';
-import {getKeyValue} from "../../typescript/utils/helper";
+import { getKeyValue } from "../../typescript/utils/helper";
 import {
     ArticleCategory as IArticleCategory,
     ArticleCategoryInput as IArticleCategoryInput,
     ArticleCategoryQuantityAndList as IArticleCategoryQuantityAndList
 } from "../../graphql";
 import { getRandomEntry, compareObjects } from '../utils/helper';
-
 
 const config: any = getConfig();
 
@@ -90,7 +89,7 @@ describe('Successful article category creation/update/deletion operations', func
 })
 
 
-describe('Successful article category get/get(many) operations', function() {
+describe('Successful get/receive (many) article categories', function() {
     it('Get article category by id', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
@@ -105,7 +104,7 @@ describe('Successful article category get/get(many) operations', function() {
         compareObjects(articleCategory, findArticleCategory.getArticleCategory);
     });
 
-    it('Get list of article category', async function () {
+    it('Get a list of article categories', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
         const articleCategories: Array<IArticleCategory> = await prisma.articleCategory.findMany();

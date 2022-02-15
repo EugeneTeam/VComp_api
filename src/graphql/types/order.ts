@@ -1,9 +1,10 @@
 import { gql } from 'apollo-server';
 import { QueryUtil } from "../../typescript/utils/helper";
-import lProductList from "./lProductList";
+
+// TODO Awaiting improvements
 
 export default class Order extends QueryUtil {
-    static resolver() {
+    static resolver(): any {
         this.init('order');
         return {
             Query: {
@@ -54,10 +55,7 @@ export default class Order extends QueryUtil {
         }
     }
     static typeDefs() {
-        return gql`
-            
-            # TYPES
-            
+        return gql`            
             # INPUTS
             
             input OrderFilter {

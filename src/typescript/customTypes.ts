@@ -1,3 +1,5 @@
+import {ResultType, Scalars} from "../graphql";
+
 export type ProductView = {
     id: number
     productId: number
@@ -112,4 +114,9 @@ export type Image = {
     name: string
     url: string
     order: number
+}
+
+export type RemoveImagesResult = {
+    id: number
+    type: string
 }

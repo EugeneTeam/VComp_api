@@ -1,20 +1,20 @@
 import { gql } from 'apollo-server';
 import {
-    Callback as ICallback,
-    MutationCloseCallbackArgs as IMutationCloseCallbackArgs,
-    MutationRequestCallbackArgs as IMutationRequestCallbackArgs
+    Callback as TCallback,
+    MutationCloseCallbackArgs as TMutationCloseCallbackArgs,
+    MutationRequestCallbackArgs as TMutationRequestCallbackArgs
 } from '../../graphql';
 
 export default class Callback {
-    static resolver() {
+    static resolver(): any {
         return {
             Mutation: {
-                requestCallback: async (obj: any, args: IMutationRequestCallbackArgs, context: any): Promise<boolean> => {
+                requestCallback: async (obj: any, args: TMutationRequestCallbackArgs, context: any): Promise<boolean> => {
                     if (args.phone.length > 15) {
                         throw new Error('Phone number is too long');
                     }
 
-                    const checkCallback: ICallback = await context.prisma.callback.findFirst({
+                    const checkCallback: TCallback = await context.prisma.callback.findFirst({
                         where: {
                             phone: args.phone,
                             isProcessed: true,
@@ -34,8 +34,8 @@ export default class Callback {
 
                     return true;
                 },
-                closeCallback: async (obj: any, args: IMutationCloseCallbackArgs, context: any): Promise<boolean> => {
-                    const callback: ICallback = await context.prisma.callback.findUnique({
+                closeCallback: async (obj: any, args: TMutationCloseCallbackArgs, context: any): Promise<boolean> => {
+                    const callback: TCallback = await context.prisma.callback.findUnique({
                         where: {
                             id: args.id,
                         },
@@ -55,8 +55,8 @@ export default class Callback {
                         },
                         data: {
                             isProcessed: false,
-                        }
-                    })
+                        },
+                    });
 
                     return true;
                 }
@@ -64,8 +64,11 @@ export default class Callback {
         }
     }
 
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
+            
+            # TYPES
+            
             type Callback {
                 id: Int!
                 phone: String!

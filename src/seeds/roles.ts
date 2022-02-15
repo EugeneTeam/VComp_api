@@ -1,4 +1,4 @@
-import {PrismaClient} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 export async function addRoles(prisma: PrismaClient): Promise<any> {
     return prisma.role.createMany({

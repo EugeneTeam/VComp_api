@@ -2,34 +2,36 @@ import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 
 import {
-    Characteristic as ICharacteristic,
-    CharacteristicQuantityAndList as ICharacteristicQuantityAndList,
-    MutationCreateCharacteristicArgs as IMutationCreateCharacteristicArgs,
-    MutationRemoveCharacteristicArgs as IMutationRemoveCharacteristicArgs,
-    MutationUpdateCharacteristicArgs as IMutationUpdateCharacteristicArgs,
-    QueryGetCharacteristicArgs as IQueryGetCharacteristicArgs,
-    QueryGetCharacteristicsArgs as IQueryGetCharacteristicsArgs
+    Characteristic as TCharacteristic,
+    CharacteristicQuantityAndList as TCharacteristicQuantityAndList,
+    MutationCreateCharacteristicArgs as TMutationCreateCharacteristicArgs,
+    MutationRemoveCharacteristicArgs as TMutationRemoveCharacteristicArgs,
+    MutationUpdateCharacteristicArgs as TMutationUpdateCharacteristicArgs,
+    QueryGetCharacteristicArgs as TQueryGetCharacteristicArgs,
+    QueryGetCharacteristicsArgs as TQueryGetCharacteristicsArgs
 } from '../../graphql';
 
 export default class Characteristic extends QueryUtil{
-    static resolver() {
+    static resolver(): any {
         this.init('characteristic');
         return {
             Query: {
-                getCharacteristic: (obj: any, args: IQueryGetCharacteristicArgs): Promise<ICharacteristic> => this.findById(args.id),
-                getCharacteristics: (obj: any, args: IQueryGetCharacteristicsArgs): Promise<ICharacteristicQuantityAndList> => {
-                    return this.findAllAndCount(null, args?.pagination?.limit, args?.pagination?.offset)
+                getCharacteristic: (obj: any, args: TQueryGetCharacteristicArgs): Promise<TCharacteristic> => {
+                    return this.findById(args.id);
+                },
+                getCharacteristics: (obj: any, args: TQueryGetCharacteristicsArgs): Promise<TCharacteristicQuantityAndList> => {
+                    return this.findAllAndCount(null, args?.pagination?.limit, args?.pagination?.offset);
                 },
             },
             Mutation: {
-                createCharacteristic: async (obj: any, args: IMutationCreateCharacteristicArgs, context: any): Promise<ICharacteristic> => {
+                createCharacteristic: async (obj: any, args: TMutationCreateCharacteristicArgs, context: any): Promise<TCharacteristic> => {
                     await this.setAnotherTableForNextRequest('category');
                     await this.findById(args.input!.categoryId);
                     return context.prisma.characteristic.create({
                         data: args.input,
                     });
                 },
-                updateCharacteristic: async (obj: any, args: IMutationUpdateCharacteristicArgs, context: any): Promise<ICharacteristic> => {
+                updateCharacteristic: async (obj: any, args: TMutationUpdateCharacteristicArgs, context: any): Promise<TCharacteristic> => {
                     await this.findById(args.id);
                     await this.setAnotherTableForNextRequest('category');
                     await this.findById(args.input!.categoryId);
@@ -40,7 +42,7 @@ export default class Characteristic extends QueryUtil{
                         data: args.input,
                     });
                 },
-                removeCharacteristic: async (obj: any, args: IMutationRemoveCharacteristicArgs, context: any): Promise<ICharacteristic> => {
+                removeCharacteristic: async (obj: any, args: TMutationRemoveCharacteristicArgs, context: any): Promise<TCharacteristic> => {
                     await this.findById(args.id);
                     return context.prisma.characteristic.delete({
                         where: {
@@ -51,7 +53,7 @@ export default class Characteristic extends QueryUtil{
             },
         }
     }
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
             
             # TYPES

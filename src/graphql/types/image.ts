@@ -1,53 +1,66 @@
 import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 
+import {
+    Image as TImage,
+    QueryGetImageArgs as TQueryGetImageArgs,
+    MutationAddImagesArgs as TMutationAddImagesArgs,
+    MutationRemoveImagesArgs as TMutationRemoveImagesArgs,
+    MutationUpdateImageArgs as TMutationUpdateImageArgs,
+    RemoveImagesResult as TRemoveImagesResult
+} from '../../graphql';
+import { RemoveImagesResult } from '../../typescript/customTypes';
+
 export default class Image extends QueryUtil{
-    static resolver() {
+    static resolver(): any {
         this.init('image');
         return {
             Query: {
-                getImage: (obj: any, args: any) => this.findById(args.id),
+                getImage: (obj: any, args: TQueryGetImageArgs) => {
+                    return this.findById(args.id);
+                },
             },
             Mutation: {
-                addImages: async (obj: any, args: any, context: any) => {
+                addImages: async (obj: any, args: TMutationAddImagesArgs, context: any): Promise<Array<TImage>> => {
                     await this.setAnotherTableForNextRequest('gallery');
-                    await this.findById(args.input.galleryId);
+                    await this.findById(args?.input!.galleryId);
                     let result = [];
-                    for (const image of args.input.images) {
+                    for (const image of args?.input!.images) {
                         const newImage = await context.prisma.image.create({
                             data: image,
                         });
                         await context.prisma.lImageGallery.create({
                             data: {
                                 imageId: newImage.id,
-                                galleryId: args.input.galleryId,
+                                galleryId: args?.input!.galleryId,
                             }
                         });
                         result.push(newImage);
                     }
                     return result;
                 },
-                removeImages: async (obj: any, args: any, context: any) => {
+                removeImages: async (obj: any, args: TMutationRemoveImagesArgs, context: any): Promise<Array<RemoveImagesResult>> => {
                     await this.setAnotherTableForNextRequest('gallery');
-                    await this.findById(args.input.galleryId);
+                    await this.findById(args?.input!.galleryId);
                     let result = [];
 
-                    for (const imageId of args.input.imageIds) {
+                    for (const imageId of args?.input!.imageIds) {
                         await context.prisma.lImageGallery.delete({
                             where: {
                                 imageInGallery: {
-                                    galleryId: args.input.galleryId,
+                                    galleryId: args?.input!.galleryId,
                                     imageId,
                                 }
                             },
                         });
-
                         result.push({
                             type: 'RELATION',
                             id: imageId,
                         });
 
-                        if (args.input.destroyImages) {
+                    }
+                    if (args?.input!.destroyImages) {
+                        for (const imageId of args?.input!.imageIds) {
                             const deletedImage = await context.prisma.image.delete({
                                 where: {
                                     id: imageId,
@@ -61,7 +74,7 @@ export default class Image extends QueryUtil{
                     }
                     return result;
                 },
-                updateImage: async (obj: any, args: any, context: any) => {
+                updateImage: async (obj: any, args: TMutationUpdateImageArgs, context: any) => {
                     await this.findById(args.id);
                     return context.prisma.image.update({
                         where: {
@@ -91,6 +104,11 @@ export default class Image extends QueryUtil{
                 url: String!
                 order: Int!
             }
+
+			type RemoveImagesResult {
+				type: ResultType!
+				id: Int!
+			}
             
             # INPUTS
             
@@ -103,11 +121,6 @@ export default class Image extends QueryUtil{
             input AddImages {
                 images: [ImageInput!]!
                 galleryId: Int!
-            }
-            
-            type RemoveImagesResult {
-                type: ResultType!
-                id: Int!
             }
             
             input RemoveImages {

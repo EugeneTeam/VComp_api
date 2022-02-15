@@ -1,34 +1,36 @@
 import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 import {
-    Category as ICategory,
-    CategoryQuantityAndList as ICategoryQuantityAndList,
-    QueryGetCategoryArgs as IQueryGetCategoryArgs,
-    QueryGetCategoriesArgs as IQueryGetCategoriesArgs,
-    MutationCreateCategoryArgs as IMutationCreateCategoryArgs,
-    MutationRemoveCategoryArgs as IMutationRemoveCategoryArgs,
-    MutationUpdateCategoryArgs as IMutationUpdateCategoryArgs
+    Category as TCategory,
+    CategoryQuantityAndList as TCategoryQuantityAndList,
+    QueryGetCategoryArgs as TQueryGetCategoryArgs,
+    QueryGetCategoriesArgs as TQueryGetCategoriesArgs,
+    MutationCreateCategoryArgs as TMutationCreateCategoryArgs,
+    MutationRemoveCategoryArgs as TMutationRemoveCategoryArgs,
+    MutationUpdateCategoryArgs as TMutationUpdateCategoryArgs
 } from '../../graphql';
 
 
 export default class Category extends QueryUtil {
-    static resolver() {
+    static resolver(): any {
         this.init('category');
         return {
             Query: {
-                getCategory: (obj: any, args: IQueryGetCategoryArgs): Promise<ICategory> => this.findById(args.id),
-                getCategories: (obj: any, args: IQueryGetCategoriesArgs): Promise<ICategoryQuantityAndList> => {
+                getCategory: (obj: any, args: TQueryGetCategoryArgs): Promise<TCategory> => {
+                    return this.findById(args.id)
+                },
+                getCategories: (obj: any, args: TQueryGetCategoriesArgs): Promise<TCategoryQuantityAndList> => {
                     return this.findAllAndCount(null, args?.pagination?.limit, args?.pagination?.offset)
                 },
             },
             Mutation: {
-                createCategory: async (obj: any, args: IMutationCreateCategoryArgs, context: any): Promise<Category> => {
+                createCategory: async (obj: any, args: TMutationCreateCategoryArgs, context: any): Promise<TCategory> => {
                     await this.errorIfExists({ name: args?.input?.name }, 'A category with this name has already been created');
                     return context.prisma.category.create({
                         data: args.input,
                     });
                 },
-                updateCategory: async (obj: any, args: IMutationUpdateCategoryArgs, context: any): Promise<Category> => {
+                updateCategory: async (obj: any, args: TMutationUpdateCategoryArgs, context: any): Promise<TCategory> => {
                     await this.findById(args.id);
                     await this.errorIfExists({ name: args?.input?.name }, 'A category with this name has already been created');
                     return context.prisma.category.update({
@@ -38,7 +40,7 @@ export default class Category extends QueryUtil {
                         data: args.input,
                     });
                 },
-                removeCategory: async (obj: any, args: IMutationRemoveCategoryArgs, context: any): Promise<Category> => {
+                removeCategory: async (obj: any, args: TMutationRemoveCategoryArgs, context: any): Promise<TCategory> => {
                     await this.findById(args.id);
                     await context.prisma.category.updateMany({
                         where: {
@@ -67,7 +69,7 @@ export default class Category extends QueryUtil {
             },
         }
     }
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
             
             # TYPES

@@ -7,41 +7,43 @@ import {
     checkEmail
 } from '../../typescript/user';
 import {
-    User as IUser,
-    QueryGetUserArgs as IQueryGetUserArgs,
-    QueryGetUsersArgs as IQueryGetUsersArgs,
-    UsersAndCount as IUsersAndCount,
-    QueryLogInArgs as IQueryLogInArgs,
-    Token as IToken,
-    MutationUnbanUserArgs as IMutationUnbanUserArgs,
-    MutationBanUserArgs as IMutationBanUserArgs,
-    MutationSignInArgs as IMutationSignInArgs,
-    MutationCreateUserArgs as IMutationCreateUserArgs,
-    MutationUpdateUserArgs as IMutationUpdateUserArgs,
+    User as TUser,
+    QueryGetUserArgs as TQueryGetUserArgs,
+    QueryGetUsersArgs as TQueryGetUsersArgs,
+    UsersAndCount as TUsersAndCount,
+    QueryLogInArgs as TQueryLogInArgs,
+    Token as TToken,
+    MutationUnbanUserArgs as TMutationUnbanUserArgs,
+    MutationBanUserArgs as TMutationBanUserArgs,
+    MutationSignInArgs as TMutationSignInArgs,
+    MutationCreateUserArgs as TMutationCreateUserArgs,
+    MutationUpdateUserArgs as TMutationUpdateUserArgs,
 } from '../../graphql';
 import { QueryUtil } from '../../typescript/utils/helper';
-import {getRoleIdByName} from "../../typescript/role";
+import { getRoleIdByName } from "../../typescript/role";
 
 export default class User extends QueryUtil{
-    static resolver() {
+    static resolver(): any {
         this.init('user');
         return {
             Query: {
-                getUser: async (obj: any, args: IQueryGetUserArgs): Promise<IUser> => this.findById(args.id),
-                getUsers: async (obj: any, args: IQueryGetUsersArgs, context: any): Promise<IUsersAndCount> => {
+                getUser: async (obj: any, args: TQueryGetUserArgs): Promise<TUser> => {
+                    return this.findById(args.id);
+                },
+                getUsers: async (obj: any, args: TQueryGetUsersArgs): Promise<TUsersAndCount> => {
                     const filter: any = {
                         where: {
-                            ...(args?.filter?.fullName ? {fullName: {contains: args.filter.fullName}} : null),
-                            ...(args?.filter?.phone ? {phone: {contains: args.filter.phone}} : null),
-                            ...(args?.filter?.city ? {city: {contains: args.filter.city}} : null),
-                            ...(args?.filter?.email ? {email: {contains: args.filter.email}} : null),
-                            ...(args?.filter?.status ? {status: args.filter.status} : null),
-                            ...(args?.filter?.role ? {roleId: await getRoleIdByName(args.filter.role)} : null),
+                            ...(args?.filter?.fullName && { fullName: { contains: args.filter.fullName} }),
+                            ...(args?.filter?.phone && { phone: { contains: args.filter.phone} }),
+                            ...(args?.filter?.city && { city: { contains: args.filter.city } }),
+                            ...(args?.filter?.email && { email: { contains: args.filter.email } }),
+                            ...(args?.filter?.status && { status: args.filter.status }),
+                            ...(args?.filter?.role && { roleId: await getRoleIdByName(args.filter.role) }),
                         },
                     };
                     return this.findAllAndCount(filter, args?.filter?.limit, args?.filter?.offset);
                 },
-                logIn: async (obj: any, args: IQueryLogInArgs, context: any): Promise<IToken> => {
+                logIn: async (obj: any, args: TQueryLogInArgs, context: any): Promise<TToken> => {
                     const user: any = await context.prisma.user.findUnique({
                         where: {
                             email: args.input!.email,
@@ -64,8 +66,8 @@ export default class User extends QueryUtil{
                 }
             },
             Mutation: {
-                unbanUser: async (obj: any, args: IMutationUnbanUserArgs, context: any): Promise<IUser> => {
-                    const user: IUser | null = await context.prisma.user.findUnique({
+                unbanUser: async (obj: any, args: TMutationUnbanUserArgs, context: any): Promise<TUser> => {
+                    const user: TUser | null = await context.prisma.user.findUnique({
                         where: {
                             id: args.input!.userId,
                         },
@@ -89,8 +91,8 @@ export default class User extends QueryUtil{
                         },
                     });
                 },
-                banUser: async (obj: any, args: IMutationBanUserArgs, context: any): Promise<IUser> => {
-                    const user: IUser | null = await context.prisma.user.findUnique({
+                banUser: async (obj: any, args: TMutationBanUserArgs, context: any): Promise<TUser> => {
+                    const user: TUser | null = await context.prisma.user.findUnique({
                         where: {
                             id: args.input!.userId,
                         },
@@ -110,7 +112,7 @@ export default class User extends QueryUtil{
                         },
                     });
                 },
-                signIn: async (obj: any, args: IMutationSignInArgs, context: any): Promise<IUser> => {
+                signIn: async (obj: any, args: TMutationSignInArgs, context: any): Promise<TUser> => {
                     if (args.input!.password !== args.input!.repeatPassword) {
                         throw new Error('Password mismatch');
                     }
@@ -130,7 +132,7 @@ export default class User extends QueryUtil{
                         },
                     });
                 },
-                createUser: async (obj: any, args: IMutationCreateUserArgs, context: any): Promise<IUser> => {
+                createUser: async (obj: any, args: TMutationCreateUserArgs, context: any): Promise<TUser> => {
                      return context.prisma.user.create({
                          data: {
                              fullName: args.input.fullName,
@@ -140,11 +142,11 @@ export default class User extends QueryUtil{
                              activationToken: generateActivationToken(),
                              passwordHash: await encryptPassword(args.input.password),
                              status: args.input.status,
-                             roleId: await getRoleIdByName(args.input.role)
+                             roleId: await getRoleIdByName(args.input.role),
                          },
                      });
                 },
-                updateUser: async (obj: any, args: IMutationUpdateUserArgs, context: any): Promise<IUser> => {
+                updateUser: async (obj: any, args: TMutationUpdateUserArgs, context: any): Promise<TUser> => {
                     const user = context.prisma.user.findUnique({
                         where: {
                             id: args.input!.id,
@@ -162,14 +164,14 @@ export default class User extends QueryUtil{
                             id: args.input!.id,
                         },
                         data: {
-                            ...(args?.input?.fullName ? {fullName: args.input.fullName} : null),
-                            ...(args?.input?.phone ? {phone: args.input.phone} : null),
-                            ...(args?.input?.city ? {city: args.input.city} : null),
-                            ...(args?.input?.email ? {email: args.input.email} : null),
-                            ...(args?.input?.activationToken ? {activationToken: args.input.activationToken} : null),
-                            ...(args?.input?.passwordHash ? {passwordHash: args.input.passwordHash} : null),
-                            ...(args?.input?.status ? {status: args.input.status} : null),
-                            ...(args?.input?.role ? {roleId: args.input.role} : null),
+                            ...(args?.input?.fullName && { fullName: args.input.fullName }),
+                            ...(args?.input?.phone && { phone: args.input.phone }),
+                            ...(args?.input?.city && { city: args.input.city }),
+                            ...(args?.input?.email && { email: args.input.email }),
+                            ...(args?.input?.activationToken && { activationToken: args.input.activationToken }),
+                            ...(args?.input?.passwordHash && { passwordHash: args.input.passwordHash }),
+                            ...(args?.input?.status && { status: args.input.status }),
+                            ...(args?.input?.role && { roleId: args.input.role }),
                         },
                     });
                 }
@@ -177,8 +179,11 @@ export default class User extends QueryUtil{
         }
     }
 
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
+            
+            # ENUMS
+            
 			enum UserRole {
 				ADMIN
 				MANAGER
@@ -192,7 +197,35 @@ export default class User extends QueryUtil{
 				INACTIVE
 				BANNED
 			}
-
+            
+            # TYPES
+            
+			type Token {
+				token: String
+			}
+            
+			type UsersAndCount {
+				count: Int!
+				rows: [User]
+			}
+            
+			type User {
+				id: Int!
+				fullName: String!
+				phone: String!
+				city: String!
+				email: String!
+				status: UserStatus
+				banReason: String
+				activationToken: String
+				passwordHash: String
+				resetPasswordToken: String
+				googleId: String
+				roleId: Int
+			}
+            
+            # INPUTS
+            
             input SignInInput {
 				fullName: String!
 				phone: String!
@@ -231,25 +264,6 @@ export default class User extends QueryUtil{
 				passwordHash: String = null
             }
 
-            type Token {
-                token: String
-            }
-
-            type User {
-				id: Int!
-				fullName: String!
-				phone: String!
-				city: String!
-				email: String!
-				status: UserStatus
-				banReason: String
-				activationToken: String
-				passwordHash: String
-				resetPasswordToken: String
-				googleId: String
-				roleId: Int
-            }
-
             input UserInputFilter {
 				fullName: String
 				phone: String
@@ -259,11 +273,6 @@ export default class User extends QueryUtil{
 				role: UserRole
                 limit: Int
                 offset: Int
-            }
-
-            type UsersAndCount {
-                count: Int!
-                rows: [User]
             }
 
             input UnbanUserInput {

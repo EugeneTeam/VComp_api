@@ -17,7 +17,6 @@ import { getBearerToken } from '../token/generateToken'
 import {compareObjects, getRandomEntry} from '../utils/helper';
 import {
     Banner as IBanner,
-    BannerInput as IBannerInput,
     BannerQuantityAndList as IBannerQuantityAndList
 } from '../../graphql';
 
@@ -54,7 +53,7 @@ describe('Successful banner creation/update/deletion operations', function() {
         compareObjects(newInputData, updatedBanner.updateBanner);
     });
 
-    it('Successfully deleting an banner', async function () {
+    it('Successfully deleting banner', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
         const banner: IBanner = await getRandomEntry('banner');
@@ -84,7 +83,7 @@ describe('Successful banner get/get(many) operations', function() {
         compareObjects(banner, findBanner.getBanner)
     });
 
-    it('Get list of banner', async function () {
+    it('Get list of banners', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
 
@@ -102,7 +101,7 @@ describe('Successful banner get/get(many) operations', function() {
 });
 
 
-describe('Permissions return "Access Denied"', function() {
+describe('Return error "Access Denied"', function() {
     it('Creating an banner without permission will return an error', async function () {
         try {
             const client: GraphQLClient = new GraphQLClient(config.url);

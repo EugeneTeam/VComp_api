@@ -5,7 +5,7 @@ import {
 } from '../../graphql';
 
 export default class Favorite {
-    static resolver() {
+    static resolver(): any {
         return {
             Mutation: {
                 addOrRemoveFavorite: async (obj: any, args: IMutationAddOrRemoveFavoriteArgs, context: any): Promise<IFavorite> => {
@@ -52,16 +52,21 @@ export default class Favorite {
         }
     }
 
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
-            input FavoriteIpnut {
-                productId: Int!
-            }
+
+            # TYPES
             
-            type Favorite {
+			type Favorite {
 				id: Int!
 				productId: Int!
 				userId: Int!
+			}
+            
+            # INPUTS
+            
+            input FavoriteIpnut {
+                productId: Int!
             }
         `;
     }

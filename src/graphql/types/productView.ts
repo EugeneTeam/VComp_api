@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server';
 
 export default class ProductView {
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
             
             # TYPES

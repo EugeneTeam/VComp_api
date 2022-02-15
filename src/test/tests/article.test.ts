@@ -89,7 +89,7 @@ describe('Successful article get/get(many) operations', function() {
         compareObjects(article, findArticle.getArticle);
     });
 
-    it('Get list of article', async function () {
+    it('Get list of articles', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.GOVERNING_ARTICLE_MANAGER, client);
         const articles: Array<any> = await prisma.article.findMany();
@@ -112,7 +112,7 @@ describe('Successful article get/get(many) operations', function() {
     });
 });
 
-describe('Permissions return "Access Denied"', function() {
+describe('Return error "Access Denied"', function() {
     it('Creating an article without permission will return an error', async function () {
         try {
             const client: GraphQLClient = new GraphQLClient(config.url);
@@ -156,7 +156,7 @@ describe('Permissions return "Access Denied"', function() {
         }
     });
 
-    it('Removed an article without permission will return an error', async function () {
+    it('Deleting an article without permission will return an error', async function () {
         try {
             const client: GraphQLClient = new GraphQLClient(config.url);
             const token: string = await getBearerToken(EUsers.CUSTOMER, client);

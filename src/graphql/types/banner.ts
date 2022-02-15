@@ -2,32 +2,34 @@ import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 
 import {
-    Banner as IBanner,
-    BannerQuantityAndList as IBannerQuantityAndList,
-    MutationCreateBannerArgs as IMutationCreateBannerArgs,
-    MutationUpdateBannerArgs as IMutationUpdateBannerArgs,
-    MutationRemoveBannerArgs as IMutationRemoveBannerArgs,
-    QueryGetBannerArgs as IQueryGetBannerArgs,
-    QueryGetBannersArgs as IQueryGetBannersArgs,
+    Banner as TBanner,
+    BannerQuantityAndList as TBannerQuantityAndList,
+    MutationCreateBannerArgs as TMutationCreateBannerArgs,
+    MutationUpdateBannerArgs as TMutationUpdateBannerArgs,
+    MutationRemoveBannerArgs as TMutationRemoveBannerArgs,
+    QueryGetBannerArgs as TQueryGetBannerArgs,
+    QueryGetBannersArgs as TQueryGetBannersArgs,
 } from '../../graphql';
 
 export default class Banner extends QueryUtil{
-    static resolver() {
+    static resolver(): any {
         this.init('banner');
         return {
             Query: {
-                getBanner: (obj: any, args: IQueryGetBannerArgs): Promise<IBanner> => this.findById(args.id),
-                getBanners: (obj: any, args: IQueryGetBannersArgs): Promise<IBannerQuantityAndList> => {
+                getBanner: (obj: any, args: TQueryGetBannerArgs): Promise<TBanner> => {
+                    return this.findById(args.id);
+                },
+                getBanners: (obj: any, args: TQueryGetBannersArgs): Promise<TBannerQuantityAndList> => {
                     return this.findAllAndCount(null, args?.pagination?.limit, args?.pagination?.offset)
                 },
             },
             Mutation: {
-                createBanner: (obj: any, args: IMutationCreateBannerArgs, context: any): Promise<IBanner> => {
+                createBanner: (obj: any, args: TMutationCreateBannerArgs, context: any): Promise<TBanner> => {
                     return context.prisma.banner.create({
                         data: args.input,
                     });
                 },
-                updateBanner: async (obj: any, args: IMutationUpdateBannerArgs, context: any): Promise<IBanner> => {
+                updateBanner: async (obj: any, args: TMutationUpdateBannerArgs, context: any): Promise<TBanner> => {
                     await this.findById(args.id);
                     return context.prisma.banner.update({
                         where: {
@@ -36,7 +38,7 @@ export default class Banner extends QueryUtil{
                         data: args.input,
                     });
                 },
-                removeBanner: async (obj: any, args: IMutationRemoveBannerArgs, context: any): Promise<IBanner> => {
+                removeBanner: async (obj: any, args: TMutationRemoveBannerArgs, context: any): Promise<TBanner> => {
                     await this.findById(args.id);
                     await context.prisma.bannerImage.deleteMany({
                         where: {
@@ -52,7 +54,7 @@ export default class Banner extends QueryUtil{
             },
         }
     }
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
             
             #ENUMS

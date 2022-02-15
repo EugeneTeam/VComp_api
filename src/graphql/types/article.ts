@@ -2,35 +2,39 @@ import { gql } from 'apollo-server';
 import { QueryUtil } from '../../typescript/utils/helper';
 
 import {
-    Article as IArticle,
-    QueryGetArticleArgs as IQueryGetArticleArgs,
-    QueryGetArticlesArgs as IQueryGetArticlesArgs,
-    MutationCreateArticleArgs as IMutationCreateArticleArgs,
-    MutationUpdateArticleArgs as IMutationUpdateArticleArgs,
-    MutationRemoveArticleArgs as IMutationRemoveArticleArgs
+    Article as TArticle,
+    QueryGetArticleArgs as TQueryGetArticleArgs,
+    QueryGetArticlesArgs as TQueryGetArticlesArgs,
+    MutationCreateArticleArgs as TMutationCreateArticleArgs,
+    MutationUpdateArticleArgs as TMutationUpdateArticleArgs,
+    MutationRemoveArticleArgs as TMutationRemoveArticleArgs,
+    ArticleCategoryQuantityAndList as TArticleCategoryQuantityAndList,
 } from '../../graphql';
+import {GraphQLType} from "graphql/index";
 
 export default class Article extends QueryUtil{
-    static resolver() {
+    static resolver(): any {
         this.init('article');
         return {
             Query: {
-                getArticles: async (obj: any, args: IQueryGetArticlesArgs): Promise<{ count: number, rows: Array<IArticle | null> }> => {
+                getArticles: async (obj: any, args: TQueryGetArticlesArgs): Promise<TArticleCategoryQuantityAndList> => {
                     const filter = {
                         where: {
-                            ...(args?.filter?.categoryId ? {articleCategoryId: args.filter.categoryId} : null),
-                            ...(args?.filter?.title ? {title: {contains: args.filter.title}} : null),
-                            ...(args?.filter?.text ? {text: {contains: args.filter.text}} : null),
-                            ...(args?.filter?.status ? {status: args.filter.status} : null),
+                            ...(args?.filter?.categoryId && { articleCategoryId: args.filter.categoryId }),
+                            ...(args?.filter?.title && { title: { contains: args.filter.title} }),
+                            ...(args?.filter?.text && { text: { contains: args.filter.text} }),
+                            ...(args?.filter?.status && { status: args.filter.status }),
                         },
                     };
 
                     return this.findAllAndCount(filter, args?.pagination?.limit, args?.pagination?.offset);
                 },
-                getArticle: async (obj: any, args: IQueryGetArticleArgs): Promise<IArticle> => this.findById(args.id),
+                getArticle: async (obj: any, args: TQueryGetArticleArgs): Promise<TArticle> => {
+                    return this.findById(args.id);
+                },
             },
             Mutation: {
-                createArticle: async (obj: any, args: IMutationCreateArticleArgs, context: any): Promise<IArticle> => {
+                createArticle: async (obj: any, args: TMutationCreateArticleArgs, context: any): Promise<TArticle> => {
                     await this.setAnotherTableForNextRequest('articleCategory');
                     await this.findById(args.input.articleCategoryId);
                     return context.prisma.article.create({
@@ -44,11 +48,11 @@ export default class Article extends QueryUtil{
                         },
                     });
                 },
-                updateArticle: async (obj: any, args: IMutationUpdateArticleArgs, context: any): Promise<IArticle> => {
+                updateArticle: async (obj: any, args: TMutationUpdateArticleArgs, context: any): Promise<TArticle> => {
                     await this.setAnotherTableForNextRequest('articleCategory');
                     await this.findById(args.input.articleCategoryId);
                     await this.findById(args.id);
-                    const article: Promise<IArticle> | null = await context.prisma.article.update({
+                    const article: Promise<TArticle> = await context.prisma.article.update({
                         where: {
                             id: args.id,
                         },
@@ -67,7 +71,7 @@ export default class Article extends QueryUtil{
                     }
                     return article;
                 },
-                removeArticle: async (obj: any, args: IMutationRemoveArticleArgs, context: any): Promise<IArticle> => {
+                removeArticle: async (obj: any, args: TMutationRemoveArticleArgs, context: any): Promise<TArticle> => {
                     await this.findById(args.id)
                     return context.prisma.article.delete({
                         where: {
@@ -79,7 +83,7 @@ export default class Article extends QueryUtil{
         }
     }
 
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
             
             # ENUMS

@@ -10,7 +10,6 @@
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:seed": "ts-node ./prisma/seed.ts",
-    "test:generate": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma generate",
     "test:migrate": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npx prisma migrate dev",
     "test:seed": "export NODE_ENV=test export DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && npm run prisma:seed",
     "test:run": "export NODE_ENV=test DATABASE_URL=\"mysql://root:password@mysql/mydb_test\" && jest -i --coverage",

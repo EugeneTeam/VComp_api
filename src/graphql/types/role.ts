@@ -1,47 +1,53 @@
 import {gql} from 'apollo-server-express';
 import {
-    Role as IRole,
-    QueryGetRolesArgs as IQueryGetRolesArgs,
-    MutationCreateRoleArgs as IMutationCreateRoleArgs,
-    MutationRemoveRoleArgs as IMutationRemoveRoleArgs,
-    MutationUpdateRoleArgs as IMutationUpdateRoleArgs,
+    Role as TRole,
+    QueryGetRolesArgs as TQueryGetRolesArgs,
+    MutationCreateRoleArgs as TMutationCreateRoleArgs,
+    MutationRemoveRoleArgs as TMutationRemoveRoleArgs,
+    MutationUpdateRoleArgs as TMutationUpdateRoleArgs,
 } from '../../graphql';
 
 export default class Role {
-    static resolver() {
+    static resolver(): any {
         return {
             Query: {
-                getRoles: async (obj: any, {limit, offset}: IQueryGetRolesArgs, context: any): Promise<IRole> => context.prisma.role.findMany({
-                        ...(limit ? {take: limit} : null),
-                        ...(offset ? {skip: offset} : null),
-                    })
+                getRoles: async (obj: any, { limit, offset }: TQueryGetRolesArgs, context: any): Promise<Array<TRole>> => {
+                    return context.prisma.role.findMany({
+                        ...(limit && { take: limit }),
+                        ...(offset && { skip: offset }),
+                    });
+                }
             },
             Mutation: {
-                createRole: (obj: any, args: IMutationCreateRoleArgs, context: any): Promise<IRole>  => {
+                createRole: (obj: any, args: TMutationCreateRoleArgs, context: any): Promise<TRole>  => {
                     return context.prisma.role.create({
                         data: {
                             name: args.name,
                         },
                     });
                 },
-                updateRole: (obj: any, args: IMutationUpdateRoleArgs, context: any): Promise<IRole>  => context.prisma.role.update({
-                    where: {
-                        id: args.id,
-                    },
-                    data: {
-                        name: args.name,
-                    },
-                }),
-                removeRole: (obj: any, args: IMutationRemoveRoleArgs, context: any): Promise<IRole>  => context.prisma.delete({
-                    where: {
-                        id: args.id,
-                    },
-                }),
+                updateRole: (obj: any, args: TMutationUpdateRoleArgs, context: any): Promise<TRole>  => {
+                    return context.prisma.role.update({
+                        where: {
+                            id: args.id,
+                        },
+                        data: {
+                            name: args.name,
+                        },
+                    });
+                },
+                removeRole: (obj: any, args: TMutationRemoveRoleArgs, context: any): Promise<TRole>  => {
+                    return context.prisma.delete({
+                        where: {
+                            id: args.id,
+                        },
+                    });
+                },
             }
         }
     }
 
-    static typeDefs() {
+    static typeDefs(): object {
         return gql`
             type Role {
                 id: Int!

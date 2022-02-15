@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import faker from 'faker';
-import {ECommentType} from "../test/constants";
+import { ECommentType } from "../test/constants";
 
 export async function addComments(prisma: PrismaClient, count: number = 1, productIds: number[], parentIds: number[] | [], userIds: number[]): Promise<any> {
     const entry: any = [];

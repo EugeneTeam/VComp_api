@@ -1,5 +1,8 @@
-import {PrismaClient} from '@prisma/client';
-import {encryptPassword, generateActivationToken} from '../typescript/user';
+import { PrismaClient } from '@prisma/client';
+import {
+    encryptPassword,
+    generateActivationToken
+} from '../typescript/user';
 
 export async function addUsers(prisma: PrismaClient): Promise<any> {
     const roles: Array<{id: number, name: string}> = await prisma.role.findMany();

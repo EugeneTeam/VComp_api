@@ -73,7 +73,7 @@ describe('Successful banner image creation/update/deletion operations', function
         compareObjects(newInputData, updatedBanner.updateBannerImage);
     });
 
-    it('Successfully deleting an banner image', async function () {
+    it('Successfully deleting banner image', async function () {
         const client: GraphQLClient = new GraphQLClient(config.url);
         const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
         const bannerImage: IImageBanner = await getRandomEntry('bannerImage');
@@ -120,8 +120,8 @@ describe('Successful banner image get/get(many) operations', function() {
 });
 
 
-describe('Permissions return "Access Denied"', function() {
-    it('Creating an banner image without permission will return an error', async function () {
+describe('Return error "Access Denied"', function() {
+    it('Creating a banner image without permission will return an error', async function () {
         try {
             const client: GraphQLClient = new GraphQLClient(config.url);
             const token: string = await getBearerToken(EUsers.BANNER_MANAGER, client);
